@@ -1,5 +1,5 @@
 The assignments in this course can be done in any operating environment you are comfortable with, so long as it is capable of using an NVIDIA GPU with CUDA drivers.  
-Generally, we expect most students will complete this course using a local anaconda environment.  If you do not have access to a computer with a dedicated GPU, Google Colaboratory (https://research.google.com/colaboratory/faq.html) provides free cloud-based GPUs in a Jupyter environment very similar to what we will be using; however, we cannot offer support for this option as online services change to rapidly for us to maintain expertise in all of them!
+Generally, we expect most students will complete this course using a local anaconda environment.  If you do not have access to a computer with a dedicated GPU, Google Colaboratory (https://research.google.com/colaboratory/faq.html) provides free cloud-based GPUs in a Jupyter environment very similar to what we will be using; however, we cannot offer support for this option as online services change too rapidly for us to maintain expertise in all of them!
 
 The instructions presented here are for Linux (Ubuntu), and based on Anaconda 3-2020.11 (Python 3.8); however, most notes should be applicable to all operating systems.  We do not support Python 2 in this course.
 

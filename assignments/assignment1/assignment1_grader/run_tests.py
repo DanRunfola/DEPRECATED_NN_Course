@@ -409,7 +409,8 @@ except Exception as e:
   print("\nI tried to fit your cross fold validation, but it failed.  Here is what I know: " + str(e))
   question["score"] = 0
 
-
+score = score + question["score"]
+ret["tests"].append(question)
 
 #LEADERBOARD
 ret["leaderboard"] = []
