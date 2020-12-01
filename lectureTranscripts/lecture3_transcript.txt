@@ -1,0 +1,37 @@
+=== SLIDE 1
+Welcome back to DATA 442.  Today, we're going to be discussing many of the basic building blocks of neural networks.
+
+=== SLIDE 
+First, let's briefly remind ourselves where we are.  Last week we covered a few key things - starting with the idea of the semantic gap, or that the ways humans describe an image - for example, Bird - and the ways a computer describes an image - that is, a matrix of numbers - can be challenging to overcome.  
+
+=== SLIDE
+Much of the challenge is in identifying invariant features across objects that belong to the same class, even if those objects are slightly different. So, a beak remains a beak irrespective of the bird that has it - and a computer can use these invariant features to identify the correct class for an image.
+
+=== SLIDE
+This intra-class difference challenge is just one of many in the challenge of computer vision.  You'll recall that we covered a number of different factors that can challenge our ability to cross the semantic gap, as small changes in images to our human eye can result in very large differences in the numeric matrices representing these images.  
+
+=== SLIDE
+These include viewpoint, or the idea that a bird remains a bird irrespective of how you're looking at it.  The example we gave last time was of multiple tourists taking pictures of the Eifel Tower - the tower doesn't change, but the angle of the image does.
+
+=== SLIDE
+Next up, background can cause the object we're trying to recognize to be more or less distinguishable.  While a computer may not see the colors in the same way as us, the matrix would have less variance if all of the colors are similar.  This has the potential to challenge our ability to recognize important, invariant features - like a beak.
+
+=== SLIDE
+Lighting can similarly make a bird appear different; in this lighting image you also get a bit of viewpoint, as the image has very little evident wing (but still a beak!).  
+
+===SLIDE
+And then we have deformation - or our favorite cat activity; a cat in a bowl is still, unfortunately, a cat. 
+
+=== SLIDE
+And good old occlusion - when we can only see a small part of an object, but our human mind can quickly classify it.  How do we train a computer to overcome all of these challenges?
+
+=== SLIDE
+You'll recall that during our last lecture we talked about the K-Nearest Neighbor classifier as a simple example algorithm that gives you an idea of how we approach training a computer using large sets of data.  We walked through a detailed example of text identificaiton, and then a real-world example using the CIFAR dataset.  
+
+=== SLIDE
+We also talked about different hyperparameter selection strategies, and the idea of breaking your dataset into training, validation, and testing data to ensure that you get meaningful tests of the external validity of your modeling approach.
+
+=== SLIDE
+Today, we're going to move on to linear classification techniques.  This will be one of the most important building blocks for neural nets, so pay attention!
+
+Inner product --> dot product
