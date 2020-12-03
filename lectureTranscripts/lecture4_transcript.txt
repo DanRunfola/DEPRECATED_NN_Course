@@ -105,7 +105,7 @@ We add all of these losses together and average them to get the data loss for a 
 
 
 =========SLIDE
-And, finally we add a regularization parameter onto the total loss function to encourage the algorithm to preference simpler solutions.  This slide now provides a fairly helpful summary of where we are today in this course - we have gone from taking in an input dataset, to testing weight parameters for loss.  In the next lecture, we're going to focus on how to actually use this loss score as a part of optimization strategies to select the best weights.
+And, finally we add a regularization parameter onto the total loss function to encourage the algorithm to preference simpler solutions.  This slide now provides a fairly helpful summary of where we are today in this course - we have gone from taking in an input dataset, to testing weight parameters for loss.  In the next lecture, we're going to focus on how to actually use this loss score as a part of optimization strategies to select the best weights.  We'll wrap here for today - I hope you enjoyed, and look forward to seeing you next lecture.
 
 =============Notes
 R(W) = \sum_{k=1}^{K}W_{k}^2
