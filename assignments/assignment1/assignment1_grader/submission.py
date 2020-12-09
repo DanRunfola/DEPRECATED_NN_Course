@@ -261,6 +261,33 @@ def crossFoldValidation(modelToValidate,
 
     return(accuracies)  
 
+#=========================================
+#=========================================
+#LAB QUESTION 8
+#=========================================
+#=========================================
+#Function Name: svmClassifier
+#FUNCTION DESCRIPTION: Function to solve for the multiclass SVM data loss (with regularization).
+#REQUIRED FUNCTION PARAMETERS:
+#                      X - the full (unsplit) X training dataset
+#                      y - the full (unsplit) y training dataset
+#                      W - a vector of weights (i.e., W = np.random.randn(3072, 10) * 0.0001)
+#                      e - epsilon term for SVM loss
+#                      l - Lambda for regularization loss
+#FUNCTION OUTPUT: Library with 'dataLoss', 'regLoss', and 'totalLoss'.
+
+def svmClassifier(X, y, W, e, l):
+    scores = X.dot(W)
+    countTrainSamples = scores.shape[0]
+    countClasses = scores.shape[1] 
+    trueClassScores = scores[np.arange(scores.shape[0]), y]
+    trueClassMatrix = np.matrix(trueClassScores).T 
+    loss_ij = np.maximum(0, (scores - trueClassMatrix) + e) 
+    loss_ij[np.arange(countTrainSamples), y] = 0
+    dataLoss = np.sum(np.sum(loss_ij)) / countTrainSamples
+    regLoss = np.sum(W*W)
+    totalLoss = dataLoss + (l * regLoss)
+    return({'dataLoss':dataLoss, 'regLoss':regLoss, 'totalLoss':totalLoss})
 
 #=========================================
 #Function tests
@@ -287,3 +314,7 @@ if __name__ == '__main__':
                         modelToValidate = knnClassifier(),
                         X_train = X_train,
                         y_train = y_train))
+
+  W = np.random.randn(3072, 10) * 0.0001
+  print(svmClassifier(X_train, y_train, W, e=1, l=1))
+

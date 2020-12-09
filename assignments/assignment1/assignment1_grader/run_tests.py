@@ -412,6 +412,90 @@ except Exception as e:
 score = score + question["score"]
 ret["tests"].append(question)
 
+
+#================================
+#================================
+#QUESTION 8
+#================================
+#================================
+print("\n=======================================================")
+print("\nCommencing assessment of code submitted for question 8.")
+question = {}
+question["max_score"] = 20
+question["name"] = "Implementing Multiclass SVM Loss with Regularization."
+question["output"] = ""
+question["score"] = 0
+
+y_train = labData["y_train"]
+y_test =  labData["y_test"]
+y_test = y_test[:250]
+y_train = y_train[:250]
+
+X_train = np.reshape(labData["X_train"][:250], (labData["X_train"][:250].shape[0], -1))
+X_test = np.reshape(labData["X_test"][:250], (labData["X_test"][:250].shape[0], -1))
+
+def svmClassifier(X, y, W, e, l):
+    scores = X.dot(W)
+    countTrainSamples = scores.shape[0]
+    countClasses = scores.shape[1] 
+    trueClassScores = scores[np.arange(scores.shape[0]), y]
+    trueClassMatrix = np.matrix(trueClassScores).T 
+    loss_ij = np.maximum(0, (scores - trueClassMatrix) + e) 
+    loss_ij[np.arange(countTrainSamples), y] = 0
+    dataLoss = np.sum(np.sum(loss_ij)) / countTrainSamples
+    regLoss = np.sum(W*W)
+    totalLoss = dataLoss + (l * regLoss)
+    return({'dataLoss':dataLoss, 'regLoss':regLoss, 'totalLoss':totalLoss})
+
+
+W = pickle.load(open("SVMInitWeights.pickle", "rb"))
+
+correctResult = svmClassifier(X_train, y_train, W, e=1, l=1)
+
+try:
+  studentResults = submission.svmClassifier(X=X_train, 
+                                            y=y_train, 
+                                            W = W, 
+                                            e = 1, 
+                                            l = 1)
+  try:
+    if(studentResults == correctResult):
+      print("Your outputs and mine match perfectly!  100%.")
+      question["score"] = question["max_score"]
+    elif(studentResults["dataLoss"] == correctResult["dataLoss"]):
+      print("Your data loss and mine agree, but not our reg or total loss.")
+      print("Still, very close!  You get almost-full credit at this point.")
+      question["score"] = question["max_score"]*0.9
+    elif(studentResults["regLoss"] == correctResult["regLoss"]):
+      print("Your regularization loss and mine agree, but not our data loss or total loss.")
+      print("You're getting closer - half credit!")
+      question["score"] = question["max_score"]*0.5
+
+  except Exception as e:
+    question["output"] = "I was able ot run your SVM, but it didn't return anything I could interpret.  Check my logs!"
+    print("Something went wrong with my interpretation of your model output: " + str(e))
+except Exception as e:
+  print("I was unable to run your svmClassifier.  I am trying to invoke it with the following command: \n")
+  print("  studentResults = submission.svmClassifier(X=X_train,")
+  print("                                          y=y_train,")
+  print("                                          W = W,")
+  print("                                          e = 1,")
+  print("                                          l = 1)")
+  print("\n")
+  print("With the following X and Y:")
+  print('y_train = labData["y_train"]')
+  print('y_test =  labData["y_test"]')
+  print('y_test = y_test[:250]')
+  print('y_train = y_train[:250]')
+  print('X_train = np.reshape(labData["X_train"][:250], (labData["X_train"][:250].shape[0], -1))')
+  print('X_test = np.reshape(labData["X_test"][:250], (labData["X_test"][:250].shape[0], -1))')
+  print("\nI received the error: " + str(e))
+  question["output"] = "Please see the log - I was unable to run your SVM!"
+
+
+score = score + question["score"]
+ret["tests"].append(question)
+
 #LEADERBOARD
 ret["leaderboard"] = []
 
