@@ -252,8 +252,6 @@ def crossFoldValidation(modelToValidate,
         classifier.train(np.concatenate(np.delete(X_folds, [i], axis=0)), 
                         np.concatenate(np.delete(y_folds, [i], axis=0)))
 
-        #Now, we're going to generate predictions for only the one fold we didn't use in training
-        #Then save the accuracy for this fold.
         predictions = classifier.predict(X_folds[i], k=k)
         correctCases = sum(predictions == y_folds[i])
         accuracy = correctCases / len(y_folds[i])

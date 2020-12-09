@@ -461,6 +461,7 @@ try:
   try:
     if(studentResults == correctResult):
       print("Your outputs and mine match perfectly!  100%.")
+      question["output"] = "SVM results matched perfectly, full credit awarded."
       question["score"] = question["max_score"]
     elif(studentResults["dataLoss"] == correctResult["dataLoss"]):
       print("Your data loss and mine agree, but not our reg or total loss.")
