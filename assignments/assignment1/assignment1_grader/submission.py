@@ -272,7 +272,7 @@ def crossFoldValidation(modelToValidate,
 #                      W - a vector of weights (i.e., W = np.random.randn(3072, 10) * 0.0001)
 #                      e - epsilon term for SVM loss
 #                      l - Lambda for regularization loss
-#FUNCTION OUTPUT: Library with 'dataLoss', 'regLoss', and 'totalLoss'.
+#FUNCTION OUTPUT: Library with 'dataLoss', 'regLoss', 'totalLoss', and loss matrix loss_ij.
 
 def svmClassifier(X, y, W, e, l):
     scores = X.dot(W)
@@ -285,7 +285,40 @@ def svmClassifier(X, y, W, e, l):
     dataLoss = np.sum(np.sum(loss_ij)) / countTrainSamples
     regLoss = np.sum(W*W)
     totalLoss = dataLoss + (l * regLoss)
-    return({'dataLoss':dataLoss, 'regLoss':regLoss, 'totalLoss':totalLoss})
+    return({'dataLoss':dataLoss, 'regLoss':regLoss, 'totalLoss':totalLoss, 'loss_ij':loss_ij})
+
+#=========================================
+#LAB QUESTION 9
+#=========================================
+#=========================================
+#Function Name: svmOptimizer
+#FUNCTION DESCRIPTION: Function to optimize parameters W in the function svmClassifier
+#FUNCTION OUTPUT: Best identified set of parameters W for input svm model (3072 * 10).
+#You will be graded based on how close your optimal solution is to the 
+#optimal solution the autograder has found.  The autograder uses e=1, l=1, 
+#learningRate = .0000001, and 1000 iterations; these can be hard coded in your function.
+#You must use your own svmClassifier
+#from the previous question as the input model to solve for. 
+#The autograder will call this function using the code:
+#studentWeights = svmOptimizer(X = X_train, y = y_train)
+
+def svmOptimizer(X, y, model = svmClassifier):
+    W = np.random.randn(3072, 10) * .0001
+    e = 1
+    l = 1
+    currentIteration = 1
+    maxIterations = 1000
+    learningRate = .0000001
+
+    while currentIteration < maxIterations:
+        #With the power of calculus, all of those for loops above can be replaced
+        #by our one-liner below to solve for the gradient!
+        iterationResult = model(X, y, W, e=1.0, l=l)
+        gradient = X.T.dot(iterationResult['loss_ij']) / X.shape[0]
+        W += -learningRate*gradient
+        currentIteration = currentIteration + 1
+    
+    return(W)
 
 #=========================================
 #Function tests
@@ -316,3 +349,4 @@ if __name__ == '__main__':
   W = np.random.randn(3072, 10) * 0.0001
   print(svmClassifier(X_train, y_train, W, e=1, l=1))
 
+  print(svmOptimizer(X=X_train, y = y_train))
