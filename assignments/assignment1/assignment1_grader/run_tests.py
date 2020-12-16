@@ -442,10 +442,11 @@ def svmClassifier(X, y, W, e, l):
     trueClassMatrix = np.matrix(trueClassScores).T 
     loss_ij = np.maximum(0, (scores - trueClassMatrix) + e) 
     loss_ij[np.arange(countTrainSamples), y] = 0
+    correct = np.mean(np.equal(trueClassScores, np.amax(scores,axis=1)))
     dataLoss = np.sum(np.sum(loss_ij)) / countTrainSamples
     regLoss = np.sum(W*W)
     totalLoss = dataLoss + (l * regLoss)
-    return({'dataLoss':dataLoss, 'regLoss':regLoss, 'totalLoss':totalLoss})
+    return({'dataLoss':dataLoss, 'regLoss':regLoss, 'totalLoss':totalLoss, 'percentCorrect':correct})
 
 
 W = pickle.load(open("SVMInitWeights.pickle", "rb"))
@@ -459,7 +460,7 @@ try:
                                             e = 1, 
                                             l = 1)
   try:
-    if(studentResults == correctResult):
+    if(studentResults["totalLoss"] == correctResult["totalLoss"]):
       print("Your outputs and mine match perfectly!  100%.")
       question["output"] = "SVM results matched perfectly, full credit awarded."
       question["score"] = question["max_score"]
@@ -496,6 +497,56 @@ except Exception as e:
 
 score = score + question["score"]
 ret["tests"].append(question)
+
+#================================
+#================================
+#QUESTION 9
+#================================
+#================================
+print("\n=======================================================")
+print("\nCommencing assessment of code submitted for question 9.")
+question = {}
+question["max_score"] = 20
+question["name"] = "Implementing an optimizer for SVM."
+question["output"] = ""
+question["score"] = 0
+
+y_train = labData["y_train"]
+y_test =  labData["y_test"]
+y_test = y_test[:1000]
+y_train = y_train[:1000]
+
+X_train = np.reshape(labData["X_train"][:1000], (labData["X_train"][:1000].shape[0], -1))
+X_test = np.reshape(labData["X_test"][:1000], (labData["X_test"][:1000].shape[0], -1))
+
+print("The weights I found resulted in a final image classification accuracy of about 30% (I'm going easy on you, and just running a few iterations).")
+print("If you can get at least that good - or beat me - you get full credit!  Let's see how you did.")
+
+print("Calculating....")
+try:
+  W = submission.svmOptimizer(X = X_train, y = y_train)
+except Exception as e:
+  print("I was unable to run your optimizer.  I tried to invoke it with: ")
+  print(" W = submission.svmOptimizer(X = X_train, y = y_train)")
+  print("Here is what I know: " + str(e))
+try:
+  res = svmClassifier(X_train, y_train, W, e=1, l=1)
+  print("Your optimizer ran, and you got an accuracy of " + str(res['percentCorrect']*100) + "!")
+  question['score'] = min(100.0, ((res['percentCorrect']*100) / 30)*100)
+  print("Given that I got 30%, that means you get a score of " + str(question['score']))
+except Exception as e:
+  print("I was unable to use the weights from your optimizer.  I tried to invoke it with: ")
+  print(" W = submission.svmOptimizer(X = X_train, y = y_train)")
+  print(" res = svmClassifier(X_train, y_train, W, e=1, l=1")
+  print("I have my own svmClassifier I want to test your weights with - my classifier is a correct solution")
+  print("To the previous question.")
+  print("Here are the weights I solved for with your function (submission.svmOptimizer): " + str(W))
+  print("Here is what I know: " + str(e))
+  question["output"] = "I ran into an error trying to run SVM with your optimizer weights.  Check out the logs."
+
+score = score + question["score"]
+ret["tests"].append(question)
+
 
 #LEADERBOARD
 ret["leaderboard"] = []
