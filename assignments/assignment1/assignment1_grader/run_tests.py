@@ -149,6 +149,7 @@ try:
 except Exception as e:
   question["score"] = 0
   question["output"] = "Your code resulted in an error, and so you were awarded no points.  Here is the error (ID-D): " + str(e)
+  print("Your code resulted in an error, and so you were awarded no points.  Here is the error (ID-D): " + str(e))
 
 score = score + question["score"]
 ret["tests"].append(question)
@@ -171,14 +172,17 @@ try:
   if(submission.questionThree() == 1):
     question["score"] = question["max_score"]
     question["output"] = "Your answer, 1, was correct."
+    print("Your answer, 1, was correct.")
 
   else:
     question["score"] = 0
     question["output"] = "Your answer, " + str(submission.questionThree()) + " , is incorrect."
+    print("Your answer, " + str(submission.questionThree()) + " , is incorrect.")
 
 except:
   question["score"] = 0
   question["output"] = "You appear to be missing the function 'questionThree'."
+  print("You appear to be missing the function 'questionThree'.")
 
 score = score + question["score"]
 ret["tests"].append(question)
@@ -201,13 +205,16 @@ try:
   if((submission.questionFour() == "L1")):
     question["score"] = question["max_score"]
     question["output"] = "Your answer, L1, was correct."
+    print("Your answer, L1, was correct.")
 
   else:
     question["score"] = 0
     question["output"] = "Your answer, " + str(submission.questionFour()) + " , is incorrect."
+    print("Your answer, " + str(submission.questionFour()) + " , is incorrect.")
 except:
   question["score"] = 0
   question["output"] = "You appear to be missing the function 'questionFour'."
+  print("You appear to be missing the function 'questionFour'.")
 
 score = score + question["score"]
 ret["tests"].append(question)
@@ -230,13 +237,16 @@ try:
   if((submission.questionFive() == "30%")):
     question["score"] = question["max_score"]
     question["output"] = "Your answer, 30%, was correct."
+    print("Your answer, 30%, was correct.")
 
   else:
     question["score"] = 0
     question["output"] = "Your answer, " + str(submission.questionFive()) + " , is incorrect."
+    print("Your answer, " + str(submission.questionFive()) + " , is incorrect.")
 except:
   question["score"] = 0
   question["output"] = "You appear to be missing the function 'questionFive'."
+  print("You appear to be missing the function 'questionFive'.")
   
 score = score + question["score"]
 ret["tests"].append(question)
@@ -255,10 +265,17 @@ question["name"] = "Implementing a KNN with a L2 Distance Metric."
 question["output"] = ""
 question["score"] = 0
 
-X_train = labData["X_train"]
-y_train = labData["y_train"]
-X_test =  labData["X_test"]
-y_test =  labData["y_test"]
+#If the student didn't have the library working
+#load our backup.
+try:
+  X_train = labData["X_train"][:100]
+except:
+  labData = pickle.load(open("testTrainLab1.pickle", "rb"))
+  X_Train = labData["X_train"][:100]
+
+y_train = labData["y_train"][:100]
+X_test =  labData["X_test"][:100]
+y_test =  labData["y_test"][:100]
 y_test = y_test[:100]
 X_test = X_test[:100]
 
