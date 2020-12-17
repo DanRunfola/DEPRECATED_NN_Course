@@ -419,8 +419,8 @@ try:
     print(np.subtract(correctCrossfoldResults, studentCrossfoldResults))
     print("For a total error of:")
     print(np.sum(np.abs(np.subtract(correctCrossfoldResults, studentCrossfoldResults))))
-    question["score"] = question["max_score"] / 2
-    question["output"] = "Arrays did not match, but you're almost there.  Half credit awarded."
+    question["score"] = question["max_score"] / 4
+    question["output"] = "I'm throwing a few points your way, because at least you got the code working!."
 
 except Exception as e:
   print("\nI tried to fit your cross fold validation, but it failed.  Here is what I know: " + str(e))
@@ -549,8 +549,8 @@ except Exception as e:
 try:
   res = svmClassifier(X_train, y_train, W, e=1, l=1)
   print("Your optimizer ran, and you got an accuracy of " + str(res['percentCorrect']*100) + "!")
-  question['score'] = min(100.0, ((res['percentCorrect']*100) / 30)*100)
-  print("Given that I got 30%, that means you get a score of " + str(question['score']))
+  question['score'] = min(100.0, ((res['percentCorrect']*100) / 30)*100) * question["max_score"]
+  print("Given that I got 30%, that means you get a score of " + str(question['score']) + " out of " + str(question["max_score"]) + " possible points.")
 except Exception as e:
   print("I was unable to use the weights from your optimizer.  I tried to invoke it with: ")
   print(" W = submission.svmOptimizer(X = X_train, y = y_train)")
