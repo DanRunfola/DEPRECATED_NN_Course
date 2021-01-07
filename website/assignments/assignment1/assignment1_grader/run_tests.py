@@ -154,6 +154,59 @@ except Exception as e:
 score = score + question["score"]
 ret["tests"].append(question)
 
+#######
+#######
+####### Building our own labdata for future tests.
+import requests
+
+r = requests.get("https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz")
+
+open("cifar-10-python.tar.gz", 'wb').write(r.content)
+import tarfile
+tarfile.open("cifar-10-python.tar.gz").extractall()
+import os
+import numpy as np
+import pickle
+import matplotlib.pyplot as plt
+
+cifar10_dir = 'cifar-10-batches-py'
+
+xs = []
+ys = []
+for b in range(1,6):
+    d = os.path.join(cifar10_dir, 'data_batch_%d' % (b, ))
+    
+    with open(d, 'rb') as f:
+        datadict = pickle.load(f, encoding='latin1')
+        X = datadict['data']
+        Y = datadict['labels']
+        X = X.reshape(10000, 3, 32, 32).transpose(0,2,3,1).astype("float")
+        y = np.array(Y)
+    
+    
+    xs.append(X)
+    ys.append(y)
+    
+X_train = np.concatenate(xs)
+y_train = np.concatenate(ys)
+
+
+with open(os.path.join(cifar10_dir, "test_batch"), 'rb') as f:
+    datadict = pickle.load(f, encoding='latin1')
+    X = datadict['data']
+    Y = datadict['labels']
+    X_test = X.reshape(10000, 3, 32, 32).transpose(0,2,3,1).astype("float")
+    y_test = np.array(Y)
+
+
+with open('testTrainLab1.pickle', 'wb') as f:
+    labData = {}
+    labData["X_train"] = X_train
+    labData["y_train"] = y_train
+    labData["X_test"] = X_test
+    labData["y_test"] = y_test
+    pickle.dump(labData, f)
+
 #================================
 #================================
 #QUESTION 3
@@ -481,14 +534,22 @@ try:
       print("Your outputs and mine match perfectly!  100%.")
       question["output"] = "SVM results matched perfectly, full credit awarded."
       question["score"] = question["max_score"]
+      
     elif(studentResults["dataLoss"] == correctResult["dataLoss"]):
       print("Your data loss and mine agree, but not our reg or total loss.")
       print("Still, very close!  You get almost-full credit at this point.")
       question["score"] = question["max_score"]*0.9
+      question["output"] = "Getting closer!  Your data loss agrees with mine, but not reg or total loss."
     elif(studentResults["regLoss"] == correctResult["regLoss"]):
       print("Your regularization loss and mine agree, but not our data loss or total loss.")
       print("You're getting closer - half credit!")
       question["score"] = question["max_score"]*0.5
+      question["output"] = "Half credit - your regularization loss looks right, but nothing else."
+    else:
+      print("Your model fit, but the results don't look anything like what I calculated.")
+      print("Here are the results I got when I ran your model:")
+      print(studentResults)
+      question["output"] = "Your model fit, but the results don't look anything like what I calculated.  I provide some more details in the log."
 
   except Exception as e:
     question["output"] = "I was able ot run your SVM, but it didn't return anything I could interpret.  Check my logs!"
@@ -542,15 +603,19 @@ print("If you can get at least that good - or beat me - you get full credit!  Le
 print("Calculating....")
 try:
   W = submission.svmOptimizer(X = X_train, y = y_train)
+  print(W)
 except Exception as e:
   print("I was unable to run your optimizer.  I tried to invoke it with: ")
   print(" W = submission.svmOptimizer(X = X_train, y = y_train)")
   print("Here is what I know: " + str(e))
+  question["output"] = "I ran into an error trying to run your optimizer.  Check out the logs."
 try:
-  res = svmClassifier(X_train, y_train, W, e=1, l=1)
-  print("Your optimizer ran, and you got an accuracy of " + str(res['percentCorrect']*100) + "!")
-  question['score'] = min(100.0, ((res['percentCorrect']*100) / 30)*100) * question["max_score"]
+  resM = svmClassifier(X_train, y_train, W, e=1, l=1)
+  print(resM)
+  print("Your optimizer ran, and you got an accuracy of " + str(resM['percentCorrect']*100) + "%!")
+  question['score'] = min(1, ((resM['percentCorrect']*100) / 30)) * question["max_score"]
   print("Given that I got 30%, that means you get a score of " + str(question['score']) + " out of " + str(question["max_score"]) + " possible points.")
+  question["output"] = "Your score is " + str(question['score']) + " out of " + str(question["max_score"]) + " possible points.  Take a look at the log to see how this was computed!"
 except Exception as e:
   print("I was unable to use the weights from your optimizer.  I tried to invoke it with: ")
   print(" W = submission.svmOptimizer(X = X_train, y = y_train)")

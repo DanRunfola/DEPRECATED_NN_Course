@@ -63,7 +63,7 @@ def dataDownload(url = "https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz"
 #3) Repeat this for your test data
 #4) Save and pickle all of your results.
 #Note you must create a dictionary variable for your pickle.
-#The final format of the variable should look something like:
+#The final format of the variable should look like:
 #labData = {}
 #labData["X_train"] = X_train
 #labData["y_train"] = y_train
@@ -76,38 +76,19 @@ def dataDownload(url = "https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz"
 #check that it has X_train, X_test, y_train and y_test objects,
 #and that these objects are representative of the expected CIFAR data.
 
+#Note that this function builds on the last one - i.e., wherever you extracted
+#your images to will need to be specified here.  For this example,
+#The first function extracted CIFAR to ./images/.
+
 def dataSplit(basePath = "./images/",
               picklePath = "./testTrainLab1.pickle"):
-    cifar10_dir = basePath + 'cifar-10-batches-py'
+    
+    ####YOUR CODE HERE
+    ####
+    ####END YOUR CODE
 
-    xs = []
-    ys = []
-    for b in range(1,6):
-        d = os.path.join(cifar10_dir, 'data_batch_%d' % (b, ))
-        
-        with open(d, 'rb') as f:
-            datadict = pickle.load(f, encoding='latin1')
-            X = datadict['data']
-            Y = datadict['labels']
-            X = X.reshape(10000, 3, 32, 32).transpose(0,2,3,1).astype("float")
-            y = np.array(Y)
-        
-        
-        xs.append(X)
-        ys.append(y)
-        
-    X_train = np.concatenate(xs)
-    y_train = np.concatenate(ys)
-
-    ###SOME CODE IS MISSING HERE: YOU NEED TO ADD THE PROCESSING FOR THE TEST BATCH###
-    ########
-    ########
-    ########
-    ###END CODE YOU NEED TO ADD
-
-    #Save as a Pickle we can use later, so we don't have to repeat the above loading code again.
-    #We could also write the above as a function for loading if we wanted.
-    #Also using a dict to make things a little easier to read - you could easily use a list.
+    #Pickle your data - leave this as is.  Your code should provide
+    #the correct X_train, y_train, X_test, and y_test.
     with open(picklePath, 'wb') as f:
         labData = {}
         labData["X_train"] = X_train
@@ -238,22 +219,15 @@ def crossFoldValidation(modelToValidate,
     
     k = 5
 
+    ####YOUR CODE GOES HERE.
+    #RIGHT NOW THIS IS A FOR LOOP THAT GENERATES A RANDOM ACCURACY.
+
     accuracies = []
-    X_folds = np.array_split(X_train, folds)
-    y_folds = np.array_split(y_train, folds)
 
     for i in range(0,folds): 
-        classifier = modelToValidate
-        classifier.train(np.concatenate(np.delete(X_folds, [i], axis=0)), 
-                        np.concatenate(np.delete(y_folds, [i], axis=0)))
-
-        predictions = classifier.predict(X_folds[i], k=k)
-
-        ###CODE TO CALCULATE THE ACCURACY AND APPEND THE ACCURACY IS MISSING HERE.
-        #RIGHT NOW, ACCURACY IS RANDOMLY CALCULATED.
         accuracies.append(np.random.randint(0,1,1)[0])
 
-        #####END OF BLOCK YOU NEED TO ADD
+    #####END OF BLOCK YOU NEED TO ADD
 
     return(accuracies)  
 
@@ -318,17 +292,15 @@ def svmOptimizer(X, y, model = svmClassifier):
         
         #ANALYTIC CODE TO SOLVE FOR W HERE!  Default code
         #is just a random set of guesses, which will be.. bad.
-        W = W * np.random.randn(3072, 10) * .0001
+        W = W * np.random.randn(3072, 10) 
         currentIteration = currentIteration + 1
         #END CODE YOU ADD.
 
     return(W)
 
-#You will want to do something locally like this
-#as you test your code.
-#However, you won't be graded on it.
+
 #=========================================
-#Function tests
+#Function tests for your convenience.
 #=========================================
 if __name__ == '__main__':
   print(dataDownload())

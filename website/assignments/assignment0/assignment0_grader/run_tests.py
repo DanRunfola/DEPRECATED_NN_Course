@@ -55,7 +55,7 @@ try:
     question["score"] = 0
     
   question["output"] = "Your code provided the solution of 2*3 = " + str(val) + "."
-except Exceptionn as e:
+except Exception as e:
   question["score"] = 0
   question["output"] = "Your code resulted in an error, and so you were awarded no points.  Here is the error: " + str(e)
 
