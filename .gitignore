@@ -4,8 +4,6 @@ assignments/assignment1/cifar-10-batches-py
 *.pickle
 assignments/assignment1/images
 source
-*.gz
-*.tar.gz
 images/cifar-10-batches-py
 cifar-10-python.tar.gz
 *.zip
