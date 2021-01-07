@@ -9,7 +9,7 @@ ret = {}
 ret["output"] = "This was an example of how you will be graded in this course."
 ret["visibility"] = "visible"
 ret["stdout_visibility"] = "visible"
-max_score = 50
+max_score = 5
 
 #Code Tests:
 ret["tests"] = []
@@ -20,7 +20,7 @@ startTime = datetime.now()
 #QUESTION 1
 
 question = {}
-question["max_score"] = 25
+question["max_score"] = 2.5
 question["name"] = "Testing if your code succesfully adds two values together."
 question["output"] = ""
 
@@ -28,7 +28,7 @@ try:
   val = submission.add(2,3)
   
   if(val == 5):
-    question["score"] = 25
+    question["score"] = 2.5
   else:
     question["score"] = 0
   
@@ -42,7 +42,7 @@ ret["tests"].append(question)
 
 #QUESTION 2 =====================
 question = {}
-question["max_score"] = 25
+question["max_score"] = 2.5
 question["name"] = "Testing if your code succesfully multiplies two values together."
 question["output"] = ""
 
@@ -50,7 +50,7 @@ try:
   val = submission.multiply(2,3)
 
   if(val == 6):
-    question["score"] = 25
+    question["score"] = 2.5
   else:
     question["score"] = 0
     
