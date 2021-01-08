@@ -1,9 +1,13 @@
 #Lab files 
-assignments/assignment1/*.gz
-assignments/assignment1/cifar-10-batches-py
-assignments/assignment1/images
+website/assignments/assignment1/*.gz
+website/assignments/assignment1/cifar-10-batches-py
+website/assignments/assignment1/images
 source
-images/cifar-10-batches-py
+website/images/cifar-10-batches-py
+website/assignments/assignment2/cifar-10-batches-py
+website/assignments/assignment2/cifar-10-python.tar.gz
+website/assignments/assignment2/testTrainLab2.pickle
+website/assignments/assignment2/images
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
