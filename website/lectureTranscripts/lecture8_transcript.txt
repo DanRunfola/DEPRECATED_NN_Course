@@ -1,1 +1,90 @@
-#14:25 lecture 5
+Welcome back to DATA 442!  Today is a big day - it's our first foray into convolutional neural networks, which represent one of the most succesful approaches to computer vision we've identified to date.
+#SLIDE
+As always, first let's start with a brief recap of the last lecture.  You'll recall we talked a bit about how computational grapsh - and, neural networks - can be implemented in code using forward and backward passes.  
+#SLIDE
+We also talked a bit about how it's not reasonable to represent every computation on our graphs, and introduced the idea of layers to represent networks.
+#SLIDE
+We covered the idea of implementing multi-layer neural networks, and how nonlinearities in these networks can help to mitigate heterogeneity in datasets we seek to classify (representing a large improvement over linear models), and we talked a little bit about how the metaphor of the human mind is - and is not - relevant for neural networks.
+#SLIDE
+Let's start digging into just how these CNNs work.  We'll take the CIFAR example here - remember, these images are 32x32x3, and so when we stretch the image matrix out into a single array, we end up with a 1 x 3072 array.  In our linear approach, we then multiple this image array by a weigths matrix, which in the case of CIFAR is 3072 by 10, with the 10 beign representative of the 10 CIFAR classes (dog, bird, etc).  
+#SLIDE
+This multiplication results in a 10 x 1 output array, which we've referred to as 'scores' - i.e., one score for each class.  Each of these individual scores is the result of the dot product between a row of the weights matrix and the image input array.
+#SLIDE
+Let's focus for a moment on the input image array.  One natural question to ask about the input array is how to stretch - for example, do you start at the lower-right?  upper-left?  Do you proceed vertically or horizontally?  Any of these options are reasonable, and will result in the same outcome in a linear model, as every individual pixel has a weight, and - importantly - there is no notion of pixel context.  That is to say, when we tranform an image into an array, we are losing any information about the spatial context of where a pixel is.
+#SLIDE
+Following this, one of the big questions facing computer vision researchers in the last few years has been how to process image information while retaining spatial structure - i.e., the relationship of pixels to one another.  This is intuitively a very, very important element of how we understand images - i.e., our mind can't tell that a single brown pixel is a part of a dirt bed without knowing that it is surrounded by other pixels; similarly, a single blue pixel gives us no information on if the image is the sky or the ocean.  Context - is it surrounded by more blue pixels (likely ocean) or are there some interspersed white spots (clouds, thus sky) is critical for us.
+#SLIDE
+Thus, instead of translating this image to an array, we instead are going to retain it in it's full complexity - that is, three matrices that are each 32x32, with every matrix entry being a pixel value from the red, green, or blue band of the image.
+#SLIDE
+This stack of 3 matrices is called a tensor - i.e., the tensor in this case is a 32 x 32 x 3 tensor, or 3 32 x 32 matrices.  If you've ever heard the word tensor, now you know why it's so central to convolutional modeling!
+#SLIDE
+We *could* take this tensor and stretch it out into a 1 dimensional array just like before, but that would lose the spatial information about pixel context that we want to preserve.  
+#SLIDE
+So, instead, we define something called a filter.  The filter is defined only by dimensions, and represents the shape and size of the context we are most interested in exploring.  
+#SLIDE
+This filter is convolved across the entire tensor, which results in an activation layer defined by a matrix.  The dimensions of the activation layer are variable depending on exactly how you decide to convolve your filter; we'll walk through a simple example of this in just a minute, but the key thing here is that the activation layer is a matrix in which each entry contains some information about the spatial context of a pixel at a given location.  Thus, 
+#SLIDE
+You can imagine simply introducing a convolution into the linear approach we illustrated a moment ago - here, instead of stretching the entire image into one 3,072 pixel long array, we instead convolve over the image first, resulting in a 28x28x1 activation layer.  This layer is then stretched and weighted as we did before.  Again - the benefit, which hopefully will become clear in a minute - is that the 784 values represented here are based on the spatial relationships between pixels in the image - i.e., pixel context.  Let's dig into why with an "elementary" example.
+#SLIDE
+For our example of convolutions, we're going to look at how an activation surface might be constructed using an image of the letter A.
+#SLIDE
+Ok - let's start with our three matrices; i.e., the tensor - representing the letter A.  Each matrix is 5x10, so the tensor this case would be a 5x10x3 tensor representing all three color bands.
+#SLIDE
+We'll define a simple filter here - remember, filters are arbitrarily defined, and represent the context you're trying to capture.  Here, we'll use the example of a 2x2x3 filter.
+#SLIDE
+When we talk about "convoling" a filter, we mean sliding the filter we define over each matrix (or, across the tensor).  The term convolution is drawn directly from signal processing - i.e., the convolution of two signals.
+#SLIDE
+The filter itself is based on weights - i.e., the simplest filter would have a weight of "1" in each of the 2x2x3 tensor cells.  In the case where all of your filter weights was 1, any given convolution would result in the sum of all input pixel values.  Behind the scenes, we're taking the dot product of the weights and the input values.  So, take a moment to look at this example.  Here, the blue band of the letter A has four pixel values that fall within the 2x2 filter - 1, 2, 3 and 1.  Red is 1, 3, 4 and 2; green is 1, 3, 5 and 2.  Because all of those pixels fall within this filter - remember, it's 2x2x3 - and we're assuming the weights for the filter are all equal to 1, the calculated value for this first convolution of this filter would be 28.
+#SLIDE
+This value - 28 - becomes the first cell in the activation layer.  Note the activation layer is a 4x9x1 matrix - we'll discuss why in a moment, but note that this may not always be the case, and is based on some choices you have to make about convolution strategies.
+#SLIDE
+In this case, we are going to convolve by moving our filter one pixel to the right across all three layers.  Because we're assuming our filter weights are all 1, we take the dot product of the filter and the image pixels, which would be equivalent to the sum of all pixels that fall within the filter - i.e., 36.  This would be the computed value for the second convolution, and represents the next value in the activation layer.
+#SLIDE
+And so on - we keep moving the filter, computing the dot product, and saving the resultant value to our activation layer.
+#SLIDE
+This process is repeated until all convolutions are complete, and the full acivation layer has been constructed.  
+#SLIDE
+Implicit in everything so far has been the idea that our filter is made up of all "1s" for the weights.  In practice, we can treat these weights just like any other weight we need to find the parameter for - i.e., we can try to find filter weights that are the most helpful in improving our loss function.  
+#SLIDE
+Imagine for a moment you're trying to distinguish between the letter A and B, and the letter A is always blue, while B is always red or green.  In that case, you could find a hypothetical set of weights that look like this - i.e., all of the blue filter weights are "1", and both red and green are "0".  The filter size is still the same - i.e., this is a 2x2x3 filter - but only the values in the blue layer will be summed, as the weights themselves have changed.  Essentially, this becomes a filter that is only considering the blue band.
+#SLIDE
+Just as before, we would convolve this filter - but, this time, the dot product between the filter weights and the three bands is equal to the sum of only blue pixels.  I.e., in the highlighted red example, the four blue pixels are 4, 3, 3 and 2 - for a total of 12.  This computation would ignore the values in the red and green bands.
+#SLIDE
+In practice, convolutional neural networks are made up of large numbers of activation surfaces - i.e., one might define hundreds of filter dimensions, and then seek to solve for the most appropriate weights given the target classification.  Each filter - and associated weights - will result in an activation layer.  So, if we start with 5 filters, we end up with five activation layers, as illustrated here.
+#SLIDE
+So, to take a step back for a moment, we could hypothetically use these five activation layers to calculate a final classificaiton of the letter A.  Our activation layers are 4x9x1, and we have 5 of them (i.e., five filters), for a total of 180 values.  We would take the dot product of this 1x180 array, multiply it by a matrix of weights that is 26 x 180 (as there are 26 letters in the alphabet - so we would need 26 sets of weights), and then we would get an output scores array that is 26x1 - hopefully, the letter A would have the highest score in that final array.
+#SLIDE
+Most convolutional neural networks take this a step farther, and actually have multiple rounds of convolution.  In this approach, the activation layers themselves become the inputs - 
+#SLIDE
+And we define a new filter.  For example, here you see a 2x2x5 filter, with a hypothetical where all weights are equal to 1.  Just like before, we would sum all of the values in each activation (where there is one activation per filter).  So - in the upper left is the activation surface for all colors; i.e., when all weights are equal to 1.  The upper-right represents a hypothetical where the filter weights for green and blue are all 1, but the filter weights for red are all 0.  The number of convolutions and filter dimensions for each convolution are all defined by a given network architecture.
+#SLIDE
+In addition, many convolutional architectures intersperse convolutions with other types of computations.  The most common of these is something called reLu - a simple computation in which if a value is greater than a number, it passes on the value; otherwise it passes on a 0.  This is a reLu with a threshold of 75 - i.e., any value greater than 75 is passed on, otherwise it is not.  Very loosely, this is designed to replicate human neurons "activating", and is where the term "activation surface" comes from.
+#SLIDE
+Another important concept is pooling.  Many convolutional neural network architectures have additional computational stages which "pool" data together.  This can be helpful for a number of reasons, but the most practical is that it can dramatically reduce computational complexity.  Take this (made up) activation surface as an example.  
+#SLIDE
+A pooling layer will subset the activation layer into some number of quadrants; there are a variety of pooling strategies that can be followed, and the pooling strategy itself can be defined in different ways - again, these are defined by the network architecture.  In this example, a 4-quadrant max pool is implemented.
+#SLIDE
+In this approach, the input activation layer is subset into four equally-sized quadrants, and the maximum value within each quadrant is taken.
+#SLIDE
+Most architectures leverage all of these different components iteratively, alternating between convolving, pooling, and computational (i.e., reLu) layers.
+#SLIDE
+Depending on the network architecture, at some point we stop convolving or pooling, and we want to translate our filter information to a final prediction of a class.  The model that does this is referred to as the "fully connected layer" - i.e., the layer that takes in all of the final filter values, and outputs the final set of scores.  While this could theoretically be as simple as a linear model - as illustrated here - in practice the fully connected layer is most commonly yet another neural network (just without the convolutions this time).
+#SLIDE
+Take this set of activations as an example - after all of our pooling and convolutions, we have four filters that have been reduced down to the values shown here (4 for each filter, and 255 filters). 
+#SLIDE
+We're going to vectorize these values into one long array with 255 x 4 - 1020 entires, stacked vertically here.  The number 255 is, again, arbitrary - i.e., the number of filters used is going to vary based on network architecture.  The number 4 may also change, dependign on the number of convolutions and pooling stages implemented, as well as the input dimensions of the images themselves.
+#SLIDE
+#From here, we take these input values just like we would any other input - i.e., we can apply any number of hidden layers to retrieve a score.  Just like before, we're going to be calculating sets of weights for each computational layer in the network.  
+#SLIDE
+That's the fundamentals of a network, but there are a few other important things we need to cover.  You'll recall I've mentioned that activation surface dimensions can be driven be a range of choices you ahve to make regarding the nature of your convolutions.  One of these is stride.  In this example, we'll set stride equal to 1 - i.e., we will always shift one cell during each connvolution.  In this case, the activation surface would be 4x9, as there are 4x9 valid locations for the filter to convolve across.
+#SLIDE
+A stride of 2 is when you shift the filter two units, rather than one - resulting in a much smaller activation surface, as the number of valid locations to convolve are smaller.  
+#SLIDE
+Here is an example of the second activation value if stride=2. <Toggle back adn forth a bit>.  You'll see that the activation surface I've drawn here is a 3x5, but if you're *really* paying attention you'll probably be wondering how it's possible to have a stride of 2 3 times - i.e.,
+#SLIDE
+Wouldn't you go off the side of the image if you had stride=2?  This is another choice that must be made regarding how to convolve over your images.  
+#SLIDE
+I.e., you may choose to zero-pad your image.  This can result in odd biases along edges, but as the biases are systematic if all input images are of the same dimensions bias will be somewhat mitigated.  Note that the depth of a network is limited by the pooling, convolution, padding, and input image dimensions; we'll go into much more depth on this as we explore different architectural choices in this course.
+#SLIDE
+In summary, in this lecture we covered the fundamentals of convolutional layers and architectures.  Convolutional layers take as input an image (or other similar dataset) that has a width, height, and depth (i.e., the colors of the image).  You must make four choices - the number of filters you want, the dimensions of those filters, the stride, and if you will use zero padding (and if you do, how many 0s to pad with).  Thanks for joining me today, and I look forward to next time.
+
