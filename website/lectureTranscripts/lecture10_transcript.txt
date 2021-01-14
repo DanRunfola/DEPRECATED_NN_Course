@@ -1,0 +1,2 @@
+Ok - now we're goign to talk about the actual process of optimization.  At this point, we've defined our network architecture - i.e., the number of layers, nodes, inputs, batch normalizations, activations - everything.  We have a data processing pipeline - normally just a zero-mean shift for image data - and we've defined some strategy to initialize our weights (probably Xavier).  That is - we're ready to click "go".  So what do we do now?  Chances are your network is going to fail to fit your first try, so how do you diagnose the issues?
+#SLIDE
