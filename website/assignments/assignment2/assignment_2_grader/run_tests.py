@@ -125,7 +125,7 @@ try:
   print("image preprocessing should give you over 90 percent, but the random weights initialization")
   print("will cause your score to vary across submissions.  Keep that in mind as you resubmit (and remember, ")
   print("you can resubmit as much as you want!)")
-  question["score"] =  question["score"] + (points/100 * question["max_score"] * 20)
+  question["score"] =  question["score"] + (points/100 * question["max_score"])
   question["output"] = "Model succesfully ran with accuracy of " + str(round(percentCorrect*100,2))
 except Exception as e:
   print("I had an error executing your code!")
