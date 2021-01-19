@@ -7,6 +7,5 @@ pip3 install -r /autograder/source/requirements.txt
 eval `ssh-agent -s`
 chmod 600 /autograder/source/id_rsa
 ssh-add /autograder/source/id_rsa
+ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
 
-cd /autograder
-git clone git@github.com:DanRunfola/D442.git

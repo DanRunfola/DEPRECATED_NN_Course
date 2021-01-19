@@ -6,6 +6,7 @@ import pickle
 import numpy as np
 import tarfile
 import submission
+import requests
 
 basePath = str(os.path.abspath(__file__))[:-13]
 
@@ -19,6 +20,10 @@ max_score = 100
 #Code Tests:
 ret["tests"] = []
 score = 0
+
+r = requests.get("https://icss.wm.edu/data442/assets/cifar-10-python.tar.gz")
+
+open(basePath + "/cifar-10-python.tar.gz", 'wb').write(r.content)
 
 #Open test data
 tarfile.open(basePath + "/" + "cifar-10-python.tar.gz").extractall("./")
