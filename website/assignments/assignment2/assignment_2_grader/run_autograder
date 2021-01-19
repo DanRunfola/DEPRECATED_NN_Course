@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+# Set up autograder files
+
+cp /autograder/submission/submission.py /autograder/D442/website/assignments/assignment2/assignment_2_grader/submission.py
+
+cd /autograder/D442/website/assignments/assignment2/assignment_2_grader
+
+python3 run_tests.py

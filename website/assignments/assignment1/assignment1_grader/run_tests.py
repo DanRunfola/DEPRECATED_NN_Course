@@ -640,8 +640,8 @@ tim["order"] = "asc"
 ret["leaderboard"].append(tim)
 
 acc = {}
-acc["name"] = "Accuracy (Percentage)"
-acc["value"] = score / max_score
+acc["name"] = "SVM Classifier Accuracy (Percentage)"
+acc["value"] = resM['percentCorrect']*100
 ret["leaderboard"].append(acc)
 
 json.dumps(ret)
