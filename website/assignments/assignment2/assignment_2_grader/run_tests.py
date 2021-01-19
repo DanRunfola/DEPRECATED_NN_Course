@@ -115,18 +115,34 @@ try:
   print("Model succesfully initialized, fit and predicted a test set.  Technical checks passed.")
   print("Commencing output tests to check accuracy.")
 
-  #Check the total percent accuracy
-  percentCorrect = np.mean(np.equal(y_test,studentPreds))
+
+  #Run the model 5 times if everything worked so far.
+  #This is to reduce variance in reported scores.
+  x = 1
+  resultArray = []
+  print("I am running your model five time.")
+  print("I will record the test accuracy for each run and report it here.")
+  print("Your grade will be based on the average of these runs.")
+  while x < 5:
+    x = x + 1
+    studentNet.fit(maxIterations=500, learningRate = 1e-7, batchSize = 512)
+    studentPreds = studentNet.predict(X_test)
+    percentCorrectIt = np.mean(np.equal(y_test, studentPreds))
+    print("Test " + str(x) + " accuracy: " + str(round(percentCorrectIt*100,2)) + " %.")
+    resultArray.append(percentCorrectIt)
+  
+  percentCorrect = np.mean(percentCorrectIt)
+  
   points = min(1, percentCorrect/0.25)*100
   print("Test Dataset Accuracy: " + str(round(percentCorrect*100,2)) + " %")
-  print("Our threshold is 25 percent - so, your implementation receives " + str(points) + " points!")
-  print("If you received less than a 100%, consider adding some image preprocessing steps to your class, or...")
-  print("trying different weights initialization strategies.  A correctly implemented random initialization with no")
-  print("image preprocessing should give you over 90 percent, but the random weights initialization")
-  print("will cause your score to vary across submissions.  Keep that in mind as you resubmit (and remember, ")
-  print("you can resubmit as much as you want!)")
-  question["score"] =  question["score"] + (points/100 * question["max_score"])
-  question["output"] = "Model succesfully ran with accuracy of " + str(round(percentCorrect*100,2))
+  if(percentCorrect < 0.25):
+    print("Our threshold is 25 percent - so, your implementation receives " + str(points) + " points!")
+    print("If you received less than a 100%, consider adding some image preprocessing steps to your class, or...")
+    print("trying different weights initialization strategies.  A correctly implemented random initialization with no")
+    print("image preprocessing should give you over 80 percent, but the random weights initialization")
+    print("will cause your score to vary across submissions.  Keep that in mind as you resubmit.")
+    question["score"] =  question["score"] + (points/100 * question["max_score"])
+    question["output"] = "Model succesfully ran with accuracy of " + str(round(percentCorrect*100,2))
 except Exception as e:
   print("I had an error executing your code!")
   print("\nWhat I tried to run: ")
