@@ -134,7 +134,7 @@ try:
   percentCorrect = np.mean(percentCorrectIt)
   
   points = min(1, percentCorrect/0.25)*100
-  print("Test Dataset Accuracy: " + str(round(percentCorrect*100,2)) + " %")
+  print("Average Test Dataset Accuracy: " + str(round(percentCorrect*100,2)) + " %")
   if(percentCorrect < 0.25):
     print("Our threshold is 25 percent - so, your implementation receives " + str(points) + " points!")
     print("If you received less than a 100%, consider adding some image preprocessing steps to your class, or...")
@@ -142,7 +142,10 @@ try:
     print("image preprocessing should give you over 80 percent, but the random weights initialization")
     print("will cause your score to vary across submissions.  Keep that in mind as you resubmit.")
     question["score"] =  question["score"] + (points/100 * question["max_score"])
-    question["output"] = "Model succesfully ran with accuracy of " + str(round(percentCorrect*100,2))
+    question["output"] = "Model succesfully ran with an average accuracy of " + str(round(percentCorrect*100,2)) + ".  See the log for recommendations on how to improve."
+  else:
+    question["score"] = question["max_score"]
+    question["output"] = "Model succesfully ran with an average accuracy of " + str(round(percentCorrect*100,2))
 except Exception as e:
   print("I had an error executing your code!")
   print("\nWhat I tried to run: ")
