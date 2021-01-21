@@ -108,4 +108,20 @@ class twoLayerNet():
         hiddenLayerValues = np.dot(X, self.params['W1'])
         scores = hiddenLayerValues.dot(self.params['W2'])
         y_pred = np.argmax(scores, axis=1)
-        return(y_pred)                  
+        return(y_pred)
+
+
+#=========================================
+#=========================================
+#LAB QUESTION 2
+#=========================================
+#=========================================
+#FUNCTION NAME: forwardTanh
+#Parameters: x (arbitrary dimensions, numpy)
+#Outputs: out, cache, where cache is the incoming x, 
+#and out is the output of the activation layer.
+
+def forwardTanh(x):
+    out = (np.exp(x)-np.exp(-x))/(np.exp(x)+np.exp(-x))
+    cache = x
+    return(out, cache)

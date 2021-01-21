@@ -157,6 +157,38 @@ except Exception as e:
 ret["tests"].append(question)
 Q1leaderboardScore = str(round(percentCorrect*100,2))
 
+#================================
+#================================
+#QUESTION 2
+#================================
+#================================
+print("\nCommencing assessment of code submitted for question 2.")
+question = {}
+question["max_score"] = 5
+question["name"] = "tanh activation"
+question["output"] = ""
+question["score"] = 0
+
+def forwardTanh(x):
+    out = (np.exp(x)-np.exp(-x))/(np.exp(x)+np.exp(-x))
+    cache = x
+    return(out, cache)
+
+testArray = [0.5, 0.5, 0.25, -0.25, 100, 10, -10, -1, 0]
+correctOut = forwardTanh(testArray)
+
+
+
+print("I am comparing your tanh activation function to a correctly implemented one.")
+try:
+  studentOut = submission.forwardTanh(testArray)
+  perCor = np.mean(correctOut==studentOut) 
+  points = perCor * question["max_score"]
+  question["output"] = str(round(perCor, 2)) + "percent of my test entries matched yours.  Points awarded: " + str(points)
+  question['score'] = points
+except Exception as e:
+  print("I was unable to call your forwardTanh function.  Here is the error I received: " + str(e))
+  question["output"] = "Error running your function.  Check the log."
 
 #LEADERBOARD
 ret["leaderboard"] = []
