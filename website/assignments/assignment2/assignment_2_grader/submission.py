@@ -45,7 +45,9 @@ import pickle
 #studentNet.fit(maxIterations=500, learningRate = 1e-7, batchSize = 512)
 #studentNet.predict(X_test)
 
-#If your model achieves > 25% accuracy, you receive full credit for this question.
+#If your model achieves > 20% accuracy, you receive full credit for this question.
+#Note there may be some variation from submission to submission, 
+#but this low threshold is designed so it can be accomplished in 500 iterations
                   
                   
 class twoLayerNet():
@@ -121,7 +123,80 @@ class twoLayerNet():
 #Outputs: out, cache, where cache is the incoming x, 
 #and out is the output of the activation layer.
 
+#Example input:
+#testInput = np.array([10,20,30,-400])
+
+#The specific line of code I run to check your grade is similar to:
+#perCor = np.mean(correctFunctionReturn[0]==studentFunctionReturn[0]) 
+
 def forwardTanh(x):
     out = (np.exp(x)-np.exp(-x))/(np.exp(x)+np.exp(-x))
     cache = x
     return(out, cache)
+
+
+#=========================================
+#=========================================
+#LAB QUESTION 3
+#=========================================
+#=========================================
+#FUNCTION NAME: forwardSigmoid
+#Parameters: x (arbitrary dimensions, numpy)
+#Outputs: out, cache, where cache is the incoming x, 
+#and out is the output of the activation layer.
+
+#Example input:
+#testInput = np.array([10,20,30,-400])
+
+#The specific line of code I run to check your grade is similar to:
+#perCor = np.mean(correctFunctionReturn[0]==studentFunctionReturn[0]) 
+
+def forwardSigmoid(x):
+    out = 1/(1+np.exp(-x))
+    cache = x
+    return(out, cache)
+
+#=========================================
+#=========================================
+#LAB QUESTION 4
+#=========================================
+#=========================================
+#FUNCTION NAME: forwardLeakyRelu
+#Parameters: x (arbitrary dimensions, numpy)
+#Outputs: out, cache, where cache is the incoming x, 
+#and out is the output of the activation layer.
+
+#Example input:
+#testInput = np.array([10,20,30,-400])
+
+#The specific line of code I run to check your grade is similar to:
+#perCor = np.mean(correctFunctionReturn[0]==studentFunctionReturn[0]) 
+
+def forwardLeakyRelu(x):
+    out = np.maximum(x, 0.01 * x)
+    cache = x
+    return(out, cache)
+
+
+#=========================================
+#=========================================
+#LAB QUESTION 5
+#=========================================
+#=========================================
+#FUNCTION NAME: backwardLeakyRelu
+#Parameters: upstreamGradient and cache (same dimensions; np arrays)
+#In this case, the cache holds the "x" value from the forward pass.
+#Outputs: array / matrix / tensor of gradients to pass further upstream.
+
+#Example input:
+#cache = np.array([10,20,30,-400])
+#upstreamGradient = np.array([3.1, .04, -13.3, 104.2])
+
+#The specific line of code I run to check your grade is similar to:
+#perCor = np.mean(correctFunctionReturn==studentFunctionReturn) 
+
+def backwardLeakyRelu(upstreamGradient, cache):
+    x = cache
+    dx = np.array(upstreamGradient, copy=True)
+    dx[x <= 0] = 0.01
+    return(dx)

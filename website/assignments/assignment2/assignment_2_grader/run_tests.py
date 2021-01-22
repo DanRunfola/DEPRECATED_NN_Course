@@ -78,7 +78,7 @@ startTime = datetime.now()
 #================================
 print("\nCommencing assessment of code submitted for question 1.")
 question = {}
-question["max_score"] = 20
+question["max_score"] = 35
 question["name"] = "Two Layer Neural Network Implementation"
 question["output"] = ""
 question["score"] = 0
@@ -118,7 +118,7 @@ try:
 
   #Run the model 5 times if everything worked so far.
   #This is to reduce variance in reported scores.
-  x = 1
+  x = 0
   resultArray = []
   print("I am running your model five time.")
   print("I will record the test accuracy for each run and report it here.")
@@ -133,14 +133,10 @@ try:
   
   percentCorrect = np.mean(percentCorrectIt)
   
-  points = min(1, percentCorrect/0.25)*100
+  points = min(1, percentCorrect/0.20)*100
   print("Average Test Dataset Accuracy: " + str(round(percentCorrect*100,2)) + " %")
-  if(percentCorrect < 0.25):
-    print("Our threshold is 25 percent - so, your implementation receives " + str(points) + " points!")
-    print("If you received less than a 100%, consider adding some image preprocessing steps to your class, or...")
-    print("trying different weights initialization strategies.  A correctly implemented random initialization with no")
-    print("image preprocessing should give you over 80 percent, but the random weights initialization")
-    print("will cause your score to vary across submissions.  Keep that in mind as you resubmit.")
+  if(percentCorrect < 0.20):
+    print("Our threshold is 20 percent - so, your implementation receives " + str(points) + " points!")
     question["score"] =  question["score"] + (points/100 * question["max_score"])
     question["output"] = "Model succesfully ran with an average accuracy of " + str(round(percentCorrect*100,2)) + ".  See the log for recommendations on how to improve."
   else:
@@ -174,21 +170,128 @@ def forwardTanh(x):
     cache = x
     return(out, cache)
 
-testArray = [0.5, 0.5, 0.25, -0.25, 100, 10, -10, -1, 0]
+testArray = np.array([0.5, 0.5, 0.25, -0.25, 100, 10, -10, -1, 0])
 correctOut = forwardTanh(testArray)
-
-
 
 print("I am comparing your tanh activation function to a correctly implemented one.")
 try:
   studentOut = submission.forwardTanh(testArray)
-  perCor = np.mean(correctOut==studentOut) 
+  perCor = np.mean(correctOut[0]==studentOut[0]) 
   points = perCor * question["max_score"]
-  question["output"] = str(round(perCor, 2)) + "percent of my test entries matched yours.  Points awarded: " + str(points)
+  question["output"] = str(round(perCor, 2)*100) + " percent of my test entries matched yours.  Points awarded: " + str(points)
+  print(str(round(perCor, 2) * 100) + " percent of my test entries matched yours.  Points awarded: " + str(points))
   question['score'] = points
 except Exception as e:
   print("I was unable to call your forwardTanh function.  Here is the error I received: " + str(e))
   question["output"] = "Error running your function.  Check the log."
+
+ret["tests"].append(question)
+
+#================================
+#================================
+#QUESTION 3
+#================================
+#================================
+print("\nCommencing assessment of code submitted for question 3.")
+question = {}
+question["max_score"] = 5
+question["name"] = "sigmoid activation"
+question["output"] = ""
+question["score"] = 0
+
+def forwardSigmoid(x):
+    out = 1/(1+np.exp(-x))
+    cache = x
+    return(out, cache)
+    
+testArray = np.array([0.5, 0.5, 0.25, -0.25, 100, 10, -10, -1, 0])
+correctOut = forwardSigmoid(testArray)
+
+print("I am comparing your tanh activation function to a correctly implemented one.")
+try:
+  studentOut = submission.forwardSigmoid(testArray)
+  perCor = np.mean(correctOut[0]==studentOut[0]) 
+  points = perCor * question["max_score"]
+  question["output"] = str(round(perCor, 2)*100) + " percent of my test entries matched yours.  Points awarded: " + str(points)
+  print(str(round(perCor, 2)* 100) + " percent of my test entries matched yours.  Points awarded: " + str(points))
+  question['score'] = points
+except Exception as e:
+  print("I was unable to call your forwardSigmoid function.  Here is the error I received: " + str(e))
+  question["output"] = "Error running your function.  Check the log."
+
+ret["tests"].append(question)
+
+#================================
+#================================
+#QUESTION 4
+#================================
+#================================
+print("\nCommencing assessment of code submitted for question 4.")
+question = {}
+question["max_score"] = 5
+question["name"] = "Leaky relu forward"
+question["output"] = ""
+question["score"] = 0
+
+def forwardLeakyRelu(x):
+    out = np.maximum(x, 0.01 * x)
+    cache = x
+    return(out, cache)
+    
+testArray = np.array([0.5, 0.5, 0.25, -0.25, 100, 10, -10, -1, 0])
+correctOut = forwardLeakyRelu(testArray)
+
+print("I am comparing your leaky relu activation function to a correctly implemented one.")
+try:
+  studentOut = submission.forwardLeakyRelu(testArray)
+  perCor = np.mean(correctOut[0]==studentOut[0]) 
+  points = perCor * question["max_score"]
+  question["output"] = str(round(perCor, 2)*100) + " percent of my test entries matched yours.  Points awarded: " + str(points)
+  print(str(round(perCor, 2)* 100) + " percent of my test entries matched yours.  Points awarded: " + str(points))
+  question['score'] = points
+except Exception as e:
+  print("I was unable to call your forwardLeakyRelu function.  Here is the error I received: " + str(e))
+  question["output"] = "Error running your function.  Check the log."
+
+ret["tests"].append(question)
+
+#================================
+#================================
+#QUESTION 5
+#================================
+#================================
+print("\nCommencing assessment of code submitted for question 5.")
+question = {}
+question["max_score"] = 10
+question["name"] = "Leaky relu backward"
+question["output"] = ""
+question["score"] = 0
+
+def backwardLeakyRelu(upstreamGradient, cache):
+    x = cache
+    dx = np.array(upstreamGradient, copy=True)
+    dx[x <= 0] = 0.01
+    return(dx)
+    
+testArray = np.array([0.5, 0.5, 0.25, -0.25, 100, 10, -10, -1, 0])
+upstreamGradientTest = np.array([0.05, -0.045, -0.25, 0.250, 1.45, 0.64, -1, -1, 0])
+
+correctOut = backwardLeakyRelu(upstreamGradientTest, testArray)
+
+print("I am comparing your backward leaky relu function to a correctly implemented one.")
+try:
+  studentOut = submission.backwardLeakyRelu(upstreamGradientTest, testArray)
+  perCor = np.mean(correctOut==studentOut) 
+  points = perCor * question["max_score"]
+  question["output"] = str(round(perCor, 2)*100) + " percent of my test entries matched yours.  Points awarded: " + str(points)
+  print(str(round(perCor, 2)* 100) + " percent of my test entries matched yours.  Points awarded: " + str(points))
+  question['score'] = points
+except Exception as e:
+  print("I was unable to call your backwardLeakyRelu function.  Here is the error I received: " + str(e))
+  question["output"] = "Error running your function.  Check the log."
+
+ret["tests"].append(question)
+
 
 #LEADERBOARD
 ret["leaderboard"] = []
