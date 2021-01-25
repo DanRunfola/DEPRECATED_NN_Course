@@ -395,7 +395,8 @@ try:
       if(out["categorical_accuracy"] > 0.35):
         question["score"] = question["max_score"]
       else:
-        question["score"] = ((out["categorical_accuracy"]-0.2) / 0.15) * question["max_score"]
+        question["score"] = (max(out["categorical_accuracy"]-0.2,0) / 0.15) * question["max_score"]
+        question["output"] = "To get any points you must get a minimum of 20 percent accuracy on the test set of data.  Your accuracy was " + str(round(out["categorical_accuracy"]*100,2)).
     except Exception as e:
       print("Your model evaluation failed.  Here is the error I received: " + str(e))
       question["output"] = "Error running your function.  Check the log."
