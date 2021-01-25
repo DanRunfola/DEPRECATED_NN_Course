@@ -7,6 +7,7 @@ import numpy as np
 import tarfile
 import submission
 import requests
+import keras
 
 basePath = str(os.path.abspath(__file__))[:-13]
 
@@ -78,10 +79,11 @@ startTime = datetime.now()
 #================================
 print("\nCommencing assessment of code submitted for question 1.")
 question = {}
-question["max_score"] = 35
+question["max_score"] = 25
 question["name"] = "Two Layer Neural Network Implementation"
 question["output"] = ""
 question["score"] = 0
+Q1leaderboardScore = 0
 
 try:
   studentNet = submission.twoLayerNet(inputSize = 3072, 
@@ -120,7 +122,7 @@ try:
   #This is to reduce variance in reported scores.
   x = 0
   resultArray = []
-  print("I am running your model five time.")
+  print("I am running your model five times.")
   print("I will record the test accuracy for each run and report it here.")
   print("Your grade will be based on the average of these runs.")
   while x < 5:
@@ -135,13 +137,18 @@ try:
   
   points = min(1, percentCorrect/0.20)*100
   print("Average Test Dataset Accuracy: " + str(round(percentCorrect*100,2)) + " %")
-  if(percentCorrect < 0.20):
+  if(percentCorrect < 0.15):
+    print("You must achieve at least 15% model accuracy for any credit on this question.")
+    question["output"] = "Your model ran, but with an accuracy too low to be awarded any points.  15 percent is the minimum accepted."
+  elif(percentCorrect < 0.20):
     print("Our threshold is 20 percent - so, your implementation receives " + str(points) + " points!")
     question["score"] =  question["score"] + (points/100 * question["max_score"])
     question["output"] = "Model succesfully ran with an average accuracy of " + str(round(percentCorrect*100,2)) + ".  See the log for recommendations on how to improve."
+    Q1leaderboardScore = str(round(percentCorrect*100,2))
   else:
     question["score"] = question["max_score"]
     question["output"] = "Model succesfully ran with an average accuracy of " + str(round(percentCorrect*100,2))
+    Q1leaderboardScore = str(round(percentCorrect*100,2))
 except Exception as e:
   print("I had an error executing your code!")
   print("\nWhat I tried to run: ")
@@ -151,7 +158,7 @@ except Exception as e:
   question["output"] = "Error - see log."
 
 ret["tests"].append(question)
-Q1leaderboardScore = str(round(percentCorrect*100,2))
+
 
 #================================
 #================================
@@ -292,6 +299,118 @@ except Exception as e:
 
 ret["tests"].append(question)
 
+#================================
+#================================
+#QUESTION 6
+#================================
+#================================
+print("\nCommencing assessment of code submitted for question 6.")
+question = {}
+question["max_score"] = 10
+question["name"] = "Convolutional Forward"
+question["output"] = ""
+question["score"] = 0
+
+def convolutionalForward(X, W, B, stride=2):
+    (N, Height, Width, Channels) = X.shape
+    (F, filterSize, filterSize, imageChannels) = W.shape
+    convH = int((Height-filterSize)/stride)+1
+    convW = int((Width-filterSize)/stride)+1
+    activationSurface = np.zeros((N, F, convH, convW, imageChannels))
+    out = np.zeros((N,F))
+
+    for i in range(N):
+        x = X[i]
+        for f in range(F):
+            for h in range(0, Height, stride):
+                for w in range(Width):
+                    for c in range(Channels):
+                        y_upper = h * stride
+                        y_lower = y_upper + filterSize
+                        x_left = w * stride
+                        x_right = x_left + filterSize
+                        window = x[y_upper:y_lower, x_left:x_right, :]
+                        if((window.shape[0] == filterSize) and window.shape[1] == filterSize):
+                            s = np.multiply(window, W[f])
+                            activationSurface[i,f,h,w,c] = np.sum(s)
+                            activationSurface[i,f,h,w,c] = activationSurface[i,f,h,w,c] + np.sum(B)
+                            out[i,f] = np.max(activationSurface[i,f,h,w,c])
+    return(out)
+
+exampleInput = labData["X_train"][345:350]
+W = np.random.randn(2,5,5,3)
+B = np.random.randn(2)
+correctOut = convolutionalForward(X=exampleInput, W=W, B=B, stride=2)
+
+print("I am comparing your forward convolutional function to a correctly implemented one.")
+try:
+  studentOut = submission.convolutionalForward(X=exampleInput, W=W, B=B, stride=2)
+  perCor = np.mean(correctOut==studentOut) 
+  points = perCor * question["max_score"]
+  question["output"] = str(round(perCor, 2)*100) + " percent of my test entries matched yours.  Points awarded: " + str(points)
+  print(str(round(perCor, 2)* 100) + " percent of my test entries matched yours.  Points awarded: " + str(points))
+  question['score'] = points
+except Exception as e:
+  print("I was unable to call your convolutional forward function.  Here is the error I received: " + str(e))
+  question["output"] = "Error running your function.  Check the log."
+
+ret["tests"].append(question)
+
+
+#================================
+#================================
+#QUESTION 7
+#================================
+#================================
+print("\nCommencing assessment of code submitted for question 7.")
+question = {}
+question["max_score"] = 40
+question["name"] = "Full Network Implementation"
+question["output"] = ""
+question["score"] = 0
+
+from keras.utils import to_categorical
+y_train = to_categorical(y_train)
+y_test = to_categorical(y_test)
+
+Q7leaderboardScore = 0
+
+print("I am loading your model...")
+try:
+  model = submission.submissionNet()
+  print(model.summary())
+
+  print("Model succesfully loaded.  Fitting.")
+  try:
+    model.fit(x=labData['X_train'], y=y_train,
+              batch_size=512,
+              epochs=5)
+
+    print("Model succesfully fit.  Running the final evaluation.")
+    try:
+      out = model.evaluate(labData['X_test'], y_test, return_dict=True)
+      print("Your model categorical accuracy was " + str(out["categorical_accuracy"]) + ".")
+      Q7leaderboardScore = str(round(out["categorical_accuracy"]*100,2))
+      if(out["categorical_accuracy"] > 0.35):
+        question["score"] = question["max_score"]
+      else:
+        question["score"] = ((out["categorical_accuracy"]-0.2) / 0.15) * question["max_score"]
+    except Exception as e:
+      print("Your model evaluation failed.  Here is the error I received: " + str(e))
+      question["output"] = "Error running your function.  Check the log."
+
+
+  except Exception as e:
+    print("Your model failed to fit.  Here is the error I received: " + str(e))
+    question["output"] = "Error running your function.  Check the log."
+
+
+except Exception as e:
+  print("I was unable to call your network.  Here is the error I received: " + str(e))
+  question["output"] = "Error running your function.  Check the log."
+
+ret["tests"].append(question)
+
 
 #LEADERBOARD
 ret["leaderboard"] = []
@@ -304,6 +423,11 @@ ret["leaderboard"].append(tim)
 
 acc = {}
 acc["name"] = "Accuracy (Percentage) of Q1 Model"
+acc["value"] = Q1leaderboardScore
+ret["leaderboard"].append(acc)
+
+acc = {}
+acc["name"] = "Accuracy (Percentage) of Q7 Model"
 acc["value"] = Q1leaderboardScore
 ret["leaderboard"].append(acc)
 

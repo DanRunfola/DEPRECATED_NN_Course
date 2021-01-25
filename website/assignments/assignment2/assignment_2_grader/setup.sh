@@ -8,4 +8,3 @@ eval `ssh-agent -s`
 chmod 600 /autograder/source/id_rsa
 ssh-add /autograder/source/id_rsa
 ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
-

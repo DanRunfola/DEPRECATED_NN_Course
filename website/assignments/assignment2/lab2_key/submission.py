@@ -72,9 +72,40 @@ class twoLayerNet():
             self.params['W1'] = np.random.randn(self.inputSize, self.hiddenSize)
             self.params['W2'] = np.random.randn(self.hiddenSize, self.outputSize)
 
-    def fit(self, maxIterations, learningRate, batchSize):
-            self.params['W1'] = np.random.randn(self.inputSize, self.hiddenSize)
-            self.params['W2'] = np.random.randn(self.hiddenSize, self.outputSize)
+    def fit(self, maxIterations, learningRate, batchSize, visualization=True):
+        
+        currentIteration = 0
+        while currentIteration < maxIterations:
+            randomSelection = np.random.randint(len(self.X_train), size=batchSize)
+            xBatch = self.X_train[randomSelection,:]
+            yBatch = self.y_train[randomSelection]
+
+            self.hiddenLayerValues = np.dot(xBatch, self.params['W1'])
+            self.scores = self.hiddenLayerValues.dot(self.params['W2'])
+  
+            if(self.lossType == "svmMulticlass"):
+                e = self.lossParams["epsilon"]
+                countSamples = len(xBatch)
+                countClasses = self.scores.shape[0]
+                trueClassScores = self.scores[np.arange(self.scores.shape[0]), yBatch]
+                trueClassMatrix = np.matrix(trueClassScores).T
+                self.correct = np.mean(np.equal(trueClassScores, np.amax(self.scores, axis=1)))
+                loss_ij = np.maximum(0, self.scores - trueClassMatrix + e)
+                loss_ij[np.arange(countSamples), yBatch] = 0
+                self.loss_ij = loss_ij
+                self.dataLoss = np.sum(np.sum(loss_ij)) / countSamples
+            
+            gradients = {}
+            svmMask = np.zeros(self.loss_ij.shape)
+            svmMask[self.loss_ij > 0] = 1
+            rowPostiveCount = np.sum(svmMask, axis=1)
+            svmMask[np.arange(self.scores.shape[0]), yBatch] = -1 * rowPostiveCount
+            self.gradients['W2'] = np.asmatrix(self.hiddenLayerValues).T.dot(svmMask)
+            self.gradients["hiddenLayer"] = np.dot(svmMask, self.params['W2'].T)
+            self.gradients['W1'] = np.dot(np.asmatrix(xBatch).T, self.gradients["hiddenLayer"])
+            self.params['W1'] += -learningRate*self.gradients['W1']
+            self.params['W2'] += -learningRate*self.gradients['W2']   
+            currentIteration = currentIteration + 1
             
     def predict(self, X):
         hiddenLayerValues = np.dot(X, self.params['W1'])
@@ -100,7 +131,7 @@ class twoLayerNet():
 #perCor = np.mean(correctFunctionReturn[0]==studentFunctionReturn[0]) 
 
 def forwardTanh(x):
-    out = np.array([442,442,442,442])
+    out = (np.exp(x)-np.exp(-x))/(np.exp(x)+np.exp(-x))
     cache = x
     return(out, cache)
 
@@ -122,7 +153,7 @@ def forwardTanh(x):
 #perCor = np.mean(correctFunctionReturn[0]==studentFunctionReturn[0]) 
 
 def forwardSigmoid(x):
-    out = np.array([442,442,442,442])
+    out = 1/(1+np.exp(-x))
     cache = x
     return(out, cache)
 
@@ -143,7 +174,7 @@ def forwardSigmoid(x):
 #perCor = np.mean(correctFunctionReturn[0]==studentFunctionReturn[0]) 
 
 def forwardLeakyRelu(x):
-    out = np.array([442,442,442,442])
+    out = np.maximum(x, 0.01 * x)
     cache = x
     return(out, cache)
 
@@ -167,7 +198,8 @@ def forwardLeakyRelu(x):
 
 def backwardLeakyRelu(upstreamGradient, cache):
     x = cache
-    dx = np.array([442,442,442,442])
+    dx = np.array(upstreamGradient, copy=True)
+    dx[x <= 0] = 0.01
     return(dx)
 
 
@@ -201,9 +233,27 @@ def backwardLeakyRelu(upstreamGradient, cache):
 def convolutionalForward(X, W, B, stride=2):
     (N, Height, Width, Channels) = X.shape
     (F, filterSize, filterSize, imageChannels) = W.shape
-
+    convH = int((Height-filterSize)/stride)+1
+    convW = int((Width-filterSize)/stride)+1
+    activationSurface = np.zeros((N, F, convH, convW, imageChannels))
     out = np.zeros((N,F))
 
+    for i in range(N):
+        x = X[i]
+        for f in range(F):
+            for h in range(0, Height, stride):
+                for w in range(Width):
+                    for c in range(Channels):
+                        y_upper = h * stride
+                        y_lower = y_upper + filterSize
+                        x_left = w * stride
+                        x_right = x_left + filterSize
+                        window = x[y_upper:y_lower, x_left:x_right, :]
+                        if((window.shape[0] == filterSize) and window.shape[1] == filterSize):
+                            s = np.multiply(window, W[f])
+                            activationSurface[i,f,h,w,c] = np.sum(s)
+                            activationSurface[i,f,h,w,c] = activationSurface[i,f,h,w,c] + np.sum(B)
+                            out[i,f] = np.max(activationSurface[i,f,h,w,c])
     return(out)
 
 
@@ -244,6 +294,11 @@ def submissionNet():
                               kernel_size=(2,2),
                               activation="tanh",
                               input_shape=(32,32,3)))
+    m.add(keras.layers.BatchNormalization())
+    m.add(keras.layers.Conv2D(filters=256,
+                            kernel_size=(2,2),
+                            activation="tanh",
+                            input_shape=(32,32,3)))
     m.add(keras.layers.GlobalAveragePooling2D())
     m.add(keras.layers.Dense(units=10))
     m.compile(optimizer=keras.optimizers.SGD(learning_rate=.001),
