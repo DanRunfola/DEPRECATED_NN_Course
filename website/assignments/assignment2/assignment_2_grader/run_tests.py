@@ -384,11 +384,12 @@ try:
   try:
     model.fit(x=labData['X_train'], y=y_train,
               batch_size=512,
-              epochs=5)
+              epochs=5,
+              verbose=2)
 
     print("Model succesfully fit.  Running the final evaluation.")
     try:
-      out = model.evaluate(labData['X_test'], y_test, return_dict=True)
+      out = model.evaluate(labData['X_test'], y_test, return_dict=True, verbose=0)
       print("Your model categorical accuracy was " + str(out["categorical_accuracy"]) + ".")
       Q7leaderboardScore = str(round(out["categorical_accuracy"]*100,2))
       if(out["categorical_accuracy"] > 0.35):
