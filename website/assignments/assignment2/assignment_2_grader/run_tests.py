@@ -383,9 +383,10 @@ try:
   print("Model succesfully loaded.  Fitting.")
   try:
     model.fit(x=labData['X_train'], y=y_train,
-              batch_size=512,
+              batch_size=32,
               epochs=5,
-              verbose=2)
+              verbose=2,
+              use_multiprocessing=True)
 
     print("Model succesfully fit.  Running the final evaluation.")
     try:
