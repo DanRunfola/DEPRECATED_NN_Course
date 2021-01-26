@@ -204,7 +204,7 @@ class knnClassifier:
         Ypred = np.zeros(len(X), dtype=np.dtype(self.ytr.dtype))
 
         for i in range(0, len(X)):
-            l2Distances = np.linalg.norm(self.Xtr - X[i])
+            l2Distances = np.linalg.norm(self.Xtr - X[i], ord=2)
 
             minimumIndices = np.argsort(l2Distances)
             kClosest = minimumIndices[:k]

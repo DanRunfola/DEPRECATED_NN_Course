@@ -320,17 +320,20 @@ question["score"] = 0
 
 #If the student didn't have the library working
 #load our backup.
+
 try:
-  X_train = labData["X_train"][:100]
+  s1 = np.random.choice(range(labData["X_train"].shape[0]), 100, replace=False)
+  s2 = np.random.choice(range(labData["X_train"].shape[0]), 100, replace=False)
+  X_train = labData["X_train"][s1]
 except:
   labData = pickle.load(open("testTrainLab1.pickle", "rb"))
-  X_Train = labData["X_train"][:100]
+  s1 = np.random.choice(range(labData["X_train"].shape[0]), 100, replace=False)
+  s2 = np.random.choice(range(labData["X_train"].shape[0]), 100, replace=False)
+  X_Train = labData["X_train"][s1]
 
-y_train = labData["y_train"][:100]
-X_test =  labData["X_test"][:100]
-y_test =  labData["y_test"][:100]
-y_test = y_test[:100]
-X_test = X_test[:100]
+y_train = labData["y_train"][s1]
+X_test =  labData["X_test"]
+y_test =  labData["y_test"]
 
 #Classifier for comparison - saved as a Pickle
 #So responses on Gradescope pop back quicker.
@@ -346,7 +349,7 @@ class comparisonClassifier:
          Ypred = np.zeros(len(X), dtype=np.dtype(self.ytr.dtype))
 
          for i in range(0, len(X)):
-             l2Distances = np.linalg.norm(self.Xtr - X[i])
+             l2Distances = np.sqrt(np.square(np.subtract(self.Xtr,X[i])))
 
              minimumIndices = np.argsort(l2Distances)
              kClosest = minimumIndices[:k]
@@ -355,17 +358,10 @@ class comparisonClassifier:
         
          return Ypred
 
-# knnClass = comparisonClassifier()
-# knnClass.train(X = X_train, y = y_train)
-# comparisonPredictKNN = knnClass.predict(X = X_test, k=10)
+knnClass = comparisonClassifier()
+knnClass.train(X = X_train, y = y_train)
+comparisonPredictKNN = knnClass.predict(X = X_test, k=10)
 
-#with open("./comparisonKnnResult.pickle", 'wb') as f:
-#    pickle.dump(comparisonPredictKNN, f)
-
-print("I am loading my own KNN to compare to yours...")
-
-
-comparisonPredictKNN = pickle.load(open("comparisonKnnResult.pickle", "rb"))
 
 print("\nI am fitting the KNN you provided to see how it compares to my results.  Computing...")
 try:
@@ -402,53 +398,50 @@ question["output"] = ""
 question["score"] = 0
 
 #====== Code for Comparison Algorithm =========
-X_train = labData["X_train"]
-y_train = labData["y_train"]
-X_test =  labData["X_test"]
-y_test =  labData["y_test"]
-y_test = y_test[:1000]
-X_test = X_test[:1000]
-y_train = y_train[:1000]
-X_train = y_train[:1000]
+#X_train = labData["X_train"]
+#y_train = labData["y_train"]
+#X_test =  labData["X_test"]
+#y_test =  labData["y_test"]
+#y_test = y_test[:1000]
+#X_test = X_test[:1000]
+#y_train = y_train[:1000]
+#X_train = y_train[:1000]
 
 #Correct function:
-#def crossFoldValidation(modelToValidate,
-#                        X_train,
-#                        y_train,
-#                        hyperparameters={"k":5},
-#                        folds=5):
-    
-#    k = hyperparameters["k"]
+def crossFoldValidation(modelToValidate,
+                        X_train,
+                        y_train,
+                        hyperparameters={"k":5},
+                        folds=5):
+   
+    k = hyperparameters["k"]
 
-#    accuracies = []
-#    X_folds = np.array_split(X_train, folds)
-#    y_folds = np.array_split(y_train, folds)
+    accuracies = []
+    X_folds = np.array_split(X_train, folds)
+    y_folds = np.array_split(y_train, folds)
 
-#    for i in range(0,folds): 
-#        classifier = modelToValidate
-#        classifier.train(np.concatenate(np.delete(X_folds, [i], axis=0)), 
-#                        np.concatenate(np.delete(y_folds, [i], axis=0)))
-#        predictions = classifier.predict(X_folds[i], k=k)
-#        correctCases = sum(predictions == y_folds[i])
-#        accuracy = correctCases / len(y_folds[i])
-#        accuracies.append(accuracy)
+    for i in range(0,folds): 
+        classifier = modelToValidate
+        classifier.train(np.concatenate(np.delete(X_folds, [i], axis=0)), 
+                        np.concatenate(np.delete(y_folds, [i], axis=0)))
+        predictions = classifier.predict(X_folds[i], k=k)
+        correctCases = sum(predictions == y_folds[i])
+        accuracy = correctCases / len(y_folds[i])
+        accuracies.append(accuracy)
 
-#    return(accuracies)  
+    return(accuracies)  
 
 
-#correctCrossfoldResults = crossFoldValidation(folds=5,
-#                        modelToValidate = comparisonClassifier(),
-#                        hyperparameters={"k":5},
-#                        X_train = X_train,
-#                        y_train = y_train)
+correctCrossfoldResults = crossFoldValidation(folds=5,
+                        modelToValidate = comparisonClassifier(),
+                        hyperparameters={"k":5},
+                        X_train = X_train,
+                        y_train = y_train)
 
-#with open("./correctCrossfoldResults.pickle", 'wb') as f:
-#    pickle.dump(correctCrossfoldResults, f)
+
 
 print("I am loading my own cross validation to compare to yours...")
 
-
-correctCrossfoldResults = pickle.load(open("correctCrossfoldResults.pickle", "rb"))
 print("Here are the solutions I arrived at for each fold's accuracy: " + str(correctCrossfoldResults))
 
 print("\nI am now fitting the cross validation you provided to see how it compares to my results.  Computing...")
