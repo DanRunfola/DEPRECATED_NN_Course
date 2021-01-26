@@ -290,15 +290,16 @@ def convolutionalForward(X, W, B, stride=2):
 
 def submissionNet():
     m = keras.models.Sequential()
-    m.add(keras.layers.Conv2D(filters=512,
+    m.add(keras.layers.Conv2D(filters=64,
                               kernel_size=(2,2),
                               activation="tanh",
                               input_shape=(32,32,3)))
     m.add(keras.layers.BatchNormalization())
-    m.add(keras.layers.Conv2D(filters=256,
-                            kernel_size=(2,2),
+    m.add(keras.layers.Conv2D(filters=64,
+                            kernel_size=(4,4),
                             activation="tanh",
                             input_shape=(32,32,3)))
+    m.add(keras.layers.BatchNormalization())
     m.add(keras.layers.GlobalAveragePooling2D())
     m.add(keras.layers.Dense(units=10))
     m.compile(optimizer=keras.optimizers.SGD(learning_rate=.001),

@@ -383,7 +383,7 @@ try:
   print("Model succesfully loaded.  Fitting.")
   try:
     model.fit(x=labData['X_train'], y=y_train,
-              batch_size=32,
+              batch_size=64,
               epochs=5,
               verbose=2,
               use_multiprocessing=True)
