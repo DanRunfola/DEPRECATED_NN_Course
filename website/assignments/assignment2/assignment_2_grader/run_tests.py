@@ -436,9 +436,15 @@ question["output"] = ""
 question["score"] = 0
 mAcc = 0
 
+import pathlib
+
+print("TEST")
+print(pathlib.Path(__file__).parent.absolute())
+print(pathlib.Path().absolute())
+
 try:
   print("Loading Model...")
-  studentModel = keras.models.load_model("/autograder/D442/website/assignments/assignment2/assignment_2_grader/Q8.h5")
+  studentModel = keras.models.load_model("/autograder/submission/Q8.h5")
   dataGenerator = keras.preprocessing.image.ImageDataGenerator()
   test = dataGenerator.flow_from_directory(basePath + "/testImages", class_mode='categorical', batch_size=64)
 
