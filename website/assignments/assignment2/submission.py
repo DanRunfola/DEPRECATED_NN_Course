@@ -275,7 +275,8 @@ def submissionNet():
 #Once you fit your model and upload it, it will
 #be tested against a completely distinct
 #set of images from another dataset you do not
-#have access to.  The accuracy of your model in predicting
+#have access to, but are of the same dimensions and classes.  
+#The accuracy of your model in predicting
 #this second dataset is what will determine
 #your score on this question.
 
@@ -293,6 +294,9 @@ def submissionNet():
 
 #4) If you achieve 50% accuracy on the independent test set,
 #you will receive a 100% on this question. 
+
+#5) The maximum model size is 100 MiB (a gradescope limitation).
+#So, the *.h5 file you save with your model must be no more than 100MiB.
 
 def q8ExampleNet():
     m = keras.models.Sequential()

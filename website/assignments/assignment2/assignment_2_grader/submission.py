@@ -359,8 +359,8 @@ def q8ExampleNet():
         include_top=False,
         pooling="max"
     ))
-    m.add(keras.layers.Dense(units=1024))
     m.add(keras.layers.Dense(units=512))
+    m.add(keras.layers.Dense(units=256))
     m.add(keras.layers.Dense(units=21))
     
     m.compile(optimizer=keras.optimizers.SGD(learning_rate=.001),
