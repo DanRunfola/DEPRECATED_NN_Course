@@ -70,6 +70,10 @@ X_test = np.reshape(labData["X_test"], (labData["X_test"].shape[0], -1))
 y_train = labData["y_train"]
 y_test = labData["y_test"]
 
+
+
+
+
 startTime = datetime.now()
 
 #================================
@@ -79,7 +83,7 @@ startTime = datetime.now()
 #================================
 print("\nCommencing assessment of code submitted for question 1.")
 question = {}
-question["max_score"] = 25
+question["max_score"] = 15
 question["name"] = "Two Layer Neural Network Implementation"
 question["output"] = ""
 question["score"] = 0
@@ -364,7 +368,7 @@ ret["tests"].append(question)
 #================================
 print("\nCommencing assessment of code submitted for question 7.")
 question = {}
-question["max_score"] = 40
+question["max_score"] = 20
 question["name"] = "Full Network Implementation"
 question["output"] = ""
 question["score"] = 0
@@ -415,6 +419,53 @@ except Exception as e:
 ret["tests"].append(question)
 
 
+#================================
+#================================
+#QUESTION 8
+#================================
+#================================
+#https://www.tensorflow.org/datasets/catalog/resisc45
+#Note - 
+#Agriculture is a straight copy, as is
+#buildings
+print("\nCommencing assessment of code submitted for question 8.")
+question = {}
+question["max_score"] = 30
+question["name"] = "Building a Model - Real World Case"
+question["output"] = ""
+question["score"] = 0
+
+try:
+  print("Loading Model...")
+  studentModel = keras.models.load_model("Q8.h5")
+  dataGenerator = keras.preprocessing.image.ImageDataGenerator()
+  test = dataGenerator.flow_from_directory(basePath + "/testImages", class_mode='categorical', batch_size=64)
+
+  print("Testing Model based on independent test set...")
+  try:
+    modelOutcome = studentModel.evaluate(test)
+    print("Your model achieved an accuracy of " + str(round(modelOutcome[1]*100,4)) + " percent.")
+    print("This is relative to the goal of 40 percent.")
+    mAcc = modelOutcome[1] * 100
+    question["score"] = min(1, mAcc / 50) * question["max_score"]
+
+    print("Your score for this question is currently " + str(question["score"]))
+    
+  except Exception as e:
+    print("I was unable to run your model on my test dataset.")
+    print("Exception: " + str(e))
+    question["output"] = "Something went wrong!  Check the log."
+
+
+except Exception as e:
+  print("I was unable to load Q8.h5.  Please check your upload is correctly formatted.")
+  print("Note that if you have not yet started on Question 8, you may see this error.")
+  print("(i.e., if you have not yet started submitting a zip file!)")
+  print("Exception: " + str(e))
+  question["output"] = "Something went wrong!  Check the log."
+
+ret["tests"].append(question)
+
 #LEADERBOARD
 ret["leaderboard"] = []
 
@@ -431,7 +482,12 @@ ret["leaderboard"].append(acc)
 
 acc = {}
 acc["name"] = "Accuracy (Percentage) of Q7 Model"
-acc["value"] = Q1leaderboardScore
+acc["value"] = Q7leaderboardScore
+ret["leaderboard"].append(acc)
+
+acc = {}
+acc["name"] = "Accuracy (Percentage) of Q8 Model"
+acc["value"] = Q8leaderboardScore
 ret["leaderboard"].append(acc)
 
 json.dumps(ret)

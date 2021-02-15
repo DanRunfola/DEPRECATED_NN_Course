@@ -11,6 +11,8 @@ website/assignments/assignment2/cifar-10-python.tar.gz
 website/assignments/assignment2/testTrainLab2.pickle
 website/assignments/assignment2/images
 
+*.h5
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

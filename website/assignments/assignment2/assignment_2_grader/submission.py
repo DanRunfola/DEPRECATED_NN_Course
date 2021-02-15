@@ -307,3 +307,84 @@ def submissionNet():
                                             metrics=['categorical_accuracy'])
     
     return(m)
+
+
+#=========================================
+#=========================================
+#LAB QUESTION 8
+#=========================================
+#=========================================
+#In this question, you are going to write
+#and fit the best network you can to solve a problem.
+#You will then save your model, and submit
+#a file called "submission.zip" to gradescope.
+#This file must include both (a) a file named
+#"Q8.h5", and (b) your submission.py.
+#Your grade for this question will be based on
+#the accuracy of your saved model.
+
+#To write this model, you must use keras, as
+#per the below example.  We will be using
+#the UC Merced Land Use database.
+#You will find the images in the folder "mercerImages"
+#In this assignment.
+
+#Once you fit your model and upload it, it will
+#be tested against a completely distinct
+#set of images from another dataset you do not
+#have access to.  The accuracy of your model in predicting
+#this second dataset is what will determine
+#your score on this question.
+
+#Note it is totally up to you to subdivide your images
+#into test/train sets.  In this example, I only use a training
+#dataset.  This is obviously wrong, don't do this!
+
+#Note you don't actually need to submit your submissionNet
+#Code - your grade on this question is just based on the Q8.h5 file
+#you submit.
+
+#Note you *must* include metrics=['categorical_accuracy'] in your
+#modile compilation (i.e., see below).
+
+#If you achieve 50% accuracy on the independent test set,
+#you will receive a 100% on this question.
+
+from keras.applications.resnet50 import ResNet50
+
+def q8ExampleNet():
+    m = keras.models.Sequential()
+    m.add(keras.applications.ResNet50V2(
+        weights="imagenet",
+        include_top=False,
+        pooling="max"
+    ))
+    m.add(keras.layers.Dense(units=1024))
+    m.add(keras.layers.Dense(units=512))
+    m.add(keras.layers.Dense(units=21))
+    
+    m.compile(optimizer=keras.optimizers.SGD(learning_rate=.001),
+                                            loss='categorical_hinge',
+                                            metrics=['categorical_accuracy'])
+    
+    return(m)
+
+if __name__ == "__main__":
+    #Load the images to fit with
+    dataGenerator = keras.preprocessing.image.ImageDataGenerator()
+
+    #Note that class_mode = categorical may be different for you, depending on how you
+    #develop your model.  In this case, I'm loading the data from folders, and using the
+    #folder names as the classes.
+    train = dataGenerator.flow_from_directory("website/assignments/assignment2/mercerImages/", 
+    class_mode='categorical', 
+    batch_size=64, target_size=(224,224))
+    
+    model = q8ExampleNet()
+    model.summary()
+    
+    model.fit(train, epochs=3, verbose=2)
+
+    #IMPORTANT: Your model must be saved as "Q8.h5"
+    model.save("/home/dan/git/D442/website/assignments/assignment2/assignment_2_grader/Q8.h5")
+
