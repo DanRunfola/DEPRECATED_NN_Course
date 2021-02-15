@@ -230,11 +230,16 @@ def convolutionalForward(X, W, B, stride=2):
 #While unlikely to be an issue for this assignment, 
 #you can run into OOM (out of memory) errors if you exceed that threshold.
 
+#***The primary challenge for this question is to build a model which is both
+#small enough to train on limited infrastructure, but powerful enough to 
+#get a somewhat-reasonable accuracy.  I expect this will require a lot of
+#trial-and-error; don't be surprised if something that runs on your local
+#computer will not run on the cloud.***
+
 #You *cannot* use predefined networks to accomplish this task; rather, you 
 #must define your own here.  To get a 100%, you must hit a baseline
 #categorical accuracy of 35% within the 5 epoch limit.  You must achieve
-#at least 20% for any credit at all, and your score will scale between
-#20% and 35%.
+#at least 20% for any credit at all.
 
 #IMPORTANT: Your model compile must include metrics=['categorical_accuracy']
 
@@ -260,9 +265,7 @@ def submissionNet():
 #In this question, you are going to write
 #and fit the best network you can to solve a problem.
 #You will then save your model, and submit
-#a file called "submission.zip" to gradescope.
-#This file must include both (a) a file named
-#"Q8.h5", and (b) your submission.py.
+#"Q8.h5" alongside your submission.py.
 #Your grade for this question will be based on
 #the accuracy of your saved model.
 

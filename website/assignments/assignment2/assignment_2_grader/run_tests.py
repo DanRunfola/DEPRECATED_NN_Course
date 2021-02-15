@@ -434,10 +434,11 @@ question["max_score"] = 30
 question["name"] = "Building a Model - Real World Case"
 question["output"] = ""
 question["score"] = 0
+mAcc = 0
 
 try:
   print("Loading Model...")
-  studentModel = keras.models.load_model("Q8.h5")
+  studentModel = keras.models.load_model("autograder/submission/Q8.h5")
   dataGenerator = keras.preprocessing.image.ImageDataGenerator()
   test = dataGenerator.flow_from_directory(basePath + "/testImages", class_mode='categorical', batch_size=64)
 

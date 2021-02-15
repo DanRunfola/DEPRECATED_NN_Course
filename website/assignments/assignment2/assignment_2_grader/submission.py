@@ -278,33 +278,49 @@ def convolutionalForward(X, W, B, stride=2):
 #Your grade is based on the categorical accuracy of the model evaluation.
 #Note that you will have access to up to 6GB of memory for your run,
 #which further limits the number of parameters and types of models you can
-#create.
+#create.  
+
+#***The primary challenge for this question is to build a model which is both
+#small enough to train on limited infrastructure, but powerful enough to 
+#get a somewhat-reasonable accuracy.  I expect this will require a lot of
+#trial-and-error; don't be surprised if something that runs on your local
+#computer will not run on the cloud.***
 
 #You *cannot* use predefined networks to accomplish this task; rather, you 
 #must define your own here.  To get a 100%, you must hit a baseline
 #categorical accuracy of 35% within the 5 epoch limit.  You must achieve
-#at least 20% for any credit at all, and your score will scale between
-#20% and 35%.
+#at least 20% for any credit at all.
 
 #IMPORTANT: Your model compile must include metrics=['categorical_accuracy']
 
 def submissionNet():
+    #######FOR KEY:
+    ####THIS IS A DUMMY MODEL SLOTTED IN TO MAKE THIS RUN QUICKLY FOR TESTING.
+    ####THE "KEY" MODEL IS COMMENTED BELOW.
+
     m = keras.models.Sequential()
-    m.add(keras.layers.Conv2D(filters=64,
-                              kernel_size=(2,2),
-                              activation="tanh",
-                              input_shape=(32,32,3)))
-    m.add(keras.layers.BatchNormalization())
-    m.add(keras.layers.Conv2D(filters=64,
-                            kernel_size=(4,4),
-                            activation="tanh",
-                            input_shape=(32,32,3)))
-    m.add(keras.layers.BatchNormalization())
     m.add(keras.layers.GlobalAveragePooling2D())
     m.add(keras.layers.Dense(units=10))
     m.compile(optimizer=keras.optimizers.SGD(learning_rate=.001),
                                             loss='categorical_hinge',
                                             metrics=['categorical_accuracy'])
+    
+    #m = keras.models.Sequential()
+    #m.add(keras.layers.Conv2D(filters=64,
+    #                          kernel_size=(2,2),
+    #                          activation="tanh",
+    #                          input_shape=(32,32,3)))
+    #m.add(keras.layers.BatchNormalization())
+    #m.add(keras.layers.Conv2D(filters=64,
+    #                        kernel_size=(4,4),
+    #                        activation="tanh",
+    #                        input_shape=(32,32,3)))
+    #m.add(keras.layers.BatchNormalization())
+    #m.add(keras.layers.GlobalAveragePooling2D())
+    #m.add(keras.layers.Dense(units=10))
+    #m.compile(optimizer=keras.optimizers.SGD(learning_rate=.001),
+    #                                        loss='categorical_hinge',
+    #                                        metrics=['categorical_accuracy'])
     
     return(m)
 
