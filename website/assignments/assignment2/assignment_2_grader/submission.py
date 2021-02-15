@@ -276,9 +276,9 @@ def convolutionalForward(X, W, B, stride=2):
 #          epochs=5)
 #model.evaluate(X_test, y_test)
 #Your grade is based on the categorical accuracy of the model evaluation.
-#Note that you will have access to up to 6GB of memory for your run.
-#While unlikely to be an issue for this assignment, 
-#you can run into OOM (out of memory) errors if you exceed that threshold.
+#Note that you will have access to up to 6GB of memory for your run,
+#which further limits the number of parameters and types of models you can
+#create.
 
 #You *cannot* use predefined networks to accomplish this task; rather, you 
 #must define your own here.  To get a 100%, you must hit a baseline
