@@ -438,7 +438,7 @@ mAcc = 0
 
 try:
   print("Loading Model...")
-  studentModel = keras.models.load_model("autograder/submission/Q8.h5")
+  studentModel = keras.models.load_model("/autograder/D442/website/assignments/assignment2/assignment_2_grader/Q8.h5")
   dataGenerator = keras.preprocessing.image.ImageDataGenerator()
   test = dataGenerator.flow_from_directory(basePath + "/testImages", class_mode='categorical', batch_size=64)
 
@@ -461,7 +461,7 @@ try:
 except Exception as e:
   print("I was unable to load Q8.h5.  Please check your upload is correctly formatted.")
   print("Note that if you have not yet started on Question 8, you may see this error.")
-  print("(i.e., if you have not yet started submitting a zip file!)")
+  print("(i.e., if you have not yet started submitting a Q8.h5 file!)")
   print("Exception: " + str(e))
   question["output"] = "Something went wrong!  Check the log."
 
