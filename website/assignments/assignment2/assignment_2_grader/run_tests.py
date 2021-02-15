@@ -487,7 +487,7 @@ ret["leaderboard"].append(acc)
 
 acc = {}
 acc["name"] = "Accuracy (Percentage) of Q8 Model"
-acc["value"] = Q8leaderboardScore
+acc["value"] = mAcc
 ret["leaderboard"].append(acc)
 
 json.dumps(ret)
