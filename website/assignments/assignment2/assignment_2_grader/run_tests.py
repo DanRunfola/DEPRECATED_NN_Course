@@ -438,10 +438,6 @@ mAcc = 0
 
 import pathlib
 
-print("TEST")
-print(pathlib.Path(__file__).parent.absolute())
-print(pathlib.Path().absolute())
-
 try:
   print("Loading Model...")
   studentModel = keras.models.load_model("/autograder/submission/Q8.h5")
