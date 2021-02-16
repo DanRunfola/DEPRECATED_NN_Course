@@ -452,7 +452,7 @@ try:
   try:
     modelOutcome = studentModel.evaluate(test)
     print("Your model achieved an accuracy of " + str(round(modelOutcome[1]*100,4)) + " percent.")
-    print("This is relative to the goal of 40 percent.")
+    print("This is relative to the goal of 50 percent.")
     mAcc = modelOutcome[1] * 100
     question["score"] = min(1, mAcc / 50) * question["max_score"]
 

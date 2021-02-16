@@ -249,7 +249,6 @@ def submissionNet():
                               kernel_size=(2,2),
                               activation="tanh",
                               input_shape=(32,32,3)))
-    m.add(keras.layers.GlobalAveragePooling2D())
     m.add(keras.layers.Dense(units=10))
     m.compile(optimizer=keras.optimizers.SGD(learning_rate=.001),
                                             loss='categorical_hinge',
@@ -307,7 +306,6 @@ def q8ExampleNet():
                               kernel_size=(4,4),
                               activation="tanh",
                               input_shape=(256,256,3)))
-    m.add(keras.layers.BatchNormalization())
     m.add(keras.layers.GlobalAveragePooling2D())
     m.add(keras.layers.Dense(units=21))
     m.compile(optimizer=keras.optimizers.SGD(learning_rate=.001),

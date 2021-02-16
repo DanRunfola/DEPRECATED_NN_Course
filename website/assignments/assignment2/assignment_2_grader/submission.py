@@ -298,29 +298,29 @@ def submissionNet():
     ####THIS IS A DUMMY MODEL SLOTTED IN TO MAKE THIS RUN QUICKLY FOR TESTING.
     ####THE "KEY" MODEL IS COMMENTED BELOW.
 
-    m = keras.models.Sequential()
-    m.add(keras.layers.GlobalAveragePooling2D())
-    m.add(keras.layers.Dense(units=10))
-    m.compile(optimizer=keras.optimizers.SGD(learning_rate=.001),
-                                            loss='categorical_hinge',
-                                            metrics=['categorical_accuracy'])
-    
     #m = keras.models.Sequential()
-    #m.add(keras.layers.Conv2D(filters=64,
-    #                          kernel_size=(2,2),
-    #                          activation="tanh",
-    #                          input_shape=(32,32,3)))
-    #m.add(keras.layers.BatchNormalization())
-    #m.add(keras.layers.Conv2D(filters=64,
-    #                        kernel_size=(4,4),
-    #                        activation="tanh",
-    #                        input_shape=(32,32,3)))
-    #m.add(keras.layers.BatchNormalization())
     #m.add(keras.layers.GlobalAveragePooling2D())
     #m.add(keras.layers.Dense(units=10))
     #m.compile(optimizer=keras.optimizers.SGD(learning_rate=.001),
     #                                        loss='categorical_hinge',
     #                                        metrics=['categorical_accuracy'])
+    
+    m = keras.models.Sequential()
+    m.add(keras.layers.Conv2D(filters=64,
+                              kernel_size=(2,2),
+                              activation="tanh",
+                              input_shape=(32,32,3)))
+    m.add(keras.layers.BatchNormalization())
+    m.add(keras.layers.Conv2D(filters=64,
+                            kernel_size=(4,4),
+                            activation="tanh",
+                            input_shape=(32,32,3)))
+    m.add(keras.layers.BatchNormalization())
+    m.add(keras.layers.GlobalAveragePooling2D())
+    m.add(keras.layers.Dense(units=10))
+    m.compile(optimizer=keras.optimizers.SGD(learning_rate=.001),
+                                            loss='categorical_hinge',
+                                            metrics=['categorical_accuracy'])
     
     return(m)
 
