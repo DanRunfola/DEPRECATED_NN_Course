@@ -322,14 +322,20 @@ question["score"] = 0
 #load our backup.
 
 try:
-  s1 = np.random.choice(range(labData["X_train"].shape[0]), 100, replace=False)
-  s2 = np.random.choice(range(labData["X_train"].shape[0]), 100, replace=False)
+  s1 = np.random.choice(range(labData["X_train"].shape[0]), 1000, replace=False)
+  s2 = np.random.choice(range(labData["X_train"].shape[0]), 1000, replace=False)
   X_train = labData["X_train"][s1]
 except:
-  labData = pickle.load(open("testTrainLab1.pickle", "rb"))
-  s1 = np.random.choice(range(labData["X_train"].shape[0]), 100, replace=False)
-  s2 = np.random.choice(range(labData["X_train"].shape[0]), 100, replace=False)
-  X_Train = labData["X_train"][s1]
+  try:
+    print("Loading pickled database.")
+    labData = pickle.load(open("testTrainLab1.pickle", "rb"))
+    s1 = np.random.choice(range(labData["X_train"].shape[0]), 1000, replace=False)
+    s2 = np.random.choice(range(labData["X_train"].shape[0]), 1000, replace=False)
+    X_Train = labData["X_train"][s1]
+  except:
+    print("Something went wrong when trying to load the database.")
+    print("This error may appear due to rate-limiting on a download you're trying to conduct.")
+    print("Please either wait to resubmit, or inform the instructure this occured.")
 
 y_train = labData["y_train"][s1]
 X_test =  labData["X_test"]
@@ -491,11 +497,11 @@ question["score"] = 0
 
 y_train = labData["y_train"]
 y_test =  labData["y_test"]
-y_test = y_test[:250]
-y_train = y_train[:250]
+y_test = y_test[:1000]
+y_train = y_train[:1000]
 
-X_train = np.reshape(labData["X_train"][:250], (labData["X_train"][:250].shape[0], -1))
-X_test = np.reshape(labData["X_test"][:250], (labData["X_test"][:250].shape[0], -1))
+X_train = np.reshape(labData["X_train"][:1000], (labData["X_train"][:1000].shape[0], -1))
+X_test = np.reshape(labData["X_test"][:1000], (labData["X_test"][:1000].shape[0], -1))
 
 def svmClassifier(X, y, W, e, l):
     scores = X.dot(W)
@@ -558,10 +564,10 @@ except Exception as e:
   print("With the following X and Y:")
   print('y_train = labData["y_train"]')
   print('y_test =  labData["y_test"]')
-  print('y_test = y_test[:250]')
-  print('y_train = y_train[:250]')
-  print('X_train = np.reshape(labData["X_train"][:250], (labData["X_train"][:250].shape[0], -1))')
-  print('X_test = np.reshape(labData["X_test"][:250], (labData["X_test"][:250].shape[0], -1))')
+  print('y_test = y_test[:1000]')
+  print('y_train = y_train[:1000]')
+  print('X_train = np.reshape(labData["X_train"][:1000], (labData["X_train"][:1000].shape[0], -1))')
+  print('X_test = np.reshape(labData["X_test"][:1000], (labData["X_test"][:1000].shape[0], -1))')
   print("\nI received the error: " + str(e))
   question["output"] = "Please see the log - I was unable to run your SVM!"
 
