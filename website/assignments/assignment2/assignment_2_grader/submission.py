@@ -199,7 +199,7 @@ def forwardLeakyRelu(x):
 def backwardLeakyRelu(upstreamGradient, cache):
     x = cache
     dx = np.array(upstreamGradient, copy=True)
-    dx[x <= 0] = 0.01
+    dx[x <= 0] = 0.01 * x
     return(dx)
 
 
