@@ -11,6 +11,7 @@ website/assignments/assignment3/testTrainLab3.pickle
 website/assignments/assignment2/cifar-10-python.tar.gz
 website/assignments/assignment2/testTrainLab2.pickle
 website/assignments/assignment2/images
+website/assignments/assignment2/assignment2.tar.gz
 
 *.h5
 

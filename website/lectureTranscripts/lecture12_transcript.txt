@@ -1,0 +1,6 @@
+Welcome back to DATA 442!  Today we're going to start talking about some specific software for deep learning, and related architectures.
+#SLIDE
+To briefly recap from last lecture, we first covered a range of methods for how a learning rate can be selected, including step and exponential decay, and moved on to some optimization techniques that did not require step size, focusing on BFGS.
+#SLIDE
+We then discussed a range of techniques that can help improve the performance of our model on data it hasn't seen yet, including regularization, image augmentation, transfer learning and more.
+#SLIDE
