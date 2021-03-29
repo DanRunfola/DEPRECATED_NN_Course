@@ -252,7 +252,7 @@ def convolutionalForward(X, W, B, stride=2):
                         if((window.shape[0] == filterSize) and window.shape[1] == filterSize):
                             s = np.multiply(window, W[f])
                             activationSurface[i,f,h,w,c] = np.sum(s)
-                            activationSurface[i,f,h,w,c] = activationSurface[i,f,h,w,c] + np.sum(B)
+                            activationSurface[i,f,h,w,c] = activationSurface[i,f,h,w,c] + B[f]
                             out[i,f] = np.max(activationSurface[i,f,h,w,c])
     return(out)
 
