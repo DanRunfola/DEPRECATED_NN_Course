@@ -2,11 +2,6 @@ import json
 import sys
 from datetime import datetime
 import os
-import pickle
-import numpy as np
-import tarfile
-import submission
-import requests
 import keras
 
 basePath = str(os.path.abspath(__file__))[:-13]
