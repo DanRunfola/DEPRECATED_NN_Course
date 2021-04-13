@@ -17,7 +17,7 @@ import keras
 #from a wide range of websites + personal databases.  You will not have access 
 #to those databases.
 
-#You will upload a h5 file just like in the last assignment for each question - i.e.,
+#You will upload a h5 file for each question - i.e.,
 #"Q1.h5" would be your upload for Q1.
 
 #For every question, the code I run to test your model performance 
@@ -39,7 +39,8 @@ import keras
 
 #The curve will be implemented once based on total score, not on a quesiton-by-question basis.
 
-#All models must be built and submitted using Keras, as per the examples.
+#All models must be built and submitted using Keras, as per the examples.  Any preprocessing
+#other than what I apply in the data loader must be done within the network.
 
 #========================================
 #========================================
@@ -50,7 +51,7 @@ import keras
 #You should *definitely* be creating your own net for each
 #problem!
 
-def exampleNet(inputShape, outputClasses):
+def exampleNet(inputShape, outputClasses, accMetrics):
     m = keras.models.Sequential()
     m.add(keras.layers.Conv2D(filters=64,
                               kernel_size=(4,4),
@@ -60,7 +61,7 @@ def exampleNet(inputShape, outputClasses):
     m.add(keras.layers.Dense(units=outputClasses))
     m.compile(optimizer=keras.optimizers.SGD(learning_rate=.001),
                                             loss='categorical_hinge',
-                                            metrics=['categorical_accuracy'])
+                                            metrics=accMetrics)
     
     return(m)
 
@@ -78,7 +79,7 @@ def exampleNet(inputShape, outputClasses):
 #           Images being tested will be American stop signs (red, octagon).
 
 #You *must* include metrics=['categorical_accuracy'] in your
-#compilation (i.e., see below).
+#compilation.
 
 #Validation Code:
 #studentModel = keras.models.load_model("/autograder/submission/Q1.h5")
@@ -89,6 +90,33 @@ def exampleNet(inputShape, outputClasses):
 dataGenerator = keras.preprocessing.image.ImageDataGenerator(samplewise_center=True)
 train = dataGenerator.flow_from_directory("./submissionExamples/streetSigns", class_mode='categorical', batch_size=2, target_size=(64, 64))
     
-model = exampleNet(inputShape=(64,64,3), outputClasses=2)
+model = exampleNet(inputShape=(64,64,3), outputClasses=2, accMetrics=['categorical_accuracy'])
 model.fit(train)
 model.save("./submissionExamples/models/Q1.h5")
+
+#=========================================
+#=========================================
+#LAB QUESTION 2
+#=========================================
+#=========================================
+#FILE NAME: "Q2.h5"
+#CHALLENGE: Write an algorithm that will correctly classify images of bugs
+#           into one of three classes: butterfly, ant, and caterpillar.
+#           Input images being tested will be of both posed and wild cases,
+#           the bug will always be a prominent feature of the image.
+
+#You *must* include metrics=['categorical_accuracy'] in your
+#compilation.
+
+#Validation Code:
+#studentModel = keras.models.load_model("/autograder/submission/Q2.h5")
+#dataGenerator = keras.preprocessing.image.ImageDataGenerator(samplewise_center=True)
+#test = dataGenerator.flow_from_directory(imagePath, class_mode='categorical', batch_size=32, target_size=(64, 64))
+#modelOutcome = studentModel.evaluate(test)
+
+dataGenerator = keras.preprocessing.image.ImageDataGenerator(samplewise_center=True)
+train = dataGenerator.flow_from_directory("./submissionExamples/bugs", class_mode='categorical', batch_size=2, target_size=(64, 64))
+    
+model = exampleNet(inputShape=(64,64,3), outputClasses=3, accMetrics=['categorical_accuracy'])
+model.fit(train)
+model.save("./submissionExamples/models/Q2.h5")

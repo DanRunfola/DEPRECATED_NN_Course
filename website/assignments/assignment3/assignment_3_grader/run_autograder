@@ -13,6 +13,11 @@ rm /autograder/source/id_rsa
 
 cp /autograder/submission/submission.py /autograder/D442/website/assignments/assignment3/assignment_3_grader/submission.py
 cp /autograder/submission/Q1.h5 /autograder/D442/website/assignments/assignment3/assignment_3_grader/Q1.h5
+cp /autograder/submission/Q1.h5 /autograder/D442/website/assignments/assignment3/assignment_3_grader/Q2.h5
+cp /autograder/submission/Q1.h5 /autograder/D442/website/assignments/assignment3/assignment_3_grader/Q3.h5
+cp /autograder/submission/Q1.h5 /autograder/D442/website/assignments/assignment3/assignment_3_grader/Q4.h5
+cp /autograder/submission/Q1.h5 /autograder/D442/website/assignments/assignment3/assignment_3_grader/Q5.h5
+
 
 cd /autograder/D442/website/assignments/assignment3/assignment_3_grader
 

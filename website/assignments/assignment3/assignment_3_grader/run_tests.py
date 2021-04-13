@@ -67,6 +67,54 @@ except Exception as e:
 
 ret["tests"].append(question)
 
+#================================
+#================================
+#QUESTION 2
+#================================
+#================================
+
+print("\nCommencing assessment of code submitted for question 2 (Bug Classification).")
+question = {}
+question["max_score"] = 20
+question["name"] = "Stop Sign Detection"
+question["output"] = ""
+question["score"] = 0
+Q2Acc = 0
+#studentModel = keras.models.load_model("/autograder/submission/Q2.h5")
+#dataGenerator = keras.preprocessing.image.ImageDataGenerator(samplewise_center=True)
+#test = dataGenerator.flow_from_directory(imagePath, class_mode='categorical', batch_size=32, target_size=(64, 64))
+#modelOutcome = studentModel.evaluate(test)
+
+dataGenerator = keras.preprocessing.image.ImageDataGenerator(samplewise_center=True)
+test = dataGenerator.flow_from_directory("./bugs", class_mode='categorical', batch_size=32, target_size=(64, 64))
+
+try:
+  print("Loading Model...")
+  studentModel = keras.models.load_model("/autograder/submission/Q2.h5")
+  dataGenerator = keras.preprocessing.image.ImageDataGenerator()
+  print("Testing Model based on independent test set...")
+  try:
+    modelOutcome = studentModel.evaluate(test)
+    print("Your model achieved an accuracy of " + str(round(modelOutcome[1]*100,4)) + " percent.")
+    Q2Acc = modelOutcome[1] * 100
+    question["score"] = round(min(1, modelOutcome[1]) * question["max_score"],2)
+    print("Your score for this question is currently " + str(question["score"]) + " of a maximum possible " + str(question["max_score"]))
+    
+  except Exception as e:
+    print("I was unable to run your model on my test dataset.")
+    print("Exception: " + str(e))
+    question["output"] = "Something went wrong!  Check the log."
+
+
+except Exception as e:
+  print("I was unable to load Q1.h5.  Please check your upload is correctly formatted.")
+  print("Note that if you have not yet started on Question 1, you may see this error.")
+  print("(i.e., if you have not yet started submitting a Q1.h5 file!)")
+  print("Exception: " + str(e))
+  question["output"] = "Something went wrong!  Check the log."
+
+ret["tests"].append(question)
+
 #LEADERBOARD
 ret["leaderboard"] = []
 
@@ -81,6 +129,10 @@ acc["name"] = "Accuracy (Percentage) of Q1 Model"
 acc["value"] = mAcc
 ret["leaderboard"].append(acc)
 
+acc = {}
+acc["name"] = "Accuracy (Percentage) of Q2 Model"
+acc["value"] = Q2Acc
+ret["leaderboard"].append(acc)
 
 json.dumps(ret)
 outF = open("/autograder/results/results.json", "w")
