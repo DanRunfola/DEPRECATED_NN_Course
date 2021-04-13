@@ -193,7 +193,7 @@ try:
   try:
     modelOutcome = studentModel.evaluate(test)
     print("Your model achieved an accuracy of " + str(round(modelOutcome[1]*100,4)) + " percent.")
-    Q3Acc = modelOutcome[1] * 100
+    Q4Acc = modelOutcome[1] * 100
     question["score"] = round(min(1, modelOutcome[1]) * question["max_score"],2)
     print("Your score for this question is currently " + str(question["score"]) + " of a maximum possible " + str(question["max_score"]))
     
