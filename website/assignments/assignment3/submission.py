@@ -120,3 +120,31 @@ train = dataGenerator.flow_from_directory("./submissionExamples/bugs", class_mod
 model = exampleNet(inputShape=(64,64,3), outputClasses=3, accMetrics=['categorical_accuracy'])
 model.fit(train)
 model.save("./submissionExamples/models/Q2.h5")
+
+
+#=========================================
+#=========================================
+#LAB QUESTION 3
+#=========================================
+#=========================================
+#FILE NAME: "Q3.h5"
+#CHALLENGE: Write an algorithm that will correctly identify
+#           the occurence of a natural disaster from aerial imagery.
+#           Your output should be a classificaiton which distinguishes
+#           between three cases: normal (no disaster), active fire/smoke, and building collapse.
+
+#You *must* include metrics=['categorical_accuracy'] in your
+#compilation.
+
+#Validation Code:
+#studentModel = keras.models.load_model("/autograder/submission/Q3.h5")
+#dataGenerator = keras.preprocessing.image.ImageDataGenerator(samplewise_center=True)
+#test = dataGenerator.flow_from_directory(imagePath, class_mode='categorical', batch_size=32, target_size=(64, 64))
+#modelOutcome = studentModel.evaluate(test)
+
+dataGenerator = keras.preprocessing.image.ImageDataGenerator(samplewise_center=True)
+train = dataGenerator.flow_from_directory("./submissionExamples/disasters", class_mode='categorical', batch_size=2, target_size=(256, 256))
+    
+model = exampleNet(inputShape=(64,64,3), outputClasses=3, accMetrics=['categorical_accuracy'])
+model.fit(train)
+model.save("./submissionExamples/models/Q3.h5")
