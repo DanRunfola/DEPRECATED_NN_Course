@@ -115,7 +115,7 @@ model.save("./submissionExamples/models/Q1.h5")
 #modelOutcome = studentModel.evaluate(test)
 
 dataGenerator = keras.preprocessing.image.ImageDataGenerator(samplewise_center=True)
-train = dataGenerator.flow_from_directory("./submissionExamples/bugs", class_mode='categorical', batch_size=2, target_size=(64, 64))
+train = dataGenerator.flow_from_directory("./submissionExamples/bugs", class_mode='categorical', batch_size=3, target_size=(64, 64))
     
 model = exampleNet(inputShape=(64,64,3), outputClasses=3, accMetrics=['categorical_accuracy'])
 model.fit(train)
@@ -139,11 +139,11 @@ model.save("./submissionExamples/models/Q2.h5")
 #Validation Code:
 #studentModel = keras.models.load_model("/autograder/submission/Q3.h5")
 #dataGenerator = keras.preprocessing.image.ImageDataGenerator(samplewise_center=True)
-#test = dataGenerator.flow_from_directory(imagePath, class_mode='categorical', batch_size=32, target_size=(64, 64))
+#test = dataGenerator.flow_from_directory(imagePath, class_mode='categorical', batch_size=16, target_size=(256, 256))
 #modelOutcome = studentModel.evaluate(test)
 
 dataGenerator = keras.preprocessing.image.ImageDataGenerator(samplewise_center=True)
-train = dataGenerator.flow_from_directory("./submissionExamples/disasters", class_mode='categorical', batch_size=2, target_size=(256, 256))
+train = dataGenerator.flow_from_directory("./submissionExamples/disasters", class_mode='categorical', batch_size=3, target_size=(256, 256))
     
 model = exampleNet(inputShape=(64,64,3), outputClasses=3, accMetrics=['categorical_accuracy'])
 model.fit(train)
