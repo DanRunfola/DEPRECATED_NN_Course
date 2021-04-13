@@ -12,6 +12,8 @@ website/assignments/assignment2/cifar-10-python.tar.gz
 website/assignments/assignment2/testTrainLab2.pickle
 website/assignments/assignment2/images
 website/assignments/assignment2/assignment2.tar.gz
+website/assignments/assignment3/models/
+website/assignments/assignment3/myPokemon/
 
 *.h5
 

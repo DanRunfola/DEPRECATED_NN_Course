@@ -4,3 +4,4 @@ numpy==1.19.4
 matplotlib==3.3.3
 keras==2.4.3
 tensorflow==2.4.1
+keras-video-generators==1.0.14

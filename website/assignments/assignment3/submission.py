@@ -5,7 +5,7 @@ import os
 os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
 import keras
-
+import keras_video
 #For assignment 3, you will be creating a few different models
 #and uploading your solutions in the form of *.h5 files.
 #Each model is limited to be no more than 100 megabytes in total.
@@ -41,6 +41,13 @@ import keras
 
 #All models must be built and submitted using Keras, as per the examples.  Any preprocessing
 #other than what I apply in the data loader must be done within the network.
+
+#A few resources you may find helpful while searching for data to train with includes:
+#ImageNet
+#https://homepages.inf.ed.ac.uk/rbf/CVonline/Imagedbase.htm
+#Google Images
+#http://moments.csail.mit.edu/
+#https://serre-lab.clps.brown.edu/resource/hmdb-a-large-human-motion-database/#overview
 
 #========================================
 #========================================
@@ -148,3 +155,68 @@ train = dataGenerator.flow_from_directory("./submissionExamples/disasters", clas
 model = exampleNet(inputShape=(64,64,3), outputClasses=3, accMetrics=['categorical_accuracy'])
 model.fit(train)
 model.save("./submissionExamples/models/Q3.h5")
+
+#=========================================
+#=========================================
+#LAB QUESTION 4
+#=========================================
+#=========================================
+#FILE NAME: "Q4.h5"
+#CHALLENGE: Write an algorithm that will correctly classify activity
+#           in a video as one of the following 5 classes:
+#           Throwing
+#           Sitting
+#           Walking
+#           Your output should be a classificaiton which distinguishes
+#           between these cases.  The input you are testing against will
+#           be a 10-frame composite from every input video. 
+#           Of note - the test videos are from a dataset you have never seen before
+#           in Data 442.
+
+#You *must* include metrics=['categorical_accuracy'] in your
+#compilation.
+
+#Validation Code:
+#studentModel = keras.models.load_model("/autograder/submission/Q4.h5")
+#dataGenerator = keras_video.VideoFrameGenerator(
+#    classes = ["Throwing","Sitting","Walking"],
+#    glob_pattern = 'imagePath/*', 
+#    nb_frames = 10, 
+#    batch_size = 4, 
+#    target_shape = (224,224),
+#    nb_channel = 3, 
+#    transformation = None,
+#    use_frame_cache = False,
+#    split_val = 0.99
+#    )
+#modelOutcome = studentModel.evaluate(dataGenerator)
+
+train = keras_video.VideoFrameGenerator(
+    glob_pattern = './submissionExamples/humanActions/{classname}/*.mp4', 
+    nb_frames = 10, 
+    batch_size = 2, 
+    target_shape = (224,224),
+    nb_channel = 3, 
+    use_frame_cache = False,
+    split_val = 0.99
+    )
+
+test = train.get_validation_generator()
+
+def videoExampleNet():
+    m = keras.models.Sequential()
+    m.add(keras.layers.Conv2D(filters=64,
+                              kernel_size=(4,4),
+                              activation="tanh",
+                              input_shape=(10,224,224,3))) 
+    m.add(keras.layers.GlobalAveragePooling3D())
+    m.add(keras.layers.Dense(units=3))
+    m.compile(optimizer=keras.optimizers.SGD(learning_rate=.001),
+                                            loss='categorical_hinge',
+                                            metrics=['categorical_accuracy'])
+    
+    return(m)
+
+model = videoExampleNet()
+model.fit(train)
+model.save("./submissionExamples/models/Q4.h5")
