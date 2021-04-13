@@ -152,7 +152,7 @@ model.save("./submissionExamples/models/Q2.h5")
 dataGenerator = keras.preprocessing.image.ImageDataGenerator(samplewise_center=True)
 train = dataGenerator.flow_from_directory("./submissionExamples/disasters", class_mode='categorical', batch_size=3, target_size=(256, 256))
     
-model = exampleNet(inputShape=(64,64,3), outputClasses=3, accMetrics=['categorical_accuracy'])
+model = exampleNet(inputShape=(256,256,3), outputClasses=3, accMetrics=['categorical_accuracy'])
 model.fit(train)
 model.save("./submissionExamples/models/Q3.h5")
 
@@ -163,7 +163,7 @@ model.save("./submissionExamples/models/Q3.h5")
 #=========================================
 #FILE NAME: "Q4.h5"
 #CHALLENGE: Write an algorithm that will correctly classify activity
-#           in a video as one of the following 5 classes:
+#           in a video as one of the following 3 classes:
 #           Throwing
 #           Sitting
 #           Walking
