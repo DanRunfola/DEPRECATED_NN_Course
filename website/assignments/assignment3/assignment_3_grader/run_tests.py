@@ -132,7 +132,7 @@ question["score"] = 0
 Q3Acc = 0
 
 dataGenerator = keras.preprocessing.image.ImageDataGenerator(samplewise_center=True)
-test = dataGenerator.flow_from_directory("./disaster", class_mode='categorical', batch_size=8, target_size=(128, 128))
+test = dataGenerator.flow_from_directory("./disaster", class_mode='categorical', batch_size=4, target_size=(256, 256))
 
 try:
   print("Loading Model...")
