@@ -50,6 +50,27 @@ We can make this more explicit on our graph as well - i.e., imagine that at each
 #SLIDE
 Different RNN architectures necessitate slightly differnet computational graphs.  The last example you saw was a many-to-many example - here is a many-to-one, in which we only have one loss that is calculated at the end (i.e., say we just want to know if a series of frames contained a boat or not).  This also might be a suitable RNN architecture for a case where you're trying to identify the overall sentence sentiment about a topic, as we mentioned before (i.e., if a sentence is negative or positive).  Critically in this example, the order of the words matters, and so a RNN becomes an appropriate tool for extracting information from sentences that say "I do not like eggs" or "I do like eggs, not waffles".
 #SLIDE
+That's the basic of a RNN, but it has one big flaw: exploding and vanishing gradients.  Think about the weights matrix - unlike everything else in the RNN, it is applied to each step of the RNN.  Where this is troublesome is in the backpropogation step, as you'll effectively be multiplying by those Ws each step of the network in the calculation for the gradient of h2, h1, and h0, respectively.  As you get longer RNNs (i.e., more frames in a video), this becomes a bigger and bigger problem.  If you have a large W value (i.e., something greater than 1), this means you can end up with extremely large gradients ("exploding gradients"), which will cause your model to fail.  On the other side, if you have a small W value (something close to 0), because you're multiplying by it multiple times, your gradient can essentially shrink to something approaching 0.  Unfortunately, there isn't an easy solution to this.
+#SLIDE
+This flaw is what motivated the long short term memory network, most commonly referred to as LSTM.  It is a different take on the RNN structure, in which we are explicitly trying to solve this issue of vanishing and exploding gradients as our RNNs become longer.
+#SLIDE
+Let's walk through the LSTM, as you'll almost certainly encounter it.  To do this it's helpful to re-write our old RNN.  You'll recall in the Vanilla case, we pass the output from the past round into our function, along with our X values for a given step and the weights, W.  Let's simplify this again...
+#SLIDE
+To just focus on one step of the RNN, where we're taking the output from the first layer (h1) in.  This would be representative of - for example - the second frame of a video (where the frame's data is being held in X2).  
+#SLIDE
+In a LSTM, we first pass the output from our function to four different activation functions - three sigmoid, and one tanh.  This may seem a bit weird, but bare with me for a moment!
+#SLIDE
+The first of these activations we'll call our memory - this activation determines how much a previous step influences the model. Remember the output of a sigmoid is a value from 0 to 1, so this can roughly be interpreted as the "percentage" of our memory we'll use in this step.
+#SLIDE
+The next two activations are combined together, and are essentially providing jointly input on how much of our current time step we should add to our memory.  
+#SLIDE
+And, finally, the tanh activation would pass the output of our function directly to the next output layer. This is the basics of a LSTM - and we then repeat this just like...
+#SLIDE
+this, where we pass the long term memory forward forward to the next round, and repeat the process.  Here you have the basic logic for a LSTM!
+#SLIDE
+Now, let's remember why we started down this road in the first place - the problem was in our inability to backpropogate effeciently, because we were re-using the same weights matrix over and over again, leading to exploding or vanishing gradients.  The great thing about the LSTM model is that we now have a backpropogation pathway through the long term memory that is largely independent of the weights matrix - i.e., a big value or a small value in W will not result in a large or small value in our long term memory (as it is passed through a sigmoid gate).  Thus, when we backpropogate, we dramatically mitigate the likelihood a vanishing gradient will occur (though exploding gradients are still a challenge!).
+#SLIDE
+That's it for today!  A few key takeaways for you here - first, very practically you'll see LSTMs in the wild much, much more frequently than most other classes of models; similar to a ResNet, they scale much more nicely horizontally as you add more frames or steps to your model.  With that, in this lecture we went over our basic introduction to RNNs, and unpacked each step of a RNN to walk through how they are commonly implemented.  We then discussed differences between many-to-one and many-to-many RNNs.  And, finally, we talked through LSTM RNNs.  I hope you enjoyed, and I look forward to next time!
 
 
  f(w,h_{t-1},x_{t}) = h_{t}
