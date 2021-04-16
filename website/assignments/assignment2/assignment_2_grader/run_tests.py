@@ -442,7 +442,7 @@ try:
   print("Loading Model...")
   studentModel = keras.models.load_model("/autograder/submission/Q8.h5")
   dataGenerator = keras.preprocessing.image.ImageDataGenerator()
-  test = dataGenerator.flow_from_directory(basePath + "/testImages", class_mode='categorical', batch_size=64)
+  test = dataGenerator.flow_from_directory(basePath + "/testImages", target_size=(256,256), class_mode='categorical', batch_size=64)
 
   print("Testing Model based on independent test set...")
   try:
