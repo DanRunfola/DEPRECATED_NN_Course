@@ -243,6 +243,10 @@ acc["name"] = "Accuracy (Percentage) of Q4 Model"
 acc["value"] = Q4Acc
 ret["leaderboard"].append(acc)
 
+acc = {}
+acc["name"] = "Weighted Score"
+acc["value"] = (mAcc*0.25)+(Q2Acc*0.25)+(Q3Acc*0.25)+(Q4Acc*0.25)
+ret["leaderboard"].append(acc)
 
 json.dumps(ret)
 outF = open("/autograder/results/results.json", "w")
