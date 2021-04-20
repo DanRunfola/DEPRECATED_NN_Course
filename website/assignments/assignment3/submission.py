@@ -8,7 +8,7 @@ import keras
 import keras_video
 #For assignment 3, you will be creating a few different models
 #and uploading your solutions in the form of *.h5 files.
-#Each model is limited to be no more than 100 megabytes in total.
+#Each model is limited to be no more than 100 megabytes in total,
 #Unlike previous assignments, you will not be provided with
 #either data or pre-written code: it's up to you to find a labeled dataset
 #and implement a model!
