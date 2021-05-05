@@ -4,6 +4,7 @@ from datetime import datetime
 import os
 import keras
 import keras_video
+os.system(pip install --upgrade tensorflow_hub)
 import tensorflow_hub as hub
 
 basePath = str(os.path.abspath(__file__))[:-13]
