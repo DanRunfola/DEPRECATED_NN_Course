@@ -48,7 +48,7 @@ try:
   try:
     studentModel = keras.models.load_model("/autograder/submission/Q1.h5")
   except:
-    studentModel = keras.models.load_model("/autograder/submission/Q1.h5",custom_objects='KerasLayer':hub.KerasLayer})
+    studentModel = keras.models.load_model("/autograder/submission/Q1.h5",custom_objects={'KerasLayer':hub.KerasLayer})
   dataGenerator = keras.preprocessing.image.ImageDataGenerator()
   print("Testing Model based on independent test set...")
   try:
@@ -99,7 +99,7 @@ try:
   try:
     studentModel = keras.models.load_model("/autograder/submission/Q2.h5")
   except:
-    studentModel = keras.models.load_model("/autograder/submission/Q2.h5",custom_objects='KerasLayer':hub.KerasLayer})
+    studentModel = keras.models.load_model("/autograder/submission/Q2.h5",custom_objects={'KerasLayer':hub.KerasLayer})
   dataGenerator = keras.preprocessing.image.ImageDataGenerator()
   print("Testing Model based on independent test set...")
   try:
@@ -147,7 +147,7 @@ try:
   try:
     studentModel = keras.models.load_model("/autograder/submission/Q3.h5")
   except:
-    studentModel = keras.models.load_model("/autograder/submission/Q3.h5",custom_objects='KerasLayer':hub.KerasLayer})
+    studentModel = keras.models.load_model("/autograder/submission/Q3.h5",custom_objects={'KerasLayer':hub.KerasLayer})
 
   print("Testing Model based on independent test set...")
   try:
@@ -203,7 +203,7 @@ try:
   try:
     studentModel = keras.models.load_model("/autograder/submission/Q4.h5")
   except:
-    studentModel = keras.models.load_model("/autograder/submission/Q4.h5",custom_objects='KerasLayer':hub.KerasLayer})
+    studentModel = keras.models.load_model("/autograder/submission/Q4.h5",custom_objects={'KerasLayer':hub.KerasLayer})
 
   print("Testing Model based on independent test set...")
   try:
