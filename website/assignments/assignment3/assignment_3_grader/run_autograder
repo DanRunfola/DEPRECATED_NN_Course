@@ -11,6 +11,7 @@ cd /autograder
 git clone git@github.com:DanRunfola/D442.git
 rm /autograder/source/id_rsa
 
+pip install --upgrade tensorflow_hub
 
 cp /autograder/submission/Q1.h5 /autograder/D442/website/assignments/assignment3/assignment_3_grader/Q1.h5
 cp /autograder/submission/Q1.h5 /autograder/D442/website/assignments/assignment3/assignment_3_grader/Q2.h5
