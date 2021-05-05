@@ -45,7 +45,10 @@ test = dataGenerator.flow_from_directory("./streetSigns", class_mode='categorica
 
 try:
   print("Loading Model...")
-  studentModel = keras.models.load_model("/autograder/submission/Q1.h5")
+  try:
+    studentModel = keras.models.load_model("/autograder/submission/Q1.h5")
+  except:
+    studentModel = keras.models.load_model("/autograder/submission/Q1.h5",custom_objects='KerasLayer':hub.KerasLayer})
   dataGenerator = keras.preprocessing.image.ImageDataGenerator()
   print("Testing Model based on independent test set...")
   try:
@@ -93,7 +96,10 @@ test = dataGenerator.flow_from_directory("./bugs", class_mode='categorical', bat
 
 try:
   print("Loading Model...")
-  studentModel = keras.models.load_model("/autograder/submission/Q2.h5")
+  try:
+    studentModel = keras.models.load_model("/autograder/submission/Q2.h5")
+  except:
+    studentModel = keras.models.load_model("/autograder/submission/Q2.h5",custom_objects='KerasLayer':hub.KerasLayer})
   dataGenerator = keras.preprocessing.image.ImageDataGenerator()
   print("Testing Model based on independent test set...")
   try:
@@ -138,7 +144,11 @@ test = dataGenerator.flow_from_directory("./disaster", class_mode='categorical',
 
 try:
   print("Loading Model...")
-  studentModel = keras.models.load_model("/autograder/submission/Q3.h5")
+  try:
+    studentModel = keras.models.load_model("/autograder/submission/Q3.h5")
+  except:
+    studentModel = keras.models.load_model("/autograder/submission/Q3.h5",custom_objects='KerasLayer':hub.KerasLayer})
+
   print("Testing Model based on independent test set...")
   try:
     modelOutcome = studentModel.evaluate(test)
@@ -190,7 +200,11 @@ test = dataGenerator.get_validation_generator()
 
 try:
   print("Loading Model...")
-  studentModel = keras.models.load_model("/autograder/submission/Q4.h5")
+  try:
+    studentModel = keras.models.load_model("/autograder/submission/Q4.h5")
+  except:
+    studentModel = keras.models.load_model("/autograder/submission/Q4.h5",custom_objects='KerasLayer':hub.KerasLayer})
+
   print("Testing Model based on independent test set...")
   try:
     modelOutcome = studentModel.evaluate(test)
