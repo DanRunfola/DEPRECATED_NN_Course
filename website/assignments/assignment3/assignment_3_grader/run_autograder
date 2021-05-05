@@ -14,9 +14,9 @@ rm /autograder/source/id_rsa
 pip install --upgrade tensorflow_hub
 
 cp /autograder/submission/Q1.h5 /autograder/D442/website/assignments/assignment3/assignment_3_grader/Q1.h5
-cp /autograder/submission/Q1.h5 /autograder/D442/website/assignments/assignment3/assignment_3_grader/Q2.h5
-cp /autograder/submission/Q1.h5 /autograder/D442/website/assignments/assignment3/assignment_3_grader/Q3.h5
-cp /autograder/submission/Q1.h5 /autograder/D442/website/assignments/assignment3/assignment_3_grader/Q4.h5
+cp /autograder/submission/Q2.h5 /autograder/D442/website/assignments/assignment3/assignment_3_grader/Q2.h5
+cp /autograder/submission/Q3.h5 /autograder/D442/website/assignments/assignment3/assignment_3_grader/Q3.h5
+cp /autograder/submission/Q4.h5 /autograder/D442/website/assignments/assignment3/assignment_3_grader/Q4.h5
 
 
 cd /autograder/D442/website/assignments/assignment3/assignment_3_grader
