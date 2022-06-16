@@ -1,0 +1,118 @@
+=====
+Welcome back to DATA 442!  In this lecture we're going to do a deep dive into how loss functions are calculated in practice and a number of related topics.
+
+=====SLIDE
+Before we get into the new content, though, I want to do a brief recap.  Last lecture we discussed many of the fundamental building blocks of neural networks. 
+You'll first recall the idea of a parametric model - a model in which we pass not only our image data, but also a set of parameters (W). 
+
+=====SLIDE
+We walked through a toy parametric model - a linear model - in which we classified a CIFAR image as a Cat, Bird and Plane using a set of weights, and discussed how those weights could be used to visualize "average" images; further, we dicsussed some of the many limitations of linear models, including a horse with two heads.
+
+=====SLIDE
+Next, we introduced the concept of a loss function - i.e., a measure of how bad our model did.  Most machine learning models seek to minimize this function.
+
+=====SLIDE
+Finally, we walked through a specific type of loss function - a multiclass SVM loss.  This showed an example of how the loss functions operate in practice.
+
+======SLIDE
+
+Now we're going to talk about another specific approach to loss that you will very commonly encounter - a multinomial logitic regression, otherwise known as a softmax classifier.  Softmax interprets scores in a different way from multiclass SVM - instead of trying to identify the "best" class (i.e., the class with the highest score is the classification chosen), instead softmax seeks to predict the *probability* that a given image belongs to a given class.  So, in this made up case, the scores are read into the function, and then based on these scores we predict probabilities of class inclusion.  We're ultimately trying to identify the model that creates probabilities closest to our training data - i.e., in a perfect case, this example would have a probability of 100% for Cat, and 0% for both Car and Frog.
+
+=======SLIDE
+To solve for this softmax, we first make a key assumption - that the scores our model predicted are representative of unnormalized probabilities of each class.  That is, the number 3.2 for "Cat" is - in some way - reflective of the probability that the image is a cat, we just haven't scaled it to be a probability yet!  For softmax, we are specifically making the assumption that the scores are unnormalized *log* probabilities - this lets the classifier play nicer with optimization techniques later on.
+
+========SLIDE
+This can be formalized as seeking to identify the probability that the true class (Y) is class k, given an input Xi (the image). 
+
+=======SLIDE
+For softmax, we solve this probability using the softmax function.  Here, we exponentiate each of our scores s (this makes them positive), and then normalize by the sum of all exponentiated scores.  The numerator of this equation would be the exponentiated score for class k (i.e., cat), while the denominator would be the exponentiated scores for all classes (cat, car and frog).  
+
+========SLIDE
+Thus, in a perfect world we would get our desired behavior - if the cat score was very, very high, and the car and frog scores were very, very low, the cat value would approach 1, while the other two would approach 0.  
+
+========SLIDE
+So, how do we actually use this information?  We have a function that tells us how good or bad our scores are at approximating the probabilities we want, but how can that inform our modeling efforts?  Well, we want to use this as a loss function - something to inform the algorithm guessing weights the level of badness of a given set of weights.  There are a few things we need to worry about to do this.  First, we need to multiply by -1 - the reason for this is because loss functions need to go up when the algorithm is bad!  
+
+========
+
+Now, we could technically use this equation as is at this point - however, there are a number of benefits to taking the log of our probabilities for the loss function.  While these are beyond the purview of this course, suffice to say that mathematically it is easier to solve for weights when using loss functions derived from logs, rather than the absolute data.  So, the final equation becomes what is shown here.
+
+=========
+Note, you may also commonly see the softmax loss function represented in short-hand like this, and this is how I'll represent it for the next few slides.
+
+=========
+Ok!  Let's walk through an example with our cat licking it's paw here.  We want to calculate for that estimate what the loss function would be in this case, just like we did with the multiclass SVM in the last lecture.  Following the loss function on the screen, the first thing we'll do is exponentiate each of the three scores.  This is the numerator of the softmax function.
+
+=========
+Next, we sum all of our exponnentiated scores - this gives us 188.68.
+
+=========
+Then, we divide each exponentiated class score by the sum of all exponentiated scores to normalize, which gives us probabilities that range between 0 and 1.  These probabilities are also guaranteed to sum to 1.
+
+==========
+Finally, our loss will be the negative log of the correct class (k).  In this case, we know the image is a cat, so we take the negative log of 0.13, which is 0.89.  Remember - big numbers are worse for our loss function!  
+
+==========
+Take a look at the chart at the lower-right - this chart shows the softmax loss for each of the three images.  As expected, the frog has a really high score (high is bad!), and the car very low, with the cat in the middle.
+
+==========
+So, why do we choose different loss functions in different cases?  Let's compare our multiclass SVM loss to the softmax.  Remember - in both of these hypothetical cases, the weights vector is the same - all we're trying to do is teach that algorihtm how bad the weights vector is.  Both of these loss functions tend to agree on the general trends - i.e., the frog is bad, and the car is good.  The big difference you can see is when it comes to the car - in the case of the car, the SVM hinge loss recognizes that the classification is correct - that is, we would not only call the car a car, but we would do so with confidence greater than our epsilon term.  Thus, the weights would not be tweaked any further to get a "better" car classification; rather, we would seek to retain similar weights for car cases, because it's doing well!  Conversely, the softmax still shows that there is some error in the Car case - not much, but more than 0.  Thus, in the case of softmax, the weights we select will continue to be changed to preference an even BETTER car classification, all the way down to approach 0.  You'll see a number of different loss functions used to train algorithms throughout your applying machine learning, and the selection of an appropriate loss function generally comes down to your knowledge of your data, problem, goals and intuition.
+
+=====SLIDE
+Next, we're going to start talking about a general limitation of loss functions - as traditionally written, they will encourage models to blindly seek the best fit to your training data, or a problem generally referred to as "overfitting".  This is predominantly a challenge when there is a difference between your training data and data "in the real world"; it is a problem that is particularly important for machine learning due to the very large numbers of parameters (i.e., weights) our models seek to fit.  Take the scatterplot on the screen now as an example.  Imagine you are trying to distinguish between pictures of dogs and pictures of cats, and you have two pixels of each (recognizing this is a bit contrived and you would have more than 2 pixels, but the point holds in any number of dimensions!).  For example, the red dot in the upper-left would be a picture of a dog with a pixel value 2 that is very high, and a pixel value 1 that is very low.  Conversely, a blue dot at the lower-right would be a picture of a cat with a high value of pixel 1, and a low value of pixel 2.
+
+======SLIDE
+If we wanted to draw a straight line inbetween these two classes to seperate them, we would probably want something that looked like this - it would minimize the error (just one blue dot is on the "red" side), and we would likely get future dog vs. cat cases correct.
+
+======SLIDE
+However, because of the high number of parameters most machine learnign models have, they will be willing to go far beyond straight lines.  Frequently, this is appropriate, but sometimes it can result in situations like this - where the "decision bounds" end up fitting to essentially replicate your training data.  This is a problem because...
+
+======SLIDE
+Imagine your trying to classify this yellow dot.  Intuitively, it would make sense it's probably a dog - it's pixels look a lot more like most dogs.  However, because of the overfit nature of this example model, we would end up calling it a cat.  This is a gross simplification of the challenge of overfitting; however, you'll see it play out in practice in your own lab sets throughout this course.  Essentially, if you allow your model to perfectly replicate your training data, then you are unlikely ot be able to predict out-of-sample to new cases very well!  And, this is after all what we want to do - we don't need to know what the labels for our training data are, as we alreayd know them.  We want to be able to accurately predict new things!
+
+======SLIDE
+So, how do we mitigate overfitting?  In traditional modeling, i.e. polynomial regression, this is frequently done by reducing the number of weight parameters to be fit - if you have fewer parameters, you limit the model in terms of it's capability to overfit.  This is unfortunately very challenging for most machine learning models, as the very advantage they give us - being able to detect patterns and trends across huge datasets - requires large sets of weight parameters.  So, as an alternative we frequently modify our loss function.  On the screen now you'll see our equation from last lecture, the Total Loss (which we will now refer to as Data Loss).  If you'll recall, this resolves to the average loss for each test case - i.e., the level of "wrongness" across your test data.  Left unchecked, this is the loss function that will likely result in overfitting.
+
+=======SLIDE
+To mitigate this, we add a new term to our loss function, what we refer to as a regularization term.  This term essentially penalizes our model for being too complex - i.e., if you have a lot of large weights, you might get a higher value for the regularization term.  This would increase your loss function, and so the model would be considered "worse".  There are a range of different strategies for regularization, but the fundamental idea is that we want to bias towards simpler models to avoid concerns of overfitting to our training data.  By adding data loss - a measurement of how bad your model is, with higher values being worse - to regularization loss - a measurement of how complicated your model is, with higher values being worse - you can help to guide the selection of weights that avoid being both too complicated and too inacurate when contrasted to your training data.
+
+=======SLIDE
+Briefly, I want to highlight lambda in this function.  The function R(W) is the regularization loss itself - i.e., given W, you produce a value of complicated-ness that you add to the data lass.  Lambda determines how important this regularization loss is relative to the data loss - i.e., if you had lambda set to 0, this equation would reduce down to only data loss.  The value of lambda you choose is highly dependent on your regularization approach, and generally treated as a hyperparameter to select.
+
+========SLIDE
+So, what are a few options for regularization functions?  By far the most common encountered is L2 regularization, also known as weight decay.  In this case, it's just the euclidean norm of the weights matrix (you will sometimes see this as 1/2 of the squared norm as well).  To briefly walk through the equation, for a set of K weights parameters, we square each parameter and take the sum.  So, larger values indicate that your weights were larger in magnitude.  The basic idea is that you are penalizing the loss function based on the squared size of the weights vector. In practice, this results in models that tend to have relatively small values for weights parameters - i.e., our selection algorithms will preference weights values that approach 0.
+
+========SLIDE
+Contrasting to L2 regularization is - you guessed it - L1 regularization.  Instead of squaring each weight parameter, here we take the absolute value.  The implication of this is that model weights tend to get forced all the way to 0, so you end up with many weight parameters with 0s and only a few greater than 0 (i.e., a sparse weights matrix).  This can be highly desireable for some applications in which you need a relatively small set of weights (i.e., running smaller models on cellphones). 
+
+========SLIDE
+There are many other regularization approaches you may encounter, and even a few that are hyper-specific to regularizing in the context of neural networks.  For example, elastic nets are a combination of L1 and L2 normalization; dropout networks work by simplifying a neural networks parameters.  The key takeaway for regularization is that any component of a loss function which is predicated on the parameters W directly - i.e., seeking to make them simpler - are attempts at regularization.  Elements of a loss function which are focused on how "good" your model performs insofar as it contrats to your training data are data loss.
+
+========SLIDE
+To briefly summarize what this lecture covered, we start with a dataset of some size (for example, 3), with both images (x) and labels (y).
+
+========SLIDE
+We then feed this dataset into an algorithm with some set of weights, possibly randomly defined the first iteration (...next lecture we finally talk about how to optimize these!).  
+
+========SLIDE
+This algorithm outputs a set of scores, one for each class, with higher scores indicating a belief of class inclusion.
+
+========SLIDE
+Because we know the truth in these three cases, we can calculate how bad the classification was using a Loss Function. We independently calculate this for every input image.  This example is the softmax loss.
+
+========SLIDE
+We add all of these losses together and average them to get the data loss for a given set of weights.
+
+
+=========SLIDE
+And, finally we add a regularization parameter onto the total loss function to encourage the algorithm to preference simpler solutions.  This slide now provides a fairly helpful summary of where we are today in this course - we have gone from taking in an input dataset, to testing weight parameters for loss.  In the next lecture, we're going to focus on how to actually use this loss score as a part of optimization strategies to select the best weights.  We'll wrap here for today - I hope you enjoyed, and look forward to seeing you next lecture.
+
+=============Notes
+R(W) = \sum_{k=1}^{K}W_{k}^2
+R(W) = \sum_{k=1}^{K}|W_{k}|
+
+
+P(Y=k|X=X_{i}) 
+\frac{e_{k}^{s}}{\sum_{j=1}^{J} e_{j}^{s}}
+Loss_{i} = -1 * \frac{e_{k}^{s}}{\sum_{j=1}^{J} e_{j}^{s}}
+Loss_{i} = -1 * log(\frac{e_{k}^{s}}{\sum_{j=1}^{J} e_{j}^{s}})

@@ -1,0 +1,246 @@
+#SLIDE
+Welcome back to DATA 442 - today we're going to be digging into neural networks for the first time in this course, which will form the baseline for just about everything we do from here.  I've been waiting for today all semester, so get excited!
+
+#SLIDE
+Before we get started, I wanted to do a very brief recap of last lecture.  We focused on optimization, which is how we update weights W iteratively to find the best solutions we can.  
+
+#SLIDE
+The primary method we discussed was gradient descent, which seeks to find the gradient of our loss function at any point defined by our weights W, and then use that gradient to estimate what a better set of Ws might be.  
+
+#SLIDE
+As you'll see on your lab, we use an analytic gradient in practice to solve for this, as it is a fairly computationally effecient approach to estimating gradients with large sets of W and data.  Specifically, we rely on an implementation called stochastic gradient descent, which makes these estimates based on a subset of our data (i.e., batches).  At the end of all this, we have a method to identify an "optimal" set of weights, W, that give us the lowest loss function we can identify.  By including regularization in this equation, we also seek to find the W that is "simplest" and thus, we hope most generalizable.
+
+#SLIDE
+Ok!  Now for the fun stuff. You've all seen a figure that looks something like this, which represents a neural network.  This type of figure is called a computational graph - essentially, this is a flexible way to describe any arbitrary function.
+
+#SLIDE
+Take, for example, a linear classifier with a SVM loss function.  We can easily represent this through a computational graph just like we would any neural network.  Because the linear classifiers are much easier to understand (as they have fewer steps), we'll walk through this first.  Remember what we're trying to accomplish with these functions, which we introduced back in lecture 3.  The linear function on the left is a function that takes in a set of images, represented by X, and a set of Weights, represented by W.  It then multiplies them together, and uses the resultant scores to assign a class to each image.  We then feed these estimated scores into the loss function on the right to derive our measure of "badness", where higher loss values are worse.
+
+#SLIDE
+So, let's start picking these equations apart and transforming them into a computational graph.  First, we have our inputs into the function - weights W and images X.  We'll represent them on the graph here.
+
+#SLIDE
+Both our X and W go into the linear function, and our scores are output (one for each of the classes we're classifying images across).  
+
+#SLIDE
+These scores then go into the hinge loss function, which calculates our data loss.
+
+#SLIDE
+In parallel, we also pass the weights to our regularization function.  In this example we're using L2 regularization, but this function could be anything.  
+
+#Slide 
+We then add our data loss and regularization loss together to get our total loss.  This figure now represents the computational graph for our linear model with a SVM multiclass loss and L2 Regularization.  The big advantage to expressing our functions like this is that it allows us to use backpropogation to compute the gradient while taking into account every computation represented in the graph.  This is really important when we get to more complex functions!
+
+#Slide
+Ok - so, what is this backpropogation?  Let's start out with an even simpler example function which takes 3 inputs - x, y and z.  It then does the computation of adding x and y together, and multiplying the sum by z. 
+
+#Slide
+Just like our linear svm, this function can also be represented with a computational graph that looks like this.  Imagine we are trying to find the gradient - i.e., when x changes by one unit, what is the expected change in the output?  
+
+#SLIDE
+Note that in this computational graph, there is one intermediate product - we have to add before we multiply.  So we can solve for the gradient, let's call this step Q.  The function for Q is simply Q = x + y. 
+
+#SLIDE
+Remember back to our discussion on optimization and gradients.  In this case, we have three questions we need to answer: what is the change in the function if we shift X by one, y by one, or z by one?  We can start by writing out the gradients for Q with respect to x and y.  First, we know that a shift of one in either x or y would result in a change of 1 in q - because all we're doing is adding in this case.  So, in both cases the gradients are 1.
+
+#SLIDE
+Now let's call our multiplication node F.  This equation is similarly simple, F = q * z.
+
+#SLIDE
+The second set of gradients can be understood as trying to identify the change in our function when either Q or z change - in this case, because it is multiplication, a one unit change in Q would result in a change in the function of z (i.e., imagine z was 2 - if you increase q by one, you would get 2 more!).  The same is true of if you change z, with regard to Q.
+
+#SLIDE
+Ultimately, what we want to find is the gradients of F with respect to x, y and z.
+
+#SLIDE
+To do this we are going to use backpropogation.  We're going to start out the end of our graph (that is, the output), and work our way backwards, computing each gradient as we go.  The first stop on this road is the gradient of the output given the final variable - in this case, we only have one, which is F.  
+
+#SLIDE
+So, this reduces down to 1, because if you changed F by one, the output would also change by 1; this first one is nice and easy.
+
+#SLIDE
+Now we're going to follow our function backwards.  The next step we can look at is the gradient of F given the input z. We already know that this one is equal to Q - i.e., if you increase z by one, the total function output increases by Q.
+
+#SLIDE
+Similarly, we know that the gradient of F with respect to Q is z.
+
+#SLIDE
+Now we get to the fun part - solving for the gradient of F given x and y.  Let's start with y.  In this case, we're trying to find dF over dy, but y is not directly connected to F in our computational graph.  So, we're going to apply a chain rule.  Because we know the computations that connect y to F, we can "chain" the gradients together - i.e., in this case, the change in output F given a one unit change in y would be equal to the gradient of q multiplied by the gradient of y (or dF/dq times dQ/dy). To give some intuition - finding the effect of y on F requires first finding the effect of y on Q, and then the effect of Q on F.  Essentially, we are trying to identify the portion of a change in our function output F that can be attributed to a change in y with this chain.
+
+#SLIDE
+X is essentially the same as Y - we would use the same exact chain rule, but replacing y with x. 
+
+#SLIDE
+So, let's briefly reflect on our goal - we want to know the shift in F given a change in x, y and z.  We now have equations to do each of these things - so let's walk through the solution of dF / dx as an example.  Remember from a few slides ago that we noted dF / dQ resolves to z (as increasing Q by one increases the output of the function by z).  So, the equation reduces to ...
+
+#SLIDE
+Further, we know that dQ / dx is equal to one - that is, if X increases by one, so does x.  This leads to a further reduction of our equation to...
+
+#SLIDE
+z * 1, or z.  So - we now know that the gradient of F with regard to x is equal to z.  This makes intuitive sense in this simple case - if you increase x by one, the would increase Q by one.  Because we multiple Q by z, the resultant output is going to increase by z!  This is the chain rule at play.
+
+#SLIDE
+And, there you have it!  Using backpropogation, we've now solved for the gradient of F with respect to x, y and z.  We could use this information to update all three of these variables (x, y and z) to get a lower output value.  In our case, x, y, and z are all weights in our weights vector W, and the output is the loss. Let's think about this exact same function in terms of how most backpropogation is implemented algorithmically.  The first thing to note is that here we're using very simple computations - addition and multiplication.  This is because it is very easy for us to solve for the gradients of these simple computations - i.e., we know a one-unit increase in y will always result in a one-unit increase in Q, simply because the computation is addition.  Similarly, you know a one unit increase in z results in an increase of Q in the final output.  Because we keep the equations in these computational nodes very, very simple, it allows us to apply backpropogation techniques (and the chain rule) across very deep nets.
+
+#SLIDE
+One of the great things about backpropogation is that you can solve for each individual node without knowledge of the broader network.  To illustrate this, consider the same computational graph, but we can only see one of the computational nodes - addition. We have no idea what happens with the data after the output is created and passed on (i.e., we don't know there is a multiplication or 'z' variable). In this graph, we don't need any additional information to calculate a few things.  First, we can calculate the local gradients within the computation - i.e., the change in our output F with respect to x, and the same for y.  We know both of these are 1 in this case - i.e., if this is a computational addition function, the gradients will always be 1.
+
+#SLIDE
+In backpropogation, we have all of our upstream gradients being passed backwards to this set of local gradients.  So, at any given node, we would also know the gradient of downstream nodes based on a change in the nodes output F.  I.e., some function L (let's assume it's a loss function) changes by some amount when our output F changes.  This is denoted by dL / dF.  
+
+#SLIDE
+So, given that we will know dL over dF, we now want to compute the next gradient backwards, which would be the change in our loss function L when x changes - i.e., dL / dx.  
+
+#SLIDE
+You'll remember from the earlier example that we can use the chain rule to solve for this - i.e., dL / dx is equal to dl/dF times dF/dx.  
+
+#SLIDE
+We can then solve for the gradient for the change in loss function L when y changes in the same way.  One really neat thing about this approach is that when we pass these gradients back across the graph, we could also easily be passing them back to a computational node.  In this example, we would be done - i.e., we have solved for the gradient of x and y.  But, in a more complex example....
+
+#SLIDE
+You could imagine passing these solutions back to additional computational nodes, where you would then repeat the back-propogation process, solving for each of those nodes independently and passing the results backwards yet again.
+
+#SLIDE
+Ok - let's move into a more practical example, where we have this picture of a bird.  To simplify this a little bit, we're going to take the hypothetical situation where we have downscaled this image into only two greyscale pixels, taking the average of all pixels (of course you wouldn't really do this, but I can only fit so many nodes on a powerpoint slide!).  After we walk through the two-pixel case, we'll talk about the vectorized version of this that would include all pixels.
+
+#SLIDE
+In our hypothetical, we're going to try and establish if this picture is a bird or... lets say, a car, and we'll use our hinge loss function.  As always, the first step of this is to create our graph.
+
+#SLIDE
+First on our graph are the four input weights - we would have two weights for bird, and two weights for car (one for each pixel).  These are the values we'll multiply by each pixel.  In this case, I've arbitrarily chosen some initial weights for these (this would be the equivalent of starting with random weights). 
+
+#SLIDE
+Now we add our pixel values.  In this case, we have pixel 1 and pixel 2, representing the two giant greyscale pixels we created to represent the bird.
+
+#SLIDE
+The first computational function we use is multiplication, where we multiply each weight by it's respective pixel.  To make this easier on the eyes, I'm going to move a few of our input boxes around to group the weights for each pixel.  Red boxes are still representing the bird pixels, and blue car pixels.  Now both weights at the bottom are representative of weights for pixel 2, and the two at the top are for pixel 1.
+
+#SLIDE
+So, the first function we need to do is multiply - this is a linear model with a SVM hinge loss we're trying to replicate.  So, we multiply the weights for each class (bird and car) by their respective pixels.  This is repeated twice, once for each pixel, for a total of four multiplication computations.
+
+#SLIDE
+Following our linear approach, we now simply add together the multiplicative values for each class to get the final class scores for both bird and car.  This is represented by two addition computations.  In this graph, the blue node would contain our final score for the car class, and the red node would contain our final score for the bird class.  
+
+#SLIDE
+Now, we're ready to calculate the loss function.  You'll recall in the SVM loss we only calculate loss for the *incorrect* cases.  So, we only have to apply this equation once.  The first step in this loss function is subtracting the bird score (which we know is correct), s_yi, from the incorrect car score, s_j.
+
+#SLIDE
+Which looks like this - where the subtraction node represents the sj-syi in our loss function.
+
+#SLIDE
+Now, we have an addition function, representative of the epsilon in our hinge loss.  Because epsilon is a hyperparameter, we also need to represent it here.
+
+#SLIDE
+Finally, we have our max function, which is what gives us our final loss.  We'll represent the final output of this example as f.
+
+#SLIDE
+Phew!  There is our computational graph for this simplified case with only two pixels.  Now, we're going to do what's called a forward pass.  In this forward pass, we're going to solve for f by following each step of the graph forward, starting from the weights and pixels.
+
+#SLIDE
+Let's start at the top.  This first multiplication computation is the randomly initiatlized weight for W_1_1, or the weight for bird and pixel 1.  The -2 here is entirely random to give us a starting point.  Pixel 1 is the 3, representative of our bird pixel.  Multiplying these two together would give us a -6 for the forward pass.  (Note - in case you're confused, look in the boxes at the left - I've copied the weights and pixel values into them for reference).
+
+#SLIDE
+We then repeat this for every multiplication node.  Note that I am representing the outputs of each node in red, along the arrow coming out from the node.
+
+#SLIDE 
+Now, we do our two addition nodes.  Same logic here - the outputs of nodes are in red along the output.  The blue addition computation would resolve to 3 + -10, or -7.
+
+#SLIDE
+And the red addition node would be -6 + -2, or -8.
+
+#SLIDE
+For subtraction, following our loss function, we want sj - syi, or the wrong score (blue, car) minus the right score (red, bird).  This resolves to -7 (the output of the car addition node) - -8 (the output of the bird addition node), or 1.
+
+#Slide 
+Next, we add epsilon.  In this case we'll assume epsilon = 1.  So, 1 + 1 equals - you guessed it - 2.
+
+#Slide
+And, finally, here at the end of all things, we take the max of 0 and 2, which results in 2 as our final output for f in this case.
+
+#Slide
+So - this was our first guess at Weights, and they were random so we know that they probably aren't optimal.  So, how do we update the weights to try and get a better prediction for our bird in this case?  This is the magic of backpropogation - so let's head backwards through this graph.
+
+#Slide
+Skipping the gradient of one for f (if you increase the output of the max function by 1, f increases by 1!), our first real quesiton is if we change the output of the addition computation, what would the change in the output of the max function be?  Let's zoom in on this first case for a moment.
+
+#Slide
+In this zoomed in part of our graph, we are trying to solve for the downstream gradient from the max computation node to the addition computation node, represented by the question mark on the graph.  This can intuitively be understood as the change in the max computation given a change in the addition computation.
+
+#Slide
+This is sometimes referred to as a max gate - to help build intuition, I'm going to label a few things.  First, you'll see the value coming from the addition to the max function is now labeled as "X".  So, in our forward propogation based on the random weights, we had X = 2.  Additionally, you'll see the computation in the max node is now max(0, X), which is reflective of our loss functionn in the upper-right of the screen.  The reason max functions are referred to as gates is becuase of how they operate in back-propogation.  In this case, the downstream gradient we would pass is either equal to 0 (it doesn't matter if you change the output of the addition function if it's less than 0 - it would stay 0), or 1 (an increase in the output of the addition node by 1 would increase the max node output by 1 if the output is greater than 0).  
+
+#Slide
+In this case, our X was 2, which is greater than 0, and thus the gradient we pass back would be 1, because our incoming gradient from the downstream f is 1.  The entire gradient passes back to the addition node in this case, because it is the larger value (X) of the inputs into the max function.  
+
+#Slide
+To help build intuition further, you could hypothetically draw another node representing the "0" in the max function - let's call it Y.  In this case, the gradient we would pass back to Y is 0 - i.e., because Y is nnot the max in the max function, for this pass it doesn't matter if you change Y - the output of the max function would remain the same (it only matters what the output of the addition function is).  This is the gate - a max function is going to pass the full gradient back along one of the paths.
+
+#Slide
+Ok, back to our full graph.  In this case, this backpropogation step has a gradient of 1 being passed back to the addition computation.  We now are going to move back another step to solve for the change in the addition computation given a change in the subtraction computation.  (Of note - we could also solve for a change in the addition computation given a change in our hyperparameter epsilon, but we'll skip that for now.).  To refresh a bit, in this case we have one local gradient for the addition node, which is df / dx, or 1 - that is, a one unit increase in the input to the addition node results in a one unit increase in the function f.  
+
+#Slide
+So now we have two pieces of information - we know the local gradient at this node is 1, and we know the upstream gradient being passed to this node is also 1.  To get the downstream gradient for this node - our ? - we just multiply; in this case, that gives us a 1.
+
+#Slide
+Let's go back another step now.  Here, we want to solve for what the change in function f would be if we increased the addition function in red.  The forward pass output of this addition was -8.  Let's start here by formally defining a few things.  First, we're going to define the upstream gradient - the gradient we just solved for - as U.  So, in this case, U = 1.  
+
+#Slide
+Next, we need to solve for the top local downstream gradient - again, the expected change in f if the *red* addition computation node was to increase by one.  Remember back to our loss function, now at the top of the screen.  The red node represents the score for "true", or the bird.  So, in that function, if the red addition node output increases, the value of the subtraction will *decrease* - i.e., we're subtracting red from blue.  So, the local gradient in this top case is -1.  We'll define that as L0 (where 0 represents the red node gradient).
+
+#Slide
+So, to calculate the purple question mark, we just multiply L0 - our local gradient - by the upstream gradient - 1. That gives us -1, and thus our first gradient is -1. 
+
+#Slide
+Now we can move onto our second gradient - how the value of this subtraction node changes if there is a change in the *blue* addition node.  This node represents the car value.  Just like before, we are trying to solve for how function f would change if there was a one-unit increase in the second input into the subtraction computation - this is represented by the qwuestion mark.  First, we know that our upstream gradientn in this case is 1 - i.e., the incoming gradient we already solved for (that is, U = 1).  In this case, if we have a one-unit increase in the incoming number, we actually have a one-unit *increase* in our subtraction function - again, look back at the loss function at the top of the screen.  Now, we're increaing sj - the "incorrect" score of car.  
+
+#Slide
+So, L1 resolves to a positive 1, which then allows us to solve this gradient as 1 * 1, or 1.
+
+#Slide 
+And now, we go back again!  I'm only going to do one of the two branches here, the red (bird) branch, because the approach in both cases is identical.  Let's solve for the top branch first, denoted by the giant purple question mark.  The number we are trying to solve for is, givenn a change in the output of the top multiplication computation, what is the change in the final function f?  In this case, we know that the gradient of an addition function is going to be equal to 1 - i.e., an increase of 1 in either input results in a change of the output of 1.  So, L_0 (our top local gradient) would simply be 1. The incoming gradient in this case - what we solved for on the last few slides - is a negative one.  So, the final gradient we pass here is -1.
+
+#Slide
+We can do the same thing for the bottom gradient (L1) - in this case, it's the same as the top, as the gradient of the addition function is the same for both paths.  
+
+#Slide
+Alright, and finally we've chained all the way back to the gradient we're trying to solve for - what the expected change in f would be if we changed the first weight (the weight for the first pixel for bird).  Whew!  To keep with our approach so far, I am copying the bird weight and pixel value out of each box on the left to their respective lines.
+
+#Slide
+There we go - the input value of pixel 1 was 3, now in red; the weight 1 for bird was -2.  So, just like last time, we need to solve for the upstream and local gradients.  This time, our upstream was -1 - simple enough, we know it from last time.  You'll recall from 30 or so slides ago (really, go look it up!) that a multiplicative gradient resolves to the inverse input - i.e., an increase of 1 in the pixel value 1 would result in a decrease of -2 for the multiplicative node.  So, if we're trying to solve for the top path (that is, the weight - the one we care about), the *local* gradient (L_0) is equal to....
+
+#Slide
+3!  As a one unit increase in the weight results in a change of the multiplication output of 3 (because pixel value 1 is a 3).  So, just like before, we multiply this local gradient by the upstream gradient, and we get a -3.  This is the chain-rule solution to the gradient for the first weight in this example!  Note that we could solve for the gradient of pixel 1 - i.e., if the pixel value changed what the resulting change in the function would be - but we don't really care in this case, as we aren't adjusting pixel values - only weights.
+
+#Slide
+If we move to the bottom, we can repeat this exact same operation to solve for the gradient of the second bird weight - in this case, the weight associated with the second pixel for bird.  Pause the video here for a minute if you want to try annd solve this on your own (I recommend it!), otherwise in a second I'm going to go to the next slide with the solution.
+
+#Slide
+And, viola!  In this case, we would have a expected change in our final function f of -2 if this parameter increased by 1.  
+
+#Slide
+I went ahead and solved this out for the two other weights - Car pixel 1 weight and pixel 2 weight - here.  So, ultimately we have the four values we care about - the gradients for each of our weights.  So, why do we care?  What is so special about these four numbers that we just spent the better part of a lecture solving for?
+
+#Slide
+Let's go back to our goal and what all this means.  If we have these four weights - -2, 1, -5 and -1 - we end up with a score of -7 for car, and -8 for bird.  So, car is bigger - thus, we would pick car as our class.  That's not great, becuase we know the image is a bird, so we want our loss value to be high (i.e., "badness is high".)
+
+#Slide
+When we calculated the full graph, we also had a final output of 2 - i.e., our loss was 2.  Remember, higher values are worse - optimally, we want our loss to be 0 (or even negative for some loss functions).
+
+#Slide
+The gradient tells us how we would expect our loss to change if we changed each of the weights by positive one.  So, if all we did was increase weight 1 by 1, the final loss value would be expected to be -1 (i.e., it's 2 now, and we expect it would decrease by 3).  So, that would be good!  At the same time, if we increased the first car weight (W2_1) by 1, we would expect an increase in our loss function of 3 - that's no good.
+
+#Slide
+So, what we do is we add the INVERSE of the gradient to our weights, to get a new set of weights to test.  Take the first row for example. We know from our gradient that if we increase weight 1 for bird by 1, we expect a decrease in our loss function of 3, which is what we want.  So, by taking the inverse of the gradient, we are going to increase weight 1 by 3 - i.e., an even larger positive increase, which we are hypothesizing will give us what we want - a lower loss function.  In this case, this means the new weight for Bird would be 1.
+
+#Slide
+We repeat this process for each weight - updating them based on the gradient.  So, like that, we have a new set of weights to test, and a set of weights our gradient specifically informs us are likely going to produce a lower loss.
+
+#Slide
+We can plug these weights back in and do a new forward pass to see if the loss function is better.  Remember, last time it was 2.  The new weights are now on the left, and the solutions for each step of the forward propogation are in red.  If we work left to right, you can see that now our max function resolves to 0 - i.e., our final loss is 0, which is as good as it gets in this case.  So, our model would not be able to improve any further past this point, and would have a perfect classificaiton (it is now, in fact, classifying a bird as a bird).  From this point, we could back-propogate again to further refine our weights, but it wouldn't make any difference here, as there is no more improvement that can be accomplished!  In more complex models with many, many more parameters, you will have to do back-propogation dozens, hundreds, thousands, or even more times.
+
+#Slide
+Ok!  So, that's the basics of back-propogation.  To summarize, in this lecture we introduced the idea of computational graphs, and showed a few examples of how you could set one up.  We then talked about how gradients and partial derivatives can be calculated within these graphs.  Finally, we showed a small example of backpropogation with a very small dataset.  Next time, we'll go the next step: how can we do backpropogation when we have thousands or even millions of weights parameters and inputs that we're trying to solve across?  I hope you enjoyed this walk through of backpropogation, and see you next time.
+
+#NOTES
+\frac{\partial q}{\partial x} = 1
+\frac{\partial f}{\partial q} = z

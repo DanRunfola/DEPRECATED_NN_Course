@@ -1,0 +1,76 @@
+Welcome back to DATA 442!  As usual, let's start with a brief recap of the last lecture.
+#SLIDE
+First, we chatted about the physical differences between CPUs and GPUs, especially focused on the number of cores and relative speed of those cores.
+#SLIDE
+We talked specifically about how the nature of matrix multiplication and dot products lends itself to hardware capable of doing many, many computations at the same time - just like a GPU.
+#SLIDE
+I introduced the two low-level programming interfaces that allow us to leverage GPUs - nvidia's CUDA (which is faster and works onn NVIDIA cards) and OpenCL (slower, but can - with elbow grease - work on all cards).
+#SLIDE
+We then turned our attention to some of the software interfaces that live on top of CUDA and OpenCL, making things like automatic backpropoation and fast optimization possible (with a foucs on Torch, PyTorch, Tensorflow and Keras). 
+#SLIDE
+And, finally, we went over a number of baseline network designs, culminating with ResNet.
+#SLIDE
+Today, we're going to start out by talking about a slightly different metric than we've discussed to date: raw speed.  While most of the applications we've discussed to date have been focused around accuracy, in many applications you may need to - for example - quickly analyze the frames of a video to detect an object.  Think about the video a car might read in from its sensors - the faster you can read in and do a forward pass, the safer your car might be.  This figure shows - for a few of the networks we've discussed - the speed of various networks; if you look closely, as an example, VGG-19 is the line at the very top of this figure.  Essentially, it would take around 200 milliseconds per image to do a forward pass with VGG-19, or you could do about 5 images per second; contrast this to GoogleNet, which is around 20 milliseconds per image at a batch size of 16, or about 50 images per second.  Different tasks may require different forward-pass speed, and so this becomes a metric of critical importance in some applications.
+#SLIDE
+Recurrent Neural Networks are the class of networks that are frequently most concerned with speed, as they are generally taking multiple inputs and outputs; for example, video processing is frequently done using a RNN.  So - what exactly is it?  Let's start with what we've done so far - what's shown on the slide here is a 'traditional' neural network, just like what we've worked with in this class to date.  You have one piece of input data - i.e., an image - some series of convolutions or other layers performed on it - and then some single output (i.e., what class the image belongs to).
+#SLIDE
+Recurrent Neural Networks are a class of network that change this, for a wide range of purposes.  Take for example a many-to-many network, which is a common network architecture for video classification.  Each input data source would be a frame in a video, which is processed and given an output, such as "is a stop sign present in this frame?".  
+#SLIDE
+You can also imagine other classes of RNNs, such as a many-to-one network, which takes in multiple pieces of information and returns one classification.  An example of this might be a semantic analysis in which you take as input all of the words or phrases in a sentence, and then use them to estimate the sentiment - or tone - of the sentence (i.e., is it positive or negative).  RNN is a catch-all phrase for all of these multi-input, multi-output network architectures, and are very powerful for a range of problems.
+#SLIDE
+Ok, so how are these RNNs implemented in practice?  Take a look at the many-to-many network in the upper-left; this is the same as what we saw a few slides ago.  On the upper-right is another way to write that network - i.e., there are some number of inputs X, which occur at different frames of a movie (denoted by t).  We have our RNN, which is denoted by.. RNN.  At each time step, we then have some estimate - or network state, denoted by h_t.  
+#SLIDE
+Now note the red arrows in the figure at the upper-left.  What makes RNNs special is that, at each step, the RNN state is saved, and then provided as an input into the next time step.  So, the network evolves over time as it sees more information, but still can be used to produce an output at a single time step.  
+#SLIDE
+An intuitive way to think about this is to think about a video of a balloon popping.  To know if a balloon popped, you can't just look at one image - i.e., you need to know it was intact at some point, and then something changed.  Thus, it is helpful to know that (a) there was a balloon in a previous step of the network, (b) there was a pin in a previous step, and (c) there is no longer a balloon.  In this first slide, i.e., the first row in our RNN, we could read in this image and retrieve features that are closely correlated with "pin", "balloon", and so forth.  The weights that identify those features would be saved, and we would have an output of "no balloon popping".
+#SLIDE
+Your next frame might look something like this - but this time, you feed it into the network which will contain information from the last time step.  Here, we might detect features that are similar (i.e., the pin and the balloon), but we also might detect that the spatial region in the image where the pin and balloon are are closer to one another.  Probabilistically, over many photos, this might indicate a higher likelihood of popping (as contrasted to the last time step).
+#SLIDE
+Finally, on a third frame, we might finally see the balloon pop.  Because popping is a *process* - that is, something must be inflated first, then popped, the RNN let's us detect the sequence of events.  I.e., we know the balloon was intact on a previous step, and then popped (or is popping) over some sequence of layers, because we're propogating information from earlier layers forward into later layers of the RNN.
+#SLIDE
+This can be formalized using a recurrence relationship, such as the one written here.  Let's define a few terms.  First, h_t is the state of the network at any given timestep - i.e., the function you would use at a timestep to take in the input X_t, and create some output y.  
+#SLIDE
+Let's walk through this briefly.  First, we have the function of the network defined by three inputs - w, or our network weights, x_t, or the input image, and, importantly, h_t-1, or the state at the last step of the network.  These three inputs are entered into the function (i.e., your network layers), and return h_t, or your current network state. One important note for understanding how RNNs work is that our weights, w, are the same for each step of the network - i.e., while we pass the last network state in, the weights we use to process that information are held constant.
+#SLIDE
+Let's think about a RNN in another way, going back to our CIFAR-10 example.  Let's pretend for a brief moment that every CIFAR-10 image is animated - i.e., you have three slides showing a little bit of movement.  We want to implement a RNN using the far-too-simple 1-layer network here, which takes in the 3072 pixels from each input X_t, adds to these the 10 scores from the previous iteration's h (for a total of 30,720 inputs), passes them through our weights W, and then outputs our 10 scores, denoted here by h.
+#SLIDE
+In our RNN, the first thing we do is build the initial set of hidden layer outputs - in almost all cases, this is initialized as all 0s, because we have no previous layer to model based on yet.  In this example, we would have 10 outputs, representing the 10 outputs in our layer h (for the 10 classes in CIFAR).
+#SLIDE
+We then pass these 10 zeros forward into the network itself, which adds (in this simple case) each of the h outputs to our input X pixels.  Because our CIFAR10 data has a total of 3,072 pixels, and we have 10 values h, this results in a 10 x 3072 matrix, which when flattened has 30,720 elements that would be the input into our network.  In this first step of the network, because we initialized h0 to be all 0s, the results of the forward pass would be very similar to what you would see in a normal network.
+#SLIDE
+The output of this network pass would be a new set of outputs h, represented by this new vector.
+#SLIDE
+We then repeat this process for each input X, passing the outputs from the previous layer forward.  This is repeated until all of the inputs X have been read into the network.
+#SLIDE
+In this visualization, the actual parameters we are fitting are still the parameters W. Going back to our network, we would have 30720 inputs each iteration, and 10 outputs.  That means in our fully connected layer, we would have 30,720 * 10 weights, or about 307,000 weights in our vector W. 
+#SLIDE
+Because we re-use the same weights vector for each iteration, our vector W would exist like this - with the same set of weights feeding into each function. So, h (the previous iteration outputs) and X (the current iteration inputs) all change each step, but W stays the same. Remembering back to the chain rule, this means that the gradient for our weights is based on the sum of all gradients for each iteration within the RNN.
+#SLIDE
+We can make this more explicit on our graph as well - i.e., imagine that at each time step you have your scores h coming out, which can then be fed forward into a loss function for each step.  This would be representative of a many-to-manny RNN, in which we have multiple output estimates of class, one for each frame or step of the model.
+#SLIDE
+Different RNN architectures necessitate slightly differnet computational graphs.  The last example you saw was a many-to-many example - here is a many-to-one, in which we only have one loss that is calculated at the end (i.e., say we just want to know if a series of frames contained a boat or not).  This also might be a suitable RNN architecture for a case where you're trying to identify the overall sentence sentiment about a topic, as we mentioned before (i.e., if a sentence is negative or positive).  Critically in this example, the order of the words matters, and so a RNN becomes an appropriate tool for extracting information from sentences that say "I do not like eggs" or "I do like eggs, not waffles".
+#SLIDE
+That's the basic of a RNN, but it has one big flaw: exploding and vanishing gradients.  Think about the weights matrix - unlike everything else in the RNN, it is applied to each step of the RNN.  Where this is troublesome is in the backpropogation step, as you'll effectively be multiplying by those Ws each step of the network in the calculation for the gradient of h2, h1, and h0, respectively.  As you get longer RNNs (i.e., more frames in a video), this becomes a bigger and bigger problem.  If you have a large W value (i.e., something greater than 1), this means you can end up with extremely large gradients ("exploding gradients"), which will cause your model to fail.  On the other side, if you have a small W value (something close to 0), because you're multiplying by it multiple times, your gradient can essentially shrink to something approaching 0.  Unfortunately, there isn't an easy solution to this.
+#SLIDE
+This flaw is what motivated the long short term memory network, most commonly referred to as LSTM.  It is a different take on the RNN structure, in which we are explicitly trying to solve this issue of vanishing and exploding gradients as our RNNs become longer.
+#SLIDE
+Let's walk through the LSTM, as you'll almost certainly encounter it.  To do this it's helpful to re-write our old RNN.  You'll recall in the Vanilla case, we pass the output from the past round into our function, along with our X values for a given step and the weights, W.  Let's simplify this again...
+#SLIDE
+To just focus on one step of the RNN, where we're taking the output from the first layer (h1) in.  This would be representative of - for example - the second frame of a video (where the frame's data is being held in X2).  
+#SLIDE
+In a LSTM, we first pass the output from our function to four different activation functions - three sigmoid, and one tanh.  This may seem a bit weird, but bare with me for a moment!
+#SLIDE
+The first of these activations we'll call our memory - this activation determines how much a previous step influences the model. Remember the output of a sigmoid is a value from 0 to 1, so this can roughly be interpreted as the "percentage" of our memory we'll use in this step.
+#SLIDE
+The next two activations are combined together, and are essentially providing jointly input on how much of our current time step we should add to our memory.  
+#SLIDE
+And, finally, the tanh activation would pass the output of our function directly to the next output layer. This is the basics of a LSTM - and we then repeat this just like...
+#SLIDE
+this, where we pass the long term memory forward forward to the next round, and repeat the process.  Here you have the basic logic for a LSTM!
+#SLIDE
+Now, let's remember why we started down this road in the first place - the problem was in our inability to backpropogate effeciently, because we were re-using the same weights matrix over and over again, leading to exploding or vanishing gradients.  The great thing about the LSTM model is that we now have a backpropogation pathway through the long term memory that is largely independent of the weights matrix - i.e., a big value or a small value in W will not result in a large or small value in our long term memory (as it is passed through a sigmoid gate).  Thus, when we backpropogate, we dramatically mitigate the likelihood a vanishing gradient will occur (though exploding gradients are still a challenge!).
+#SLIDE
+That's it for today!  A few key takeaways for you here - first, very practically you'll see LSTMs in the wild much, much more frequently than most other classes of models; similar to a ResNet, they scale much more nicely horizontally as you add more frames or steps to your model.  With that, in this lecture we went over our basic introduction to RNNs, and unpacked each step of a RNN to walk through how they are commonly implemented.  We then discussed differences between many-to-one and many-to-many RNNs.  And, finally, we talked through LSTM RNNs.  I hope you enjoyed, and I look forward to next time!
+
+
+ f(w,h_{t-1},x_{t}) = h_{t}

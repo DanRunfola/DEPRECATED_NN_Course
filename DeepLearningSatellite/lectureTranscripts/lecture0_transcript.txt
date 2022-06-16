@@ -1,0 +1,13 @@
+Nearly every square inch of the Earth's surface is captured by a satellite instrument every day, resulting in a huge trove of data reflecting how humans are changing the world.  In this course, you will learn how to use machine learning algorithms - especially deep learning techniques - to automatically extract information of use from this growing data source. 
+
+<<What this course will cover>>
+This course is designed to cover deep learning from the ground floor up - after completing this series, you'll have an understanding of the theoretical underpinnings of deep learning, a range of different implementation strategies, hardware considerations, and an applied portfolio of examples.  While I focus on satellite imagery applications, the tools you will learn can be applied to nearly any deep learning or image recognition challenges.  You'll gain an understanding of the ways in which satellite imagery differs from most other imagery sources, as well as how to account for those differences in the context of deep learning models.
+
+<<Who this course is for>>
+This course is targeted at individuals that may only have a small amount of background knowledge in python: basic logical statements like if/else, variable assignment, and a small amount of experience executing your code is all that's required.  I'll be teaching you from the ground-up, and intentionally keeping the code simple even if that means it's a bit less effecient.  I'll also keep the mathematics simple, aiming for individuals that have at least some basic algebra in their background; for those of you with a calculus background, some of the lectures exploring how neural networks are optimized will provide some stretch goal opportunities.  
+
+<<Hardware Requirements>>
+While you'll be able to finish most of the examples in this course on any modern laptop, I do suggest that you consider investing in a coding envrionment with a GPU available to improve the responsiveness of your code.  Today, there are some free online environments that provide such resources; I'll do my best to keep those resources up-to-date in the materials accompanying the course.
+
+
+With that, we're ready to jump right in.  If you're new to python, the next video will provide a brief overview of how to configure a coding environment so you can follow along with the examples throughout this course.  Otherwise, you should feel empowered to skip forward to the first lecture!
