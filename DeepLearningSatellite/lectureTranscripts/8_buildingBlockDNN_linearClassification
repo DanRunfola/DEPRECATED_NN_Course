@@ -1,0 +1,49 @@
+Today, we're going to move on to linear classification techniques.  This will be one of the most important building blocks for neural nets, so pay attention!  We'll first cover the difference between parametric and non parametric models in the context of computer vision, and introduce the basics of linear classifiers.  Second, we'll look at a few examples and discuss interpretation.  Third we'll look into the (many!) limiations of linear classifiers, and then we'll segway into a discussion on optimization of linear funnctions.
+
+=== SLIDE
+As a motivating example, we'll return to the CIFAR10 dataset.  Another set of random examples is shown on the slide, generated from the lab code (you'll be making images just like this).  Remember the goal we have - given a new image, we want to be able to identify which of these classes (plane, car, bird, cat) it belongs to.  The KNN approach was simple - record everything, and then compare a new image to everything and select the most similar one.  As you'll see in lab 1, this is a very costly excersize, and can be slow for even small datasets.  
+
+=== SLIDE
+The nearest neighbor approach can generally be considered as "Nonparametric" - that is, when you pass information into the algorithm, you're only passing the image.  The algorithm then goes through all the images in it's database, and gives probabilities that a given image belongs to a given class (with larger values indicating a higher probability of class inclusion).
+
+=== SLIDE
+A parametric model is one where we don't just pass the image - rather, we're going to take in the image and some vector of parameters, generally referred to as Weights (represented by W).  Our computer code will now be able to take into consideration two things - the image itself, as well as the weights we provide.  These weights can then adjust the probabilities that we predict.  Remember for a minute the KNN classifier - in that case, we keep all of the training data in memory to compare to.  The goal of a parametric model is to summarize all of that training data in our weights parameters.  The problem then becomes how to best summarize information in W!  If we can do that well, we can get rid of the training data and only provide W to the algorithm.  If we can do a really good job, and make W really small, we could hypothetically even enable small computers - like cellphones - to run our algorithms.
+
+=== SLIDE
+Linear Classifiers are a very simple example of a parametric approach.  In this case, all we do is read in the information in the image (remember, it's just a matrix of numbers!), multiple it by weights, and that produces our probabilistic estimates. 
+
+=== SLIDE
+Let's break this down a bit, though.  Here is a real example of a bird from CIFAR 10.  It's very blurry, as the resolution of these images is very low - 32 pixels by 32 pixels.  That results in 1024 pixels of information describing "bird" - but, 
+
+=== SLIDE
+that's only in one color.  Nearly all images we will work with will have at least 3 colors - red, green and blue - and sometimes more.  So, ultimately the challenge in this case boils down to how to take in 3,072 values, and use those values to predict what's in the image.
+
+=== SLIDE
+So, let's go back to our equation.  When we look at this linear function, the first input is our image.  In practice, this is a vector of length 3,072, where each value represents a pixel in one of our three color bands.  In python, this would be represented as a numpy array - or a 1 dimensional list.
+
+=== SLIDE
+W - our weights - are represented by a 10 x 3072 matrix.  You can imagine a matrix with 10 columns and 3072 rows.  The first column might represent "Bird"; each row in that column would be the parameter you multiply by a given pixel value.  When you sum all of those up, it gives you your overall probability the image is a bird.  You repeat that for the other 9 matrix columns.
+
+=== SLIDE
+Let's think about this using a simplified example.  Imagine if CIFAR 10 was even worse - it was a 2 x 2 image, instead of a 32 x 32 image.  We've also reduced it to a single greyscale - i.e., there is only 1 band, so no blue, green or red.  So, we now have four total pixels!  Practically, this would be too little data to distinguish between different classes, but this simplified example will help us walk through linear models.
+
+=== SLIDE
+Let's say we want to solve for what this image is (i.e., a bird or dog), and someone has already solved for and provided us with the Weights for three classes - cats, birds and planes.  First, we would take all the pixels and translate them into a single array.  This is our input "image" in our function.
+
+=== SLIDE
+Second, we have our weights matrix.  In this case, we have three classes we want to choose between - cats, birds and planes.  Each of these three classes has a weight for each of our four pixels.  
+
+=== SLIDE
+Now, we can calculate the probability that this image belongs in each class.  For example, the cat score will be the inner product between the image pixels and the first row of the weights matrix.  This is sometimes refered to as the dot product.  In this example, you can see the number 56 is highlighted - this represents the greyscale pixel value in the upper left of the image of the bird.  We multiply this by the weight for this pixel for cat - 
+
+=== SLIDE
+in this case, 0.2.  We then repeat for each pixel-weight combination, and the sum of these values represents our final weight for the cat class.
+
+=== SLIDE
+We repeat this for each of our three clases - and, in this case you can see the bird score would be the highest, and thus the class we would choose. 
+
+=== SLIDE
+One neat thing about linear classifiers is our ability to understand what the algorithm is matching against.  Just like we could stretch the bird image out, we can also go the other way - transforming our weights matrices into images. Think briefly about what the numbers in the weights matrix mean - the bigger the value (above 0), the more weight it gives to a class.  So, if the upper-left hand pixel in the cats weights matrix has a large positive value, that means that images with large values in that pixel will be more likely to be a cat; and vice-versa for negative weights.  This means that the visuals of these weights matrices can be loosely interpreted as the generic "average" object the algorithm is comparing each image against.
+
+=== SLIDE
+Here is an example of visualizing those averages, generated for each class of CIFAR.  This shows some of the advantages and limitations of linear classifiers.  The biggest challenge with a linear classifier is that it is reliant on one, single "average" - that is, all "cars" are compared to the image of the car you see on the screen now; if they don't look like that car, then they likely would not be classified as a car.  The deer example is another good one - the average deer tends to be on a field of green (or maybe a forest.)  Of course, deer are not always against a green background.  In other cases, it would be harder pressed to identify an object as a deer.  My favorite example is the horse - here, if you look closely you can see the horse appears to have two heads.  This is because there are some number of images with the horse facing right, and some number to the left; thus, the average composite tends to be a two-headed horse.  This is reflective of the broader challenge of using linear classifiers for image recognition: they just aren't very good at dealing with heterogeneity.  If you have lots of different types of cars, planes, cats, deer, and they're against different backgrounds - as you would find in the real world - a linear classifier is inherently limited in it's ability to discriminate them.

@@ -1,0 +1,11 @@
+
+#SLIDE
+The next class of approaches to reducing the gap between our training and validation accuracy is regularization.  We've already discussed regularization in a few different contexts - you'll recall these are essentially penalty terms added to your loss function that penalize a model for having more complex weights (i.e., bigger values across more weights).  On the slide now is the idea of L2 Regularization.  Occam's Razor style, we hope that a simpler model will perform better than a more complex model.
+#SLIDE
+In the context of neural networks we have other options for how we implement regularization.  One of the most common of these is dropout.  The concept of dropout is - in any given layer - you set a parameter which defines the probability of any neuron's activation value being set to 0 (i.e., 0.5 is a common choice).  Thus, in the forward stage of the network, 50% of the neurons will randomly be 'dropped'.  In implementation - for example, in Keras - dropout layers frequently refer to Affine Layers with this regularization approach built in.  
+#SLIDE
+Important to note is that during your training, the dropout probabilities are applied randomly - i.e., every forward pass, you dropout different neurons.  This is great for training, but would be really bad for actual use in a model - i.e., if you're designing an algorithm to prevent a robot from knocking a toddler down, you want the same image of a toddler to be recognized as a toddler 100% of the time; it would be bad news if tomorrow, due to random chance, it identifies as something different.  So, how do we handle this?
+#SLIDE
+The most common solution is to train your weights based on the dropout - i.e., every connection still receives a weight each iteration - and then, in the final product, multiply the outputs of each neuron by the probability a neuron was dropped out.  This approximates the relative importance of each neuron in the dropout net, while ensuring a deterministic fit that will not change due to random chance.
+#SLIDE
+Another version of this concept is called DropConnect.  In DropConnect, instead of zeroing out the activation functions, random weights are set to 0 instead, essentially removing connections between neurons.  

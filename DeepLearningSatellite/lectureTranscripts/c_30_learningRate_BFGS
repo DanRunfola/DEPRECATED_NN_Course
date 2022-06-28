@@ -1,0 +1,19 @@
+And, we began a discussion on how to identify an optimal learning rate - and some of the signs that you would see if what you found was suboptimal.  This is where we'll start today.  One important thing to consider is that the question itself - what learning rate should we choose? - is a bit misleading.
+#SLIDE
+That's because learning rates can change - i.e., there is no reason why you have to use the same learning rate at each iteration of your weights calculations.  This can let you capture the best elements of multiple learning rate strategies.  One of the most common approaches to this changing is the implementation of some decay - shifting the learning rate down as the number of iterations increases. 
+#Slide
+The most common approaches to this have a parameter - k - which determine some rate of decay; this is generally implemented in three different ways.  First of these is Step Decay.  In step decay, every k iterations you cut the learning rate by half; this can be modified to cut the learning rate by different rates, and frequently is.
+#Slide
+In exponential decay, learning rate decays according to an exponential function, approaching zero as defined by the rate k.  In the exponential case, higher values of K result in quicker decay of learning.
+#Slide
+And, in inverse decay the learning rate is reduced based on an inverse function, in which the denominator increments by k each iteration. 
+#SLIDE
+Another approach is to try and omit the need for learning rates in the first place, but solving for minima using 2nd-order derivatives. 
+#SLIDE
+To date, we've focused on calulating the gradient for a given set of parameters in order to from a linear approximation of our loss function; we then move our parameters in a step to minimize that linear approximation.  All of the learning we've done to date has followed this generic approach.  One of the big challenges of this is that, if you step too far (as shown here), the approximation doesn't hold very well in most cases - necessitation a smaller learning rate. 
+#SLIDE
+However, there is nothing stopping us from going beyond a first-order approximation of our function (i.e., a line) to a second order approximation.  In this case, we can use the gradient *and* Hessian Matrix to form a quadratic approximation of the function - basically, instead of representing the function based on the first-order derivative, we can represent the function quadratically, giving a (potentialy) more accurate step.  Another very helpful characteristics of this approach is that it has a single solution that doesn't require a step size - i.e., there is one minimum of the function which we can step to.  This step is referred to as the "Newton Step".
+#SLIDE
+While very powerful, in practice calculating the quadratic approximation of our loss function is limited in a few key ways.  First and foremost, a Hessian Matrix which describes the second derivative of each parameter has O(N^2) elements; inverting that matrix would require O(N^3).  Even in a small network - with 100k parameters - that would still require around a petabyte of memory to invert, which is obviously unsuitable for realistic application.
+#SLIDE
+So, what do we do?  There are two common implementations of second order approximations, BFGS and L-BFGS, that you will encounter.  Both use different approaches to try and minimize the total amount of information that has to be held on disk or in memory at any given time. Of particular note here is that L-BFGS does work well in cases where you don't need to do any stochastic manipulations - i.e., your function is deterministic.  In our application, that means L-BFGS can be a powerful tool if we can solve our network in one large batch (i.e., no minibatches).  However, in practice it is rare you will be fitting a network without the use of batching, so the use of L-BFGS is limited.

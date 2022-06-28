@@ -1,0 +1,25 @@
+Before we dig into the outcome though, I want to highlight one quick thing.
+
+=== SLIDE
+Think for a moment about the code - our training would be lightning fast, as all we're doing is making in-memory pointers, which is nearly instantaneous.  However, our prediction would be quite slow - we have to compare every single case in our training data to a given image to find the smallest distance.  This is, needless to say, very time and computer-processing intensive.  It's also the opposite of what we generally seek: it's OK if a model takes a long time to train, because we can train a model before we use it on a large farm of computers.  However, we want our models to be able to predict very quickly, or run on low-power devices like cellphones.  So, this is no good, and more complex approaches are going to provide us with the opposite relationship.
+
+=== SLIDE
+To extend this example, lets apply the same logic to CIFAR10.  This dataset is made up of 60,000 images, which is subset into 50,000 training and 10,000 testing images.  The images are equally distributed across 10 different categories, including airplane, bird, frog and truck.  You can go to the website at the bottom of this slide to do a dive into the dataset, as well as see many more examples of the images chosen.
+
+=== SLIDE
+What you're looking at on this slide is a few example images taken from a nearest neighbor implementation on the CIFAR10 dataset done by Justin Johnson in 2017.  The first column is the image we are seeking to predict - one of the 1000 testing images from each class.  On the right are the images they are found to be most similar to according to the nearest neighbor algorithm, drawn from all 50,000 training images.  Highlighted in red are the cases where the class of the first image matched would have been incorrect.  For example, in the first row you can see the image we're testing is of a boat - the class predicted in this case would have been a bird, as the first image matched is a bird.  Conversely, in the second row you can see a case where nearest neighbor gets it right - the test image of a dog would have been matched to another dog.  Because these images are very low resolution, it can sometimes be a bit challenging to see what's going on, but they provide a good illustration of the type of approach we're testing.
+
+=== SLIDE
+One simple extension of Nearest Neighbors is K Nearest Neighbors, an algorithm that allows for a vote of multiple similar cases, rather than only taking the single best match.  Here, we have an example where we have multiple training samples for the letters "A" and "T", represented by Red (A) and Blue (T) dots.  We also have an example of a hand-written letter "T", represented by a yellow dot.
+
+=== SLIDE
+Each point is aligned so that the farther the point is from 0, the more different the letter was according to the L1 Distance.  So, for example, the first red point was a letter “A” that looked a lot like the letter “T” represented by the yellow dot.  This woudl result in an erroneous classification in an unmodified nearest neighbor algorithm, as we would then select A as the most likely correct class.
+
+=== SLIDE
+Conversely, in a K=3 Nearest Neighbor, we would expand our search radius to include the 2nd and 3rd most similar letters to our hand-written T.  Each case would get a vote, and because 2/3 of the cases are T, we would correctly assign the letter T.  You can imagine any number of expansions of this voting technique (i.e., distance weighting).  
+
+=== SLIDE
+Let's go back to our CIFAR10 example.  If you look at the fourth row, you can see the example of the frog, which was missclassified as a Cat, as the cat was the most similar image.  If we expanded to K=2, K=3, K=4, or K=10, we can get an idea of how expanding K can help (or hurt) accuracy of this class of model.
+
+=== SLIDE
+Here is us doing just that - remember, the correct answer for this estimate would have been a frog.  If we have k=1, we only use the first (most similar) image for our prediction - in this case, a Cat, and we get it wrong.  If we expand k to 2, we move to the second column of this table.  As you can kind-of, sort-of make out at the top of the table, the second-most-similar image was a frog.  Thus, we now have one example of 2 - of 50% - being a cat, and one - 50% - being a frog, so the algorithm would be tied as to what class it assigned.  If we did k=3, 2 out of the three examples are now cats, and 1/3 frogs.  If we then expand all the way out to k=10, you can see that there would be a wide range of classes estimated, with 3 of the 10 points belonging to both the cat and frog case, resulting in a tie.  

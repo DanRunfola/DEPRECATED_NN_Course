@@ -1,0 +1,16 @@
+#SLIDE
+Alright - today, we're going to be introducing Generative Models, but before we start down that road let's take a few steps back.  To date in this course, we've focused nearly entirely on classification models, in which we have some set of training data (i.e., pictures of cute, cuddly cats) that we use to calibrate model weights through trying to minimize some loss function.
+#SLIDE
+This then allows us to - at least if we have a good model - put a test image of a cat into our model, feed it forward, and get the output of the word "Cat". 
+#SLIDE
+Generative Models are after something fundamentally different.  
+#SLIDE
+Rather than seek to classify input images, in the case of generative models we're instead trying to generate outputs of samples that are drawn from the same distribution.  So, if our input images are cats, we would seek to generate outputs that.. look like cats!  Generative models are not just used for imagery, however; you can apply the same concepts to, for example, written language.
+#SLIDE
+So - why would we want to generate fake samples of things?  There are plenty of practical, and plenty of rather scary reasons why.  On the left you see the outputs of one of the most advanced generative networks available today.  Developed my NVIDIA and released in 2020, this network creates faces of people that don't exist, by drawing from a distribution of real faces and using them to generate new faces.  They have also created various nobs you can use to sample the distribution intentionally - i.e., imagine being able to see exactly what you would look like if you shaved your head; dyed it; or any other permutation.  This has real implications for everything from commercial companies all the way to law enforcement.
+#SLIDE
+The last few years have also shown the increased power of so-called "Deep Fakes", videos that are generated that seem to show individuals doing things that they never did.  While this technology is still *very* young, it's already becoming believable.  Generative networks are the functional building blocks that enable this type of inforamtion warfare. 
+#SLIDE
+And then, of course, we have the wonderful meme of "enhancing" images.  Generative networks are very good at enhancing an image by up-sampling based on a wide range of other samples - essentially teaching a computer what pixels would have looked like if the camera taking the picture had a better lense.
+#SLIDE
+There are a wide range of different generative model types, but broadly they fall into two categories: those that explicitly try to model the distribution you're sampling from, and those that implicitly try to recreate it.  For example, in your lab, you'll work with a Generative Adverserial Network (GAN) which reads in data, and then attempts to create images that fool a secondary model.  In this approach, you're never explicitly defining any probability distribution; rather, it's implicit.  This contrasts to approaches like variational autoencoders, which seek to approximate the probability distributions. 
