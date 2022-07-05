@@ -1,11 +1,10 @@
-=== SLIDE
-You'll remember last lecutre, when we discussed Image Classification - an idea that will form the core of
-most of this courses content.  When we talk about Image Classificaiton, we are talking about a process in 
+=== SLIDE 1
+When we talk about Image Classificaiton, we are talking about a process in 
 which an algorithm takes data - in the form of image data - for example, the bird on the left.  The algorithm
 is additionally provided with a set of pre-determined labels - for example, person, bird, sky, house.  Ultimately,
 the goal of these algorithms is to pick the correct of these pre-determined labels for a given image.
 
-=== SLIDE
+=== SLIDE 2
 So, what makes this so hard?  After all, my 3-year-old is very good at informing me as to the differences
 between a dog and a cat.  Unlike us squishy humans, computers have not had the benfit of millions of years
 of evolution of their visual capabilities - and, what they "see" is very different from what we see.  This 
@@ -14,9 +13,9 @@ of the matrix are defined by the size and resolution of the image; the range of 
 color is being measured.  So, a computer doesn't "see" the scene like you or I would - rather, it sees data that
 is reflective of the content of the image.
 
-=== SLIDE
+=== SLIDE 3
 The most commonn type of image is a 3 band, RGB, in which the computer actually takes in three different matrices at the same time.
-Onne of these is reflective of how much "blue" is being reflected, one red, and one green.  These values inform - for example -
+One of these is reflective of how much "blue" is being reflected, one red, and one green.  These values inform - for example -
 how bright three LED lights should turn on in a given pixel.  When they turn on at the specified intensity, the three LED lights
 (Red, Green, Blue) merge to form composite images - like the picture of the bird.
 
@@ -25,33 +24,27 @@ of a bird?  This problem is generally referred to as the "semantic gap" - we (as
 object as a "bird", and the gap is in the difference between our description of the data ("Bird") and the data description
 of the image (the data matrix).
 
-=== SLIDE
+=== SLIDE 4
 This challenge is made even more difficult by human semantic groupings - i.e., we intuitively group similar types of objects
 into the same label.  From the standpoint of computer code, the description of a given "Bird" in the data may be very different
 across two birds - even of the same species.  This is referred to as intraclass variation.
 
-=== SLIDE
+=== SLIDE 5
 You can also imagine a range of other challenges that our human eye may quickly generalize, but could dramatically challenge
 the way the data describes a given object.  One common challenge is viewpoint - a bird can easily appear in many different ways
 simply depending on where the camera was held relative to where the bird is.  A more direct example would be a tourist taking pictures of the Eiffel Tower from different angles - the tower won't move, but the viewpoint does.
 
-=== SLIDE
+=== SLIDE 6
 Lighting and Illumination can also cause the data-based description of a "Bird" to change dramatically.  A Wren set against a black background with perfect Lighting
 by national geographic will appear significantly different from a Wren in the wild with little control.  A Wren after dark would similarly appear very different.  However, it's still a Wren - and we need to be able to label it as such.  Birds don't become cars simply because it's dark outside!
 
-=== SLIDE
+=== SLIDE 7
 The background against which an object is photographed can also pose a challenge, as similarities between the image and the object can challenge both our human and computational ability to recognize the object.  
 
-=== SLIDE
-This provides a rare counter-case where the description of data (the matrix) may provide a more robust solution to object idenntification than our human eye, as camofloge has specifically evolved to counter our capabilities - not a computers.  
-
-=== SLIDE
+=== SLIDE 8
 Deformation is when the same object can be represented by numerous different geometric arrangements.  A bird isn't very deformable - though this is one example.  However....
 
-=== SLIDE
-Other types of objects can deform into a huge array of different shapes.  No matter how far a cat climbs into a couch, it's still a cat.  Or if it's sitting in a bowl.  Or if it's leaping through the air.  However, the underlying data matrices which represent each of these images would be dramatically different - thus, again, we run into a fundamental challenge of the semantic gap.  While it is very evident to our human eyes and intuition that these cats are all ... well, cats, the data matrices that describe them are going to have very little resemblence to one another.
-
-=== SLIDE
+=== SLIDE 9
 Occlusion is also an enormous challenge - while the human eye can gather what objects are in an image based on very little data, occluded objects limit the amount of relevant data within a matrix for a computer to assess.  As is only fair, here are a few examples of dogs this time - it is likely that in no case are you left with any confusion (these are, clearly, dogs), but think about how little data is actually *relevant* to your minds intuition.  
 
 === SLIDE

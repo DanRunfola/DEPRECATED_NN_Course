@@ -1,21 +1,22 @@
 
+=== SLIDE 1
 So, let's get started.  Let's pretend we're writing our first classifier - a function that takes a matrix of data representing an image in, and outputs a class. For our hypothetical, let's say we're classifying a black and white image of a capital letter "T" - one of the earliest types of image recognition challenges.  What you see here is a very simplistic representation of what the letter T might look like in code - pixels that intersect with the letter T are represented by a "1", and white pixels are represented by a "0". 
 
-=== SLIDE
+=== SLIDE 2
 What do we want to do with the letter T?  Teach a computer how to recognize it, of course! Think about how you might code an algorithm that does that - first, you would define an image classification function, then you would pass the matrix "T" in.  From there, you would need to identify a deterministic way to choose "T" from your set of possible labels.  For example, maybe you could do something like this:
 
-=== SLIDE
+=== SLIDE 3
 Because we know the letter "T" results in a matrix with 32 "1" values, we can simply hard code it so that any time there are 32 pixels with "1"s, we return the letter T.  There we go - problem solved, course is over!  This is of course a terrible solution, as it would only work for a narrow definition of "T", would likely have overlap with other charachters which lead to errors, and not be able to handle any of the classes of errors we discussed before - i.e., occlusion.
 
 This contrasts to other classes of computer algorithms, which frequently have a deterministic solution - i.e., sorting a list (everyone's favorite activity).  However, to hard-code a determinstic solution to "finding the letter T" would require a near-infinite number of exceptions and tests to ensure it is not confused with other letters, can be detected in all cases, and that it is never, ever confused with a cat.  
 
-=== SLIDE
-The impossibility of coding all such exceptions and rules has not stopped us from trying.  Back in 1986, Canny put together an algorithm which sought to detect edges, and posited that the relationships between the edges could be used to identify what the object was.  As a very simple example in our case of "T", instead of deterministically selecting the type of letter based on the number of pixels that are black (32), we can instead do it based on the number of intersections between lines (in the case of T, 1).  While deterministic - the same image fed into the same algorithm will always receive the same result - this approach is exceptionally brittle.  I.e., 
+=== SLIDE 4
+The impossibility of coding all such exceptions and rules has not stopped us from trying.  Back in 1986, Canny put together an algorithm which sought to detect edges, and posited that the relationships between the edges could be used to identify what the object was.  As a very simple example in our case of "T", instead of deterministically selecting the type of letter based on the number of pixels that are black (32), we can instead do it based on the number of intersections between lines (in the case of T, 1).  While deterministic - the same image fed into the same algorithm will always receive the same result - this approach is exceptionally brittle. For example, 
 
-=== SLIDE
-what if the font changes?  Further, if you want to consider any other type of image - i.e., a plane, or evil villans from Dr. Who - you need to start a completely new algorithm. 
+=== SLIDE 5
+what if the font changes?  Further, if you want to consider any other type of image you need to start a completely new algorithm. 
 
-=== SLIDE
+=== SLIDE 6
 So, we don't want to manually write rules for every conceivable object in the world, under all lighting conditions, irrespective of how many blankets they are hiding under.  So, what is a human that wants to automatically classify billions of frames of video and images to do?  This is where machine learning (or, AI) comes into play.  Rather than write the algorithm ourself, we instead can write a classifier - a loose framework of possible rules for an algorithm to parameterize - and let the AI use that framework to essentially write it's own function to distinguish between classes.  Practically in the case of computer vision, this is a three step process.  First, we need a very large database of labeled imagery - i.e., ImageNet - that provides millions of examples of what a "Cat", "Dog" or "Canary" are.  This is used to help cross the semantic gap - i.e., each one of these images has been labeled by a human, and thus can be used to "crosswalk" between the computer-description of matrices, annd the human-descriptors of words.  
 
 Once we have our input data, we need a function that can produce a model we can use to classify each image.  This is the function that is where the "machine learns" - i.e., tries to identify the best set of rules to determine if an image is the letter T or a Wren.  As you can imagine, there are many, many different ways to conduct this step of machine learning, and we'll be going into some depth on them throughout this course.
@@ -24,44 +25,47 @@ In the final step, we actually apply the model to unseen images - i.e., put a ne
 
 This results in a more complex approach to our code - rather than one function that takes an image in and puts a class out, we now have two different functions: one takes in a very large set of data to learn from and construct a classifier, and the second takes in an image and the output of the first function to produce a predicted class.  
 
-=== SLIDE
-We're going to start with a few simple algorithms to illustrate how machine learning works at a fundamental level, before we graduate on to the neural network based approaches.  The first of these is essentially the absolutely simplest approach to training an algorithm the field has come up with - "Nearest Neighbor".  Most of you have probably already encountered Nearest Neighbor, but it will be helpful to conceptualize it in the context of image recognition.  
+=== SLIDE 7
+We're going to start with a few simple algorithms to illustrate how machine learning works at a fundamental level, before we graduate on to the neural network based approaches.  The first of these is "Nearest Neighbor".  You may have already encountered Nearest Neighbor, but it will be helpful to conceptualize it in the context of image recognition.  
 
-=== SLIDE
+=== SLIDE 8
 The first step of Nearest Neighbor is to feed some kind of training data into the model.  This data has to be labeled.  As a very, very simple example, I have constructed three matrices that will represent our training data - the letter T, lowercase letter L, and a capital I.  While we'll show the outcome of a more serious case in a few minutes, these three matrices will be used to illustrate the basics of how Nearest Neighbor works, and serve as a nice illustrative example of machine learning as a whole.
 
-=== SLIDE
+=== SLIDE 9
 Here is an example of the letter "T" from our training data, and on the right the letter "T" we seek to recognize.  You'll note it's slightly different - i.e., the font (Time New Roman) results in a slightly wider base and edges at the sides.  Thus, our old approach (32 black pixels) would fail here - we need something that can recognize similarity, which Nearest Neighbor will help us with.
 
-=== SLIDE
+=== SLIDE 10
 For reference in later slides, here are the two letter Ts in pixel form, where each pixel that touches the letter is a 1 (black), otherwise it is a zero (white).
 
-=== SLIDE
+=== SLIDE 11
 The basics of nearest neighbor are simple - for every single image we want to predict, we'll compare it to the training data and pick the most similar according to a distance metric.  The first distance metric we'll highlight is L1 (also called manhattan distance).  This is one of the simplest ways you could imagine comparing two images - essentailly overlaying them, and simply measuring the differences.  Let's start with our letter T.  After the algorithm "learns" (i.e., memorizes) our training data, we're going to contrast the T we want to recognize to every letter we trained with.  In this slide, the first letter T on the lower-left is the T from our training data - the example T we want to match to.  In the middle is the T we want to recognize.  On the right is the pixel-wise difference between the two images.  In red are the negative cases (where the T we want to recognize had a pixel, but the training case did not).  As you can see on this slide, we take the sum of these differences to calculate the "L1 Distance" between these two images.
 
-=== SLIDE
+=== SLIDE 12
 On this slide, you'll see a simple programmatic example of implementing a L1-norm based distance function.  All this code does is take in one of our example matrices, convert them to numpy arrays, and take the pixel-wise difference.  This is identical to what we did manually on the previous slide. 
 
-=== SLIDE
+=== SLIDE 13
 Now that we have our function, we can write a very simple loop that contrasts all of our different training datasets - the T we want to classify, and the three training letters (capital T, lowercase l, and capital I).  The code will produce the distance measures shown in the lower-right - a L1 distance of 10 for the letter T, 14 for the lowercase l, and 18 for the capital I.  Based on this, we would classify our letter as a T!  Wonderful.
 
-=== SLIDE
-Of course, we want to start developing much better coding habits throughout this course, so let's translate that code into a class that we can re-use and modify more readily.  We're going to be diving right in - if you feel behind or lost, I recommend you check out the python tutorial we have up on Piazza and then return here.  First, we're going to be using numpy for all of our arrays from here on.  This is fairly straightforward to implement, and will give us big speed gains later on.  Here is one quick example of converting the training letter "T" into a np array; you'll note that while the structure changes, the underlying data does not.
+=== SLIDE 14
+Of course, we want to start developing much better coding habits throughout this course, so let's translate that code into a class that we can re-use and modify more readily.   First, we're going to be using numpy for all of our arrays.  This is fairly straightforward to implement, and will give us big speed gains later on.  Here is one quick example of converting the training letter "T" into a np array; you'll note that while the structure changes, the underlying data does not.
 
-=== SLIDE
+=== SLIDE 15
 What you're looking at now is a simple implementation of the Nearest Neighbor algorithm, this time using Numpy. Let's spend just a little bit of time breaking down what's going on here.  
 
-=== SLIDE
+=== SLIDE 16
 First, we're saving all of our training observations into memory.  As noted before, this training is about as simple as it gets!  
 
-=== SLIDE
+=== SLIDE 17
 Second, we're running the exact same algorithm as before, comparing every one of our test cases (saved as self.Xtr) to the case we want to predict (X[0] in this case).  The class we're calling is on the left (NearestNeighborSinglePrediction), and on the right you'll see an example of how we would call the code.  Noting that all of our letters are now numpy arrays, we would first build a list of all of our training data.  New in this approach, and following the general paradigm of the rest of the field, we additionally create a second array, our "trainingy".  This array is entered in the same order as our "trainingX", and provides the labels.  We then provide our training data to the algorithm, and solve for a prediction.
 
-=== SLIDE
+=== SLIDE 18
 I want to draw your attention to the 1-liner where we calculate l1Distances.  This takes the place of the for loop we wrote earlier, and is far, far more computationally effecient while providing the same solution.  This is one example of many where we will be using numpy array approaches to replace what would otherwise be implemented in a for loop.
 
-=== SLIDE
-We're almost there, but want to make this generic algorithm a little more versatile so we can test multiple letters at once - in practice, you'll need this to validate how well your algorithm is working, as you'll want to test your algorithm against thousands of cases not used in your training.   To facilitate this, I have created a new letter - lowercase l - with a different font than our training data.  In this iteration of the code, we'll be seekling to simultaneously identify the letter these two examples look most like based on our training data.
+=== SLIDE 19
+We're almost there, but want to make this generic algorithm a little more versatile so we can test multiple letters at once - in practice, you'll need this to validate how well your algorithm is working, as you'll want to test your algorithm against thousands of cases not used in your training.   To facilitate this, I have created a new letter - lowercase l - with a different font than our training data.  In this iteration of the code, we'll be seeking to simultaneously identify the letter these two examples look most like based on our training data.
 
 === SLIDE
-Alright!  Just a few small changes to our code let us output predictions for multiple inputs.  We now have a capital T and a lower case l, correctly classified.
+Alright!  Just a few small changes to our code let us output predictions for multiple inputs.  We now have a capital T and a lower case l, correctly classified.  Now, let's do that one more time - but this time we'll do it live, so you can see an actual implementation.
+
+
+(((((CUT HERE - DO AN ACTUAL IMPLEMENTATION USING THE CODE.)))))
