@@ -1,0 +1,83 @@
+Welcome back to DATA 442!
+######SLIDE
+As usual, let's start with a brief refresher of what we covered in the last lecture.  Back propogation is all about trying to find out - if you change an input (i.e., W in this slide - one of our weights), what the expected change in the total loss would be.  Once we know that, we can change the parameters (again, W here) in the direction that will minimize our total loss - and, thus, provide us with a better model.
+######SLIDE
+Solving for these expected changes is equivalent to solving for the gradient of an input with respect to our loss function - ultimately.  To solve for that in the context of neural networks, we first can create a computational graph that defines all of our inputs and outputs for a given function, as illustrated on the slide now.  Intermediate steps - such as the addition computation now represented by Q - must also be represented.
+######SLIDE
+Because many of the computations being performed are simple - i.e., addition or multiplication - their gradients are known.  I.e., we know that for a one unit change in x, Q will also change by one here.
+######SLIDE
+And, here we know that a one-unit change in z would result in an increase in our output of Q.
+######SLIDE
+The magic of backpropogation is in our ability to string all of these things together - i.e., here, we know that the gradient for x with respect to our output is equal to the multiplicative product of the two intermediate gradients - or, in this case
+######SLIDE
+z*1.  This is referred to as the chain rule.
+######SLIDE
+This process can be used on arbitrarily large networks, and is done iteratively.
+######SLIDE
+Functionally, when we go to implement a neural network, we are reliant on two different bodies of code: an implementation of a forward and backward pass.  The forward pass is the code that takes in the input X (image) and W (weights for the image).  It then provides a set of scores - no optimization of any kind is done, and forward passes are lightning fast in most cases.  After the forward pass is completed, the backward pass can then be done to solve for the gradients of each input (i.e., weights W) with respect to the loss function you select; these gradients can then be used to update your weights.  Once you weights are updated, you repeat the process - doing a forward pass and then another backward pass - until some threshold is reached (i.e., a maximum number of iterations).
+######SLIDE
+In code, you can imagine a neural network being split into the same two steps - forward and backward passes.  In the forward pass, we take our input data (say, image pixels X and weights for each pixel W).  We would then start at the beginning of the graph and solve for each node - X1 * W1, X2 * W2, and the addition computation (i.e., in our forwardPass for loop, we would conduct a computation for every blue circle in this picture).
+######SLIDE
+In the back propogation, we flip the computational graph so that we're running the nodes in reverse order, and we're passing the loss function backwards through the function.  Again, we go node-by-node, solving the gradients for each node in a for loop.
+######SLIDE
+A pragmatic approach to implementing forward and backpropogation is to create independent functions (or a class, as we will do here) for each one of the blue circles - i.e., every type of computation gets a function we can pass data through in a forward or backward direction.  
+######SLIDE
+In this case, we have two different types of computation - multiplication and addition - so would need two different classes to handle the different types of passes.
+######SLIDE
+Let's consider multiplication first.  For our forward pass, the implementation of the calculation that happens in a multiplication node is trivial - we multiply the two incoming inputs together.  Remember, because this is a function, we can replace the variables "W" and "X" to be more generic, as we'll simply be passing data into this function, so we'll call these...
+######SLIDE
+input1 and input2.
+######SLIDE
+Now we need to consider the backwards function.  In this case, we have the input of the upstream gradient - i.e., the change in the loss function when the node output changes.  We expect our backward function to have two outputs - d_input1 and d_input2 - i.e., the expected change in the loss function when input1 and input2 change, respectively.  We'll get to how to solve for those in a minute.
+######SLIDE
+First, remember back to what we discussed about multiplication nodes in the last lecture.  In this example, we have node F, which is the final computational node in our graph.  We know that F is equal to the two inputs multiplied together - i.e., Q * z in this example.  Thus, it is very easy to intuit that a one unit increase in Q would result in a change in function F of z - because, it's Q * z!  Thus, the gradient of F with respect to Q is z.  This is what we want to implement in code.
+######SLIDE
+So, let's crosswalk that to our current example, just focusing on this one multiplication node for now.  In the forward pass, following our code, we are taking in X1 and W1, multiplying them, and returning the output.  Because we're multiplying we know that a change of 1 in X1 would result in a change of W1 in this output - because all we're doing is multiplying.
+######SLIDE
+This can be represented in our code like this in the backward pass for dInput1 - i.e., the expected change if you change dInput1 by 1 is equal to the value of input2 * the upstream gradient (represented by dOutput here).  If you have a keen programming eye, you'll see a big problem with this code as written right now - pause if you want to sleuth.
+######SLIDE
+For a given multiplication node, in the forward pass we need to save the two inputs - because we're going to need those inputs to solve for the gradient on the backward pass.  As a class in python, we need to save the variables in a way all functions can access; we do so by editing the forwardPass to include a temporary cache of both input1 and input2.  This allows us to reference those values in the backward pass. These types of node definitions are what make up the backbone of neural network implementations - essentially, different architectures are stringing classes that look like this together in different ways. 
+######SLIDE
+Ok, let's take a moment to bring all of this back to the topic in this course, neural networks, and exactly how this is represented and implemented in that context.
+######SLIDE
+First, let's bring things back to a real example - remember CIFAR-10.  Here, every image has 3,072 pixels - that is, they are 32x32 size images, with 3 color bands.  In a simple linear model like this, we would multiply each of those pixels by some value W - and, remember, there are 10 of those, 3,072 for each W. Thus, for our computational graph, we have 30,720 multiplication functions that we have to include, and 10 "score" nodes which took the additive total of each set of 3,072.
+######SLIDE
+We could write all of that out - i.e., like this, but in practice that's infeasible, because you end up with a beautiful diagram that looks osmething like...
+######SLIDE
+Whatever this mess is.  So, instead, we are going to represent our neural networks using layers.  Layers are the shorthand way to refer to all of these calculations - so, one multiplicative layer in a neural network would refer to the 30,720 weights multiplied by the 3,072 pixel values, and that layer as an output would have the 10 scores - one for each class - which is the sum of the inputs.
+######SLIDE
+That would look something more like this - and, this probably looks familiar to any of you that have dabbled in neural nets before! Much cleaner.  This represents our X - which has 3,072 pixels of input - our S, which has 10 class outputs.  We can infer from this that W is an array of 30,720 free parameters.  
+While you can represent a simple linear model like this, in practice building a one-layer neural network would be a huge waste of the potential of these networks.  Right now, this is a straightforward multiplication - linear relationships would still have to be present in the data.  Remember way back to our look at CIFAR and the two-headed horse - this linear approach would be no different so far.
+######SLIDE
+Thus, what makes neural networks so powerful is the addition of non-linear layers.  Take this function as an example - here, we're still multiplying a set of weights (now called beta) by our pixel values - but now, instead of the output being that raw value, we're now taking the maximum of either 0 or that output.  Additionally, we have introduced a new parameter - being represented by W alpha - and a hidden layer of intermediary nodes called h.  Let's walk through what's going on here.
+#######SLIDE
+First, we're taking in our 3,072 pixels, and passing them to a new type of layer - a hidden layer.  Hidden layers are poorly named, but represent intermediary layers of neural networks.  In this example, I have chosen 50 for the number of hidden layers.  That means that weights vector W beta would contain 50 * 3072 weights, or just about 154,000 weights. 
+#######SLIDE
+In the second part of this network, we will reduce h (which is 50 outputs) down to the final 10 scores - one for each of our 10 CIFAR classes.  Here, we're going to multiply the 50 h outputs by 10 sets of weights W alpha.  The means weights vector W alpha would contain 500 total weights.  
+#######SLIDE
+Just like in our smaller examples, the 10 scores for a given image would then be passed into a loss function, and we would then back-propogate through the network, calculating the gradient for every W, and updating accordingly.
+#######SLIDE
+So, why is this intermediary of h, and the additional weights, so important?  Let's go back to the CIFAR example of a horse.  You'll remember back a few lectures, if we just have one layer of weights (i.e., a linear model), the weight values for a horse end up looking something like this - i.e., images that look more like this will be classified as a horse.  In the linear case, this one single image is the image that defines a "horse".  Images that look more like this will be classified as a horse - which means that images with green grass are going to get a much higher probability.
+#######SLIDE
+Thus, linear models - or single layer neural networks - would suffer when trying to classify a horse that looks like this, as there is no green background.  
+#######SLIDE
+Further, you can tell that some horses were facing left, and some right.  Thus, a linear model using CIFAR would assign a very, very high probability to a horse that looked something like...
+########SLIDE
+This lovable horse here.  Obviously, that's not desirable!
+
+########SLIDE
+A two-layer neural network allows us to overcome this limitation.  By defining h (the middle, 'hidden' layer) as 50, we essentailly enable the neural network to create 50 different templates - and then decide which of those templates to assign to each of 10 classes.  Weights beta define the 50 "intermediary" classes - so, you might have one of those 50 representing horses that face left, one representing horses that face right, and one for horses on white backgrounds.  Weights alpha then essentially define which of those belong with each class.  There is a lot of complexity in this - i.e., multiple templates h may feed into multiple scores s in cases of similarity - but this basic concept of nonlinearity leads to tremendous gains in our ability to recognize images.
+########SLIDE
+We can keep going with this - as we seek to engage with more and more complex issues, we can stack layers in a neural network to arbitrary depths.  So, here, instead of just one hidden layer, we add a second one - this time of 20.  Because adding an additional layer increases the total number of parameters in our model, it is possible to capture more heterogeneity.  However - this does come with costs, which we will be discussing later in the course. If you've ever heard the term "deep learning", this is where it comes from - i.e., we could keep adding layers until our fingers get numb.
+#########SLIDE
+We're going to briefly switch gears a bit now and start talking about node functions in a little more detail.  You'll recall that nodes carry out some computation - in the examples we've looked at so far, those are generally either multiplication or subtraction.  However, in neural networks the node computations are most commonly of a class very loosely designed to imitate how the human mind works.  If you remember back to biology, you'll probably remember that neurons "fire" - i.e., there is something that causes the neurons in our brain to send electrical impulses to other neurons, and the culmination of all that activity is what drives our body to do stuff - eating, drinking, sleeping, breathing - it's all controlled this way.
+#########SLIDE
+To imitate this "firing" of neurons, we use a range of different functions within our computational nodes.  Some of these functions operate on "toggles" - i.e., if a value is above 0, it passes on a 1 ("fires"), otherwise it remains zero (i.e., the relu function illustrated here).  In other cases it may be an intensity that goes up rapidly at a certain value - i.e., a tanh function.  All of these different activation functions have different qualities, and we're going to dig into those further later. To provide one word of caution, though - neural networks are very, very coarse representations of the power of the human mind; there are a litany of factors that distinguish how the mind works and how neural networks work.  So, while the basic inspiration for the algorithms may be the elementary function of neurons, we are not yet close to being able to claim a neural network is itself functioning even similarly to human cognition.
+######SLIDE
+Ok, that's it for today!  To briefly summarize the lecture, we covered how you can implement forward and backward propogation using computer code examples.  We then talked a bit about how it's helpful to abstract networks into layers, rather than individual nodes on a computational graph, and how neural networks and computational graphs interrelate.  We covered the fundamental concept of deep learning - i.e., adding more layers - and how it can be helpful in cases of heterogeneity.  Finally, we had a brief discussion on the relationship between neural networks and the human mind, and added a word of caution that they are not *really* the same thing.  That's it for this lecture - see you next time.
+
+
+
+
+
+f = W_{\alpha}*max(0, W_{\beta}*X)

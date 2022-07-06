@@ -1,0 +1,116 @@
+You are trying to minimize a loss function, which is defined as:
+
+$$L = \sqrt{(y_{prediction}-y_{observed})^2}$$
+
+And, the function you are trying to find the minimum loss for is:
+
+$$y = \beta_0 * X$$
+
+You have run two tests - one with $$\beta_0 = 1$$, and a second test with $$\beta_0 = 1.5$$.
+
+In the first test ($$\beta_0 = 1$$), the loss function resolved to 22.5.
+In the second test ($$\beta_0 = 1.5$$), the loss function resolved to 25.
+
+Using a finite differences approach, what is the partial derivative for the weight $$\beta_0$$?
+
+
+[____](=5+-0)
+
+If your step size (sometimes called learning rate) is set to 1.0, in a gradient descent approach to loss function minimization, by what value would you change $$\beta_0$$ on the next iteration?
+
+[____](=-5+-0)
+
+
+Which of the below are true about Stochastic Gradient Descent (SGD) and Gradient Descent (GD)?
+
+[ ] SGD will provide an exact solution for the gradient.
+[ ] A difference between SGD and GD is that in SGD, weights are initialized randomly.
+[ ] SGD relies on analytic solutions for gradients, while GD relies on finite difference solutions.
+[ ] SGD adds a randomized parameter at each step in the optimization; GD does not.
+[ ] GD has a lower learning rate than SGD.
+
+
+You have implemented a simple nearest neighbor algorithm, in which you are using the mean pixel value for images to classify.  The dataset you have access to looks like this:
+
+| Obs.  ID| Mean Pixel Value  | Image Class  |
+|---|---|---|
+|1|25.89|Cat|
+|2|26.78|Cat|
+|3|21.23|Dog|
+|4|29.23|Dog|
+
+
+You have implemented a linear model, and chose to use a multiclass SVM loss function.  You initialized your model with random weights, and calculated scores for two images:
+
+
+| Obs.  ID| Mean Pixel Value  | True Image Class  | Score - Cat | Score - Dog |
+|---|---|---|---|---|
+|1|25.89|cat|1.45|1.32
+|2|22.58|dog|2.32|1.56 
+
+What would the SVM loss be for the "cat" case, assuming $$\varepsilon$$ = 0?
+
+[____](=0+-0)
+
+What would the SVM loss be for the "cat" case, assuming $$\varepsilon$$ = 1?
+
+[____](=0.87+-0)
+
+Assume your total loss equation looks like this:
+$$\text{Total Loss} = \frac{1}{N}\sum_{i}^{N}Loss_{i}$$
+where $$Loss_i$$ is the total loss for case $$i$$.  In this example, there are two cases, as defined in the table above.  Assuming $$\varepsilon$$ = 0.5, what would the Total Loss be when accounting for both test cases, using a Multiclass SVM loss?
+
+[____](=0.815+-0.01)
+
+Assume you have a vector of weights during the process of optimization.  The vector is defined as:
+
+$$W = (45.6, -12.3, -23.5)$$
+
+Given this set of weights, what would the L1 Regularization penalty term be (assuming $$\lambda$$ = 1).
+
+[____](=81.4+-.1)
+
+Your algorithm is in the process of optimizing, and over five iterations it encountered five sets of weights parameters ($$W_{1}, W_{2}, W_{3},W_{4},W_{5}$$) that result in identical data loss.  The sets of weights parameters are:
+
+$$W_{1} = (12.6,-54.6,-54.6)$$
+$$W_{2} = (25.6,26.4,26.4)$$
+$$W_{3} = (24.5,12.5,12.5)$$
+$$W_{4} = (-24.5,-57.4,-57.4)$$
+$$W_{5} = (9.6,12.79,12.79)$$
+
+Assuming $$\lambda = 1$$, if you are using L2 regularization, which of the above sets of parameters would your model preference?
+
+( ) $$W_{1} = (12.6,-54.6,-54.6)$$
+( ) $$W_{2} = (25.6,26.4,26.4)$$
+( ) $$W_{3} = (24.5,12.5,12.5)$$
+( ) $$W_{4} = (-24.5,-57.4,-57.4)$$
+(X) $$W_{5} = (9.6,12.79,12.79)$$
+
+![Screenshot_from_2021-01-15_14-10-16.png](/files/50b7342a-7f85-49e9-9244-76689450b7fa)
+
+You defined an algorithm which follows the computational graph above. It reads in one value $$X_{1}$$, multiplies it by two weights ($$W_{1}$$ and $$W_{2}$$), adds these values together, and outputs a score $$S$$.
+
+Assume that:
+
+1) Score $$S$$ is input into a loss function, which takes the form of: 
+$$L = S^{2}$$
+
+2) $$X_{1} = 4.3$$
+
+3) $$W_{1}$$ and $$W_{2}$$ have been initialized as:
+$$W_{1} = 0.45$$
+$$W_{2} = 0.75$$
+
+During the first forward pass, what would output value $$S$$ be equal to?
+
+[____](=5.16+-.1)
+
+What would the loss function return after the first forward pass?
+[____](=26.6256+-.1)
+
+In the first backpropagation, following the chain rule, what would the gradient for $$W_{1}$$ be with respect to $$S$$?
+
+[____](=0.75)
+
+By what value would you increase or decrease $$W_{2}$$ for the next forward pass, assuming you seek to minimize the loss function?
+[____](=-0.75)

@@ -14,7 +14,26 @@ website/assignments/assignment2/images
 website/assignments/assignment2/assignment2.tar.gz
 website/assignments/assignment3/models/
 website/assignments/assignment3/myPokemon/
-
+Archive/website/assignments/assignment1/*.gz
+Archive/website/assignments/assignment1/cifar-10-batches-py
+Archive/website/assignments/assignment1/images
+Archive/source
+Archive/website/images/cifar-10-batches-py
+Archive/website/assignments/assignment2/cifar-10-batches-py
+Archive/website/assignments/assignment2/assignment_2_grader/cifar-10-batches-py
+Archive/website/assignments/assignment2/assignment_2_grader/testTrainLab2.pickle
+Archive/website/assignments/assignment3/testTrainLab3.pickle
+Archive/website/assignments/assignment2/cifar-10-python.tar.gz
+Archive/website/assignments/assignment2/testTrainLab2.pickle
+Archive/website/assignments/assignment2/images
+Archive/website/assignments/assignment2/assignment2.tar.gz
+Archive/website/assignments/assignment3/models/
+Archive/website/assignments/assignment3/myPokemon/
+Fall22/videos
+/Fall22/videos/*
+Fall22/videos/*
+/DeepLearningSatellite/videos
+*.cmproj
 *.h5
 
 # Byte-compiled / optimized / DLL files
