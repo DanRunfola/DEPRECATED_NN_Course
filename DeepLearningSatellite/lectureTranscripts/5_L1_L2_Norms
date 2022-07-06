@@ -1,0 +1,12 @@
+
+=== SLIDE 1
+Many different machine learning algorithms - including KNN - require the selection of a distance metric.  This is the metric that determines how similar any two images are to one another.  Take for example the four letters at the bottom of the screen. We seek to train an algorithm to choose if the letter in yellow (T) is an A or a T, based on the three training letters in the grey area.  First, we need to calculate the difference between the T and each of the training cases.  The simplest way to do that is to convert each letter into a binary array of 0s and 1s...
+
+=== SLIDE 2
+Based on what matrix cells a given letter touches.  We can then take the absolute difference of the matrices to give the overall difference.  You'll see that the difference (4, in this case), is what determines where on the number line a given training observation is placed - i.e., the red dot here.
+
+=== SLIDE 3
+What we just described is a "L1 Norm" - i.e., the way we're calculating the distance between these two observations is by taking the absolute pixel difference.  There are many different ways to calculate distance metrics, but the most common alternative is the L2 norm, in which you square the differences, instead of taking the absolute difference.
+
+=== SLIDE 4
+While it may seem bland, the choice of a distance metric has a number of implications.  A few important things to note.  First, L1 distance is predicated on the idea that differences are linear - i.e., a one-unit change in difference between 0 and 1 matters as much as a one-unit change in difference from 10 to 11.  L2 biases towards large differences - i.e., a one-unit change in difference between 0 and 1 matters less than a one-unit change in difference from 10 to 11.  Further, L1 distance is sensitive to changes in your underlying coordinate systems, which inter-relates to the standardization strategies you choose.  As a broad rule of thumb, L2 distance is generally preferable if you are working in a generic feature space, but L1 might be preferable if you know the specific data you have is highly relevant to your classification (i.e., the precision of the measurement matters a lot).  That's the theory - we'll get into the computational strategies for picking distance metrics in later videos.

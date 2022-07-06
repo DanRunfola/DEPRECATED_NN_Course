@@ -36,7 +36,6 @@ Fall22/videos/*
 *.cmproj
 *.h5
 
-# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class

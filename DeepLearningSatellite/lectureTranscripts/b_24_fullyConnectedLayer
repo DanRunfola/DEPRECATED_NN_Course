@@ -1,0 +1,8 @@
+#SLIDE
+Depending on the network architecture, at some point we stop convolving or pooling, and we want to translate our filter information to a final prediction of a class.  The model that does this is referred to as the "fully connected layer" - i.e., the layer that takes in all of the final filter values, and outputs the final set of scores.  While this could theoretically be as simple as a linear model - as illustrated here - in practice the fully connected layer is most commonly yet another neural network (just without the convolutions this time).
+#SLIDE
+Take this set of activations as an example - after all of our pooling and convolutions, we have four filters that have been reduced down to the values shown here (4 for each filter, and 255 filters). 
+#SLIDE
+We're going to vectorize these values into one long array with 255 x 4 - 1020 entires, stacked vertically here.  The number 255 is, again, arbitrary - i.e., the number of filters used is going to vary based on network architecture.  The number 4 may also change, dependign on the number of convolutions and pooling stages implemented, as well as the input dimensions of the images themselves.
+#SLIDE
+#From here, we take these input values just like we would any other input - i.e., we can apply any number of hidden layers to retrieve a score.  Just like before, we're going to be calculating sets of weights for each computational layer in the network.  

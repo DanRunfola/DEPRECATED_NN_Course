@@ -1,0 +1,15 @@
+=== SLIDE 1
+Let's dig a little farther into KNN - not because it's a great classifier, but because it provides a relatively simple algorithm we can use to explain a number of core concepts for computer vision approaches. Think for a moment about the code we're using to implement KNN - our training would be lightning fast, as all we're doing is making in-memory pointers, which is nearly instantaneous.  
+
+=== SLIDE 2
+However, our prediction would be quite slow - we have to compare every single case in our training data to a given image to find the smallest distance.  This is, needless to say, very time and computer-processing intensive.  It's also the opposite of what we generally seek: it's OK if a model takes a long time to train, because we can train a model (on, say, a very large farm of GPUs) before we use it.  However, we want our models to be able to predict very quickly, or run on low-power devices like cellphones.  So, this is no good, and more complex approaches are going to provide us with the opposite relationship.
+
+=== SLIDE 3
+One simple extension of Nearest Neighbors is K Nearest Neighbors, an algorithm that allows for a vote of multiple similar cases, rather than only taking the single best match.  Here, we have an example where we have multiple training samples for the letters "A" and "T", represented by Red (A) and Blue (T) dots.  We also have an example of a hand-written letter "T", represented by a yellow dot.
+
+=== SLIDE 4
+Each point is aligned so that the farther the point is from 0, the more different the letter was according to the L1 Distance.  So, for example, the yellow dot (the "T" we want to classify") has identical pixel values to... the "T" we want to classify (i.e., it's the same picture), so it scores a 0 - a perfect match.  The first red point was a letter “A” that looked a lot like the letter “T” represented by the yellow dot (only a difference of around 12 if we summed all the pixel values).  This woudl result in an erroneous classification in an unmodified nearest neighbor algorithm, as we would then select A as the most likely correct class.
+
+=== SLIDE 5
+Conversely, in a K=3 Nearest Neighbor, we would expand our search radius to include the 2nd and 3rd most similar letters to our hand-written T.  Each case would get a vote, and because 2/3 of the cases are T, we would correctly assign the letter T.  You can imagine any number of expansions of this voting technique (i.e., distance weighting).  In future videos, we're going to use this simple model as an example to explain a range of different concepts - hyperparameters, distance metrics, and more.
+

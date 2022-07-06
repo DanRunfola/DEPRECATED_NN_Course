@@ -1,0 +1,41 @@
+=== SLIDE 1
+This talk covers linear classification techniques - one of the most important building blocks for neural nets. As a motivating example, we'll be using the CIFAR10 dataset - a collection of 60,000 32x32 images divided into 10 classes of 6,000 images each.  A set of random examples from CIFAR is shown here.  Remember the goal we have - given a new image, we want to be able to identify which of these classes (plane, car, bird, cat and so on) it belongs to.  The KNN approach was simple - record everything, and then compare a new image to everything and select the most similar one.  
+
+=== SLIDE 2
+The nearest neighbor approach can generally be considered as "Nonparametric" - that is, when you pass information into the algorithm, you're only passing the image.  The algorithm then goes through all the images in it's database, and gives probabilities that a given image belongs to a given class (with larger values indicating a higher probability of class inclusion).
+
+=== SLIDE 3
+A parametric model is one where we don't just pass the image - rather, we're going to take in the image and some vector of parameters, generally referred to as Weights (represented by W).  Our computer code will now be able to take into consideration two things - the image itself, as well as the weights we provide.  These weights can then adjust the probabilities that we predict.  Remember for a minute the KNN classifier - in that case, we keep all of the training data in memory to compare to.  The goal of a parametric model is to summarize all of that training data in our weights parameters.  The problem then becomes how to best summarize information in W!  If we can do that well, we can get rid of the training data and only provide W to the algorithm.  If we can do a really good job, and make W really small, we could hypothetically even enable small computers - like cellphones - to run our algorithms.
+
+=== SLIDE 4
+Linear Classifiers are a very simple example of a parametric approach.  In this case, all we do is read in the information in the image (remember, it's just a matrix of numbers!), multiple it by some weights, and use that multiplication to produce probabilistic estimates. 
+
+=== SLIDE 5
+Let's break this down a bit, though.  Here is a real example of a bird from CIFAR 10.  It's very blurry, as the resolution of these images is very low - 32 pixels by 32 pixels.  That results in 1024 pixels of information describing "bird" - but, 
+
+=== SLIDE 6
+that's only in one color.  Many images we will work with will have at least 3 colors - red, green and blue - and sometimes more.  So, ultimately the challenge in this case boils down to how to take in 3,072 values, and use those values to predict what's in the image.
+
+=== SLIDE 7
+So, let's go back to our equation.  When we look at this linear function, the first input is our image.  In this example, this is a vector of length 3,072, where each value represents a pixel in one of our three color bands.  In python, this would be represented as a numpy array - or a 1 dimensional list.
+
+=== SLIDE 8
+W - our weights - are represented by a 10 x 3072 matrix.  You can imagine a matrix with 10 columns and 3072 rows.  The first column might represent "Bird"; each row in that column would be the parameter you multiply by a given pixel value.  When you sum all of those up, it gives you your overall probability the image is a bird.  You repeat that for the other 9 matrix columns.
+
+=== SLIDE 9
+Let's think about this using a simplified example.  Imagine if CIFAR 10 was even worse - it was a 2 x 2 image, instead of a 32 x 32 image.  We've also reduced it to a single greyscale - i.e., there is only 1 band, so no blue, green or red.  So, we now have four total pixels!  Practically, this would be too little data to distinguish between different classes, but this simplified example will help us walk through linear models.
+
+=== SLIDE 10
+Let's say we want to solve for what this image is (i.e., a bird or dog), and someone has already solved for and provided us with the Weights for three classes - cats, birds and planes.  First, we would take all the pixels and translate them into a single array.  This is our input "image" in our function.
+
+=== SLIDE 11
+Second, we have our weights matrix.  In this case, we have three classes we want to choose between - cats, birds and planes.  Each of these three classes has a weight for each of our four pixels.  
+
+=== SLIDE 12
+Now, we can calculate the probability that this image belongs in each class.  For example, the cat score will be the inner product between the image pixels and the first row of the weights matrix.  This is sometimes refered to as the dot product.  In this example, you can see the number 56 is highlighted - this represents the greyscale pixel value in the upper left of the image of the bird.  We multiply this by the weight for this pixel for cat - 
+
+=== SLIDE 13
+in this case, 0.2.  We then repeat for each pixel-weight combination, and the sum of these values represents our final weight for the cat class.
+
+=== SLIDE 14
+We repeat this for each of our three clases - and, in this case you can see the bird score would be the highest, and thus the class we would choose.  This is the fundamental idea behind a linear classifier, and at the heart of many deep learning techniques.  They don't solve many problems by themselves - for example, they don't inherently consider context in images as some of the later models we discuss will - but when integrated with other techniques they can become very powerful classification tools.

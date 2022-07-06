@@ -1,0 +1,33 @@
+
+=== SLIDE
+Let's take a step back for a second, though, and talk about the weight parameters.  Up until now, we've talked about how they operate, but not how you can solve for what the weight parameters should be.  You'll recall that in the CIFAR case, each class (i.e., Bird) required 3,072 weights - i.e., one weight for every pixel of information in the red, green and blue bands.  We want pixels more reflective of a bird to have higher weights, and those less reflective to have a lower weight (or, even negative). 
+
+=== SLIDE
+So, how do you select the best set of weights?  There are two core concepts in machine learning that we build on to try and pick the best weights to achieve the highest accuracy classifications we can.  The first of these is the Loss Function.  Essentially, the loss function is a quantitative attempt to capture how bad a set of weights are - for example, we might consider a set of weights bad if they don't result in findings that reflect our human interpretation of an image.  As a quick case, here is our bird from CIFAR - if our weights resulted in the scores on the slide, we would ultimately predict this bird was a Plane.  Obviously, we want weights that won't make errors like that!  However, we have to teach an algorithm some way to judge "good" from "bad", and then teach it a way to select weights that are "good".  The loss function is the way the algorithm judges, and...
+
+=== SLIDE
+The optimzation strategy is how the algorithm selects weights to test.  Imagine if you are trying to find the 3,072 weights that best discriminate between "birds" and "not birds" for CIFAR.  You can set those 3,072 weights to just about anything you want - so, how do you even pick where to begin, and what parameters to change to improve your estimate?  That is what the optimization function is all about. 
+
+=== SLIDE
+Alright - so, first let's dig a bit into the loss function.  The images you see on the lower right are going to serve as our examples, with the scores above them providing a hypothetical to help us work through how this all works.  Briefly, take the first column, which starts with a 3.2.  The 3.2 represents the score a hypothetical linear classifier gave to "Cat" for the image of a cat, given a certain set of input Weights, W.  The 5.1 is the same score for Car, and -1.7 for Frog.  So, this particular classifier didn't do very well in this case - we would predict that this image is an image of a car.  In the second case, we do better - the Car is correctly predicted to be a car.  In the third case, we do very poorly - the Frog is not only not correctly classified, but the score for frog is by far the worst of the three options.  As humans, we can look at this classifier and recognize it isn't very good - the only thing it got right was Car, and it missed both Cat and Frog by a fair margin.  The loss function is all about how to quantify that human impression in a way a computer can use.
+
+=== SLIDE
+First, just as a reminder so the rest of our notation makes sense, remember that each of the scores in this table are the product of some linear function, where we put the image in, and then take the dot product of it and a vector of weights, represented by W.  We want to teach the algorithm that this set of weights (W) was bad - and, that's what the loss function is attempting to do.
+
+=== SLIDE
+Let's take our three examples here and call it our dataset - we want to calculate a loss function for how poorly our weights did for this set of images.  To do that, we will define our dataset as being made up of 3 pairs of Xi and Yi, where X is the image data, y is the label of that image, and i is the index (from 0 to 2, in this case, representing the three images). So, x1, y1 would be equal to the image of the cat labeled as a cat, and so on.
+
+=== SLIDE
+Given this dataset, we can then calculate a total loss for a given set of weights.  This equation is fairly straight forward - 
+
+=== SLIDE
+first, we're taking as input an image (i.e., image x_1 would be the cat), and passing our weights into our linear function to generate a set of scores.  The maximum score would represent our predicted class.
+
+=== SLIDE
+We then compare this to our true / known class label, represented by y_i.  For example, we might say that if yi is not equal to the predicted class, then the loss is 900.  Or 10. Or 20.  It's our choice!  
+
+=== SLIDE
+That choice is the loss function itself - i.e., how you decide to measure "wrongness" in your algorithm.  There are many different loss functions designed for different purposes, and we'll cover a few later in this lecture.
+
+=== SLIDE
+Finally, total loss - i.e., the loss for one set of weights - is the average of the loss function across all images (in this case).  You can write more complicated total loss functions that might - for example - bias your results towards accurately classifying cats.  This notion of a loss function is highly generic across machine learning - writ large, we are passing in some data we call "X", and using it to predict "Y", and the loss function captures how well our algorithm performs.  In our case, X happens to be images with multiple bands of pixels, and Y is a label.  Ultimately, we want to find the set of weights "W" that minimizes our selected loss function.
