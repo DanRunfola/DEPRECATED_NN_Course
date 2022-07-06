@@ -1,16 +1,19 @@
 
-=== SLIDE
+=== SLIDE 1
 While we've been using KNN as an example - and it's a great example to help walk through a number of basic machine learning concepts - it is not a very strong algorithm when it comes to image classification.  We already covered one reason for this - it's very slow, as most of the computational costs occur during prediction, rather than during training; this makes it unsuitable for applications that require quick decisions (most of the time).  Further, we have a decent body of evidence that suggests that KNNs are simply not good at capturing the perceptual differences we see with our eyes - this is largely because they operate on a pixel-by-pixel basis, so context of pixels is not retained effectively. This leads us into the biggest challenge that most traditional machine learning approaches have when it comes to images - the curse of dimensionality.
 
-=== SLIDE
+=== SLIDE 2
 Most data analysis problems have focused around traditional datasets, in which a single row contains all of the information for a single observation.  For example, a dataset might contain millions of rows of data with personal characteristics of individuals such as Height and Weight.  A dataset like this can be represented by the number of dimensions it has (in this example, 2 - Height and Weight), and the number of observations it has (in this case, 3).  To represent this sample dataset would require 3 points in a 2 dimensional plane, or a simple scatterplot.
 
 This is important, because as the number of dimensions increases, the number of training samples we need also increases - you need an example case "nearby" (i.e., a neighbor) to get a reasonable estimation.  In traditional, low dimensional cases this is quite feasible to achieve, but in high dimension cases this becomes increasingly difficult.
 
 The figure of the right shows an example of this.  Each observation is plotted from the table, and the region in green very loosely represents the region in which we might expect to make a reasonable estimate - i.e., there are neighbors that would be nearby.  In this simple example, the green box represents around ~20% of the chart - i.e., the area in red is where we might not expect to make a very good estimate, because there are no samples nearby.
 
-=== SLIDE
+=== SLIDE 3
 Now, let's imagine adding a third dimension, but all of our values are the same (Age).  The region of space we have to estimate across grows exponentially, but the green region stays the same size - at least in this simple example.  For each dimension we add, we need a huge additional number of samples in order to cover the new region.  This is an enormous problem in the case of images, as ...
 
-=== SLIDE
-in the case of an image, in it's raw form every pixel can be considered a dimension.  This means that methods that require a dense sampling of multidimensional space are inherently ill-suited to imagery recognition tasks - especially considering that additional dimensions are frequently added as images are permuted to add in contextual information.  Bottom line: don't use KNN for imagery recognition, it's just a bad idea.
+=== SLIDE 4
+in the case of an image, in it's raw form every pixel can be considered a dimension.  This means that methods that require a dense sampling of multidimensional space are inherently ill-suited to imagery recognition tasks - especially considering that additional dimensions are frequently added as images are permuted to add in contextual information.
+
+=== SLIDE 5
+The second big driver of why deep learning techniques are effective relates to context, as we alluded to earlier.  Consider these two images - in both cases, we can see a tall building with relatively similar features - glass windows at the top, for example.  And yet, as a human, we can clearly tell from the context of the images that the image on the left is taken in an airport, while the one on the right is of a lighthouse.  The image context very clearly gives this away - the ocean on the right, or the luggage truck on the left.  Pixelwise techniques such as KNN have no means through which they can capture this type of contextual information - one of the most powerful things about convolutional neural networks and deep learning is that they can.
