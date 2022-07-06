@@ -1,36 +1,35 @@
 
-=== SLIDE
-Let's work through one example of loss - a multiclass SVM loss.  We're going to go through this equation slowly!  What you're looking at here is the loss function - *not* the total loss - i.e., this would be how we calculate loss for any single image.  As noted on the previous slide, we could take the average of all images loss functions to generate our total loss.  
+=== SLIDE 1
+Here we're going to very slowly work through an example of a common loss function - a multiclass support vector machine (SVM) loss.  What you're looking at here is the loss function - *not* the total loss - i.e., this would be how we calculate loss for any single image.  As noted on the previous slide, we could take the average of all images loss functions to generate our total loss.  
 
-=== SLIDE
-First, let's talk about what we're summing over.  Imagine we want to quantify how "bad" our algorithm is at predicting if our first image - the image of a cat - is actually a cat.  A multiclass SVM loss function operates by iterating over all possible things we *could* have called the image, denoted by a capital J.  Lowecase j is the index for ever class.  So, for example, when lowercase j equals 1, it would be cat.  When lowercase j equals 2, it would be car; 3 would be frog.  Importantly, we are going to sum over every *incorrect* case - when we say "j does not equal y_i", we mean to sum every case when the class is not equal to the true class.  In the case of the Cat, this means we would solve and sum twice - once for Car and once for Frog.
+=== SLIDE 2
+Imagine we want to quantify how "bad" our algorithm is at predicting if our first image - the image of a cat - is actually a cat.  A multiclass SVM loss function operates by iterating over all possible things we *could* have called the image, denoted by a capital J.  Lowercase j is the index for ever class.  So, for example, when lowercase j equals 1, it would be cat.  When lowercase j equals 2, it would be car; 3 would be frog.  Importantly, we are going to sum over every *incorrect* case - when we say "j does not equal y_i", we mean to sum every case when the class is not equal to the true class.  In the case of the Cat, this means we would solve and sum twice - once for Car and once for Frog.
 
-=== SLIDE
-Second, let's look at what we're doing with each class.  First, let's focus on s_j - s_yi.  Here, we're subtracting the score of the correct class from the score of the incorrect class.  So, in the case of our Cat, s_2 would be 5.1 - the score we gave to "Car".  We would subtract 3.2 - the cat score - from 5.1, which would give us 1.9.  Skipping epsilon for the moment, that gives us max(0, 1.9), which resolves to 1.9.  
+=== SLIDE 3
+Within this multiclass loss function, we're subtracting the score of the correct class from the score of the incorrect class.  So, in the case of our Cat, s_2 would be 5.1 - the score we gave to "Car".  We would subtract 3.2 - the cat score - from 5.1, which would give us 1.9.  Skipping epsilon for the moment, that gives us the max of either 0 or 1.9, which resolves to 1.9.  
 
-=== SLIDE
+=== SLIDE 4
 We then repeat this for every class - but, rather than walk through that in notation, I'm going to expand on our example.  Before we go there, though, I want to talk a little bit about the Epsilon term.
 
-=== SLIDE
-The fundamental idea of support vector machines is that we want to make sure we're as sure as we can be about our estimates - i.e., it's not just enough to classify correctly, but when we're correct we want our algorithm to be really sure.  This is reflected in the scores - for example, take the scores for Car.  The 4.9 for "Car" is way above the 2.0 for Frog or 1.3 for Cat; we like that.  The Multiclass SVM Loss includes the Epsilon term to push the weights vectors we identify towards solutions with these more concrete delineations.  A higher epsilon is a more stringent test - essentially, we're going to be more likely to punish correct cases if they aren't confident in their scores.  Also of note is the figure at the lower-left, which illustrates two different loss functions.  In green is an example of a binary loss, where it's either wrong (all values below 0) or right (all values above 0).  In a hinge loss - what the multiclass SVM loss is - you don't reduce down to 0 loss until 1.0; this is reflective of the epsilon penalty term.  Predictions in the triangle between the green line and blue line would all technically be correct, but still incur a loss because the confidence of the algorithm is not high.  We'll explore this term more in just a minute as we walk through the full example.
+=== SLIDE 5
+The fundamental idea of support vector machines is that we want to make sure we're as sure as we can be about our estimates - i.e., it's not just enough to classify correctly, but when we're correct we want our algorithm to be really sure.  This is reflected in the scores - for example, take the scores for Car.  The 4.9 for "Car" is way above the 2.0 for Frog or 1.3 for Cat; we like that.  The Multiclass SVM Loss includes the Epsilon term to push the weights vectors we identify towards solutions with these more concrete delineations.  A higher epsilon is a more stringent test - essentially, we're going to be more likely to punish correct cases if they aren't confident in their scores.  
+
+=== SLIDE 6
+Let's walk through our example now, which will use these three cases.  First, we'll compute the loss for our estimate of Cat.  Remember, we got Cat wrong - we predicted Car - so we hope the loss will be high (i.e., we want the algorithm to know it's more wrong).  
+
+Let's start with contrasting Cat and Car.  Here, we take the maximum of either 0 or 5.1 (our Car score) minus 3.2 (our cat score).  We're then going add one, representative of our epsilon term - a topic we'll discuss more later).  This resolves to max(0, 2.9), or 2.9.
+
+=== SLIDE 7
+We then repeat this process again, this time for Frog.  For frog, we have the score of -1.7 minus 3.2, plus 1.  This resolves to max(0, -3.9), or 0.  So, our two cases for the first image resolved to 2.9 and 0, respectively.  This makes intuitive sense - the Car guess was wrong (i.e., 5.1 is bigger than 3.2, and the Cat is not a Car!); thus, we penalize the algorithm for confidently stating that "Car" was the correct class.  Conversely, in the case of the Frog the model got it right (i.e., the Cat is not a Frog!), and by a fair margin - and so there is no penalty (the loss function is 0).  Adding these two values together gives us 2.9, which would be the loss for X_1.
+
+=== SLIDE 8
+Now let's take the example of the car, or image X_2.  This time, we compare to Cat and Frog.  Note that the algorithm was very confident that "Car" was the correct class - as indicated by the high score of 4.9.  This is reflected in our loss function - both cases resolve to 0, for a total loss of 0 in this case.  Good job, algorithm!
+
+=== SLIDE 9
+Finally, we get to the frog.  Remember the frog was very badly missclassified - by far the lowest score - and so we expect a large loss for this case.  Solving for both equations, we get a loss of 6.3 plus 6.6, or 12.9.  Remember, higher is worse, so this large value would indicate a bad set of weights!
 
 === SLIDE
-Let's walk through our example now, which will use these three cases.  First, we'll comput the loss for our estimate of Cat.  Remember, we got Cat wrong - we predicted Car.  First, we take the maximum of either 0 or 5.1 (our Car score) minus 3.2 (our cat score), plus 1 (our epsilon term - more on how to choose this later).  This resolves to max(0, 2.9), or 2.9.
+You can now see all three losses for each case here, at the top of the table.  Essentially, the loss function tells us that the algorithm did a very poor job with frog (12.9 is high wrongness), a great job with car, and a bad job with Cat.  To bring your attention to the two equations on this slide, the first equation at the top is our original formula for total loss; below it is the loss function we just solved for.  The teal highlighted portion is equivalent - that is, we just solved for the loss of every individual image X.  So, to get the total loss for this one set of scores, we simply need to take the average, which results in...
 
 === SLIDE
-We then repeat this process again, this time for Frog.  Remember, we only look at the INCORRECT classes, skipping the "true" case of cat.  For frog, we have the score of -1.7 minus 3.2, plus 1.  This resolves to max(0, -3.9), or 0.  
-
-=== SLIDE
-So, our two cases for the first image resolved to 2.9 and 0, respectively.  This makes intuitive sense - the Car guess was wrong (i.e., 5.1 is bigger than 3.2, and 3.2 is the cat score!); thus, we penalize the algorithm for confidently stating that "Car" was the correct class.  Covnersely, in the case of the Frog the model got it right, and by a fair margin - and so there is no penalty (the loss function is 0).  Adding these two values together gives us 2.9, which would be the loss for X_1.
-
-=== SLIDE
-Now let's take the example of the car, or image X_2.  This time, we compare to Cat and Frog (the two incorrect classes).  Note that the algorithm was very confident that "Car" was the correct class - as indicated by the high score of 4.9.  This is reflected in our loss function - both cases resolve to 0, for a total loss of 0 in this case.  Good job, algorithm!
-
-=== SLIDE
-Finally, we get to the frog.  Remember the frog was very badly missclassified - by far the lowest score - and so we expect a large loss for this case.  Solving for both equations, we get a loss of 6.3 plus 6.6, or 12.9.  Remember, we're playing by golf rules and so higher is worse, so this large value would indicate a bad set of weights!
-
-=== SLIDE
-So, we can see all three losses for each case here, in the table.  Essentially, the loss function tells us that the algorithm did a very poor job with frog, a great job with car, and a bad but still better than Frog job with Cat.  To bring your attention to the two equations on this slide, the first equation at the top is our original formula for total loss; below it is the loss function we just solved for.  The teal highlighted portion is equivalent - that is, we just solved for the loss of every individual image X.  So, to get the total loss for this one set of scores, we simply need to take the average, which results in...
-
-=== SLIDE
-approximately 5.27.
+approximately 5.27.  This score can then be used in optimization to guess a new set of weights, with the goal of improving this loss function across all tested images.
