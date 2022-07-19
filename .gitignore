@@ -29,11 +29,13 @@ Archive/website/assignments/assignment2/images
 Archive/website/assignments/assignment2/assignment2.tar.gz
 Archive/website/assignments/assignment3/models/
 Archive/website/assignments/assignment3/myPokemon/
-
-
+Fall22/videos
+/Fall22/videos/*
+Fall22/videos/*
+/DeepLearningSatellite/videos
+*.cmproj
 *.h5
 
-# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
