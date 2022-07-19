@@ -1,22 +1,20 @@
-As you'll see on your lab, we use an analytic gradient in practice to solve for this, as it is a fairly computationally effecient approach to estimating gradients with large sets of W and data.  Specifically, we rely on an implementation called stochastic gradient descent, which makes these estimates based on a subset of our data (i.e., batches).  At the end of all this, we have a method to identify an "optimal" set of weights, W, that give us the lowest loss function we can identify.  By including regularization in this equation, we also seek to find the W that is "simplest" and thus, we hope most generalizable.
+#SLIDE 1
+Ok!  Now for the fun stuff. You've probably seen a figure that looks something like this, which represents a neural network.  This type of figure is called a computational graph - essentially, this is a flexible way to describe any arbitrary function.
 
-#SLIDE
-Ok!  Now for the fun stuff. You've all seen a figure that looks something like this, which represents a neural network.  This type of figure is called a computational graph - essentially, this is a flexible way to describe any arbitrary function.
+#SLIDE 2
+Take, for example, a linear classifier with a SVM loss function.  We can easily represent this through a computational graph just like we would any neural network.  Because the linear classifiers are much easier to understand (as they have fewer steps), we'll walk through this first.  The linear function on the left is a function that takes in a set of images, represented by X, and a set of Weights, represented by W.  It then multiplies them together, and uses the resultant scores to assign a class to each image.  We then feed these estimated scores into the loss function on the right to derive our measure of "badness", where higher loss values are worse.
 
-#SLIDE
-Take, for example, a linear classifier with a SVM loss function.  We can easily represent this through a computational graph just like we would any neural network.  Because the linear classifiers are much easier to understand (as they have fewer steps), we'll walk through this first.  Remember what we're trying to accomplish with these functions, which we introduced back in lecture 3.  The linear function on the left is a function that takes in a set of images, represented by X, and a set of Weights, represented by W.  It then multiplies them together, and uses the resultant scores to assign a class to each image.  We then feed these estimated scores into the loss function on the right to derive our measure of "badness", where higher loss values are worse.
-
-#SLIDE
+#SLIDE 3
 So, let's start picking these equations apart and transforming them into a computational graph.  First, we have our inputs into the function - weights W and images X.  We'll represent them on the graph here.
 
-#SLIDE
+#SLIDE 4
 Both our X and W go into the linear function, and our scores are output (one for each of the classes we're classifying images across).  
 
-#SLIDE
+#SLIDE 5
 These scores then go into the hinge loss function, which calculates our data loss.
 
-#SLIDE
+#SLIDE 6
 In parallel, we also pass the weights to our regularization function.  In this example we're using L2 regularization, but this function could be anything.  
 
-#Slide 
-We then add our data loss and regularization loss together to get our total loss.  This figure now represents the computational graph for our linear model with a SVM multiclass loss and L2 Regularization.  The big advantage to expressing our functions like this is that it allows us to use backpropogation to compute the gradient while taking into account every computation represented in the graph.  This is really important when we get to more complex functions!
+#Slide 7
+We then add our data loss and regularization loss together to get our total loss.  This figure now represents the computational graph for our linear model with a SVM multiclass loss and L2 Regularization.  The big advantage to expressing our functions like this is that it allows us to use backpropogation to compute the gradient while taking into account every computation represented in the graph.  We'll be digging more into this shortly - backpropogation is critical part of solving for more complex functions!

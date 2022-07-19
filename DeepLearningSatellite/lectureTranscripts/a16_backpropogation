@@ -1,69 +1,69 @@
 
-#Slide
-Ok - so, what is this backpropogation?  Let's start out with an even simpler example function which takes 3 inputs - x, y and z.  It then does the computation of adding x and y together, and multiplying the sum by z. 
+#Slide 1
+What is this backpropogation?  Let's start out with an even simpler example function which takes 3 inputs - x, y and z.  It then does the computation of adding x and y together, and multiplying the sum by z. 
 
-#Slide
+#Slide 2
 Just like our linear svm, this function can also be represented with a computational graph that looks like this.  Imagine we are trying to find the gradient - i.e., when x changes by one unit, what is the expected change in the output?  
 
-#SLIDE
+#SLIDE 3
 Note that in this computational graph, there is one intermediate product - we have to add before we multiply.  So we can solve for the gradient, let's call this step Q.  The function for Q is simply Q = x + y. 
 
-#SLIDE
+#SLIDE 4
 Remember back to our discussion on optimization and gradients.  In this case, we have three questions we need to answer: what is the change in the function if we shift X by one, y by one, or z by one?  We can start by writing out the gradients for Q with respect to x and y.  First, we know that a shift of one in either x or y would result in a change of 1 in q - because all we're doing is adding in this case.  So, in both cases the gradients are 1.
 
-#SLIDE
+#SLIDE 5
 Now let's call our multiplication node F.  This equation is similarly simple, F = q * z.
 
-#SLIDE
+#SLIDE 6
 The second set of gradients can be understood as trying to identify the change in our function when either Q or z change - in this case, because it is multiplication, a one unit change in Q would result in a change in the function of z (i.e., imagine z was 2 - if you increase q by one, you would get 2 more!).  The same is true of if you change z, with regard to Q.
 
-#SLIDE
+#SLIDE 7
 Ultimately, what we want to find is the gradients of F with respect to x, y and z.
 
-#SLIDE
+#SLIDE 8
 To do this we are going to use backpropogation.  We're going to start out the end of our graph (that is, the output), and work our way backwards, computing each gradient as we go.  The first stop on this road is the gradient of the output given the final variable - in this case, we only have one, which is F.  
 
-#SLIDE
+#SLIDE 9
 So, this reduces down to 1, because if you changed F by one, the output would also change by 1; this first one is nice and easy.
 
-#SLIDE
+#SLIDE 10
 Now we're going to follow our function backwards.  The next step we can look at is the gradient of F given the input z. We already know that this one is equal to Q - i.e., if you increase z by one, the total function output increases by Q.
 
-#SLIDE
+#SLIDE 11
 Similarly, we know that the gradient of F with respect to Q is z.
 
-#SLIDE
+#SLIDE 12
 Now we get to the fun part - solving for the gradient of F given x and y.  Let's start with y.  In this case, we're trying to find dF over dy, but y is not directly connected to F in our computational graph.  So, we're going to apply a chain rule.  Because we know the computations that connect y to F, we can "chain" the gradients together - i.e., in this case, the change in output F given a one unit change in y would be equal to the gradient of q multiplied by the gradient of y (or dF/dq times dQ/dy). To give some intuition - finding the effect of y on F requires first finding the effect of y on Q, and then the effect of Q on F.  Essentially, we are trying to identify the portion of a change in our function output F that can be attributed to a change in y with this chain.
 
-#SLIDE
+#SLIDE 13
 X is essentially the same as Y - we would use the same exact chain rule, but replacing y with x. 
 
-#SLIDE
+#SLIDE 14
 So, let's briefly reflect on our goal - we want to know the shift in F given a change in x, y and z.  We now have equations to do each of these things - so let's walk through the solution of dF / dx as an example.  Remember from a few slides ago that we noted dF / dQ resolves to z (as increasing Q by one increases the output of the function by z).  So, the equation reduces to ...
 
-#SLIDE
-Further, we know that dQ / dx is equal to one - that is, if X increases by one, so does x.  This leads to a further reduction of our equation to...
+#SLIDE 15
+This.  Further, we know that dQ / dx is equal to one - that is, if X increases by one, so does x.  This leads to a further reduction of our equation to...
 
-#SLIDE
+#SLIDE 16
 z * 1, or z.  So - we now know that the gradient of F with regard to x is equal to z.  This makes intuitive sense in this simple case - if you increase x by one, the would increase Q by one.  Because we multiple Q by z, the resultant output is going to increase by z!  This is the chain rule at play.
 
-#SLIDE
+#SLIDE 17
 And, there you have it!  Using backpropogation, we've now solved for the gradient of F with respect to x, y and z.  We could use this information to update all three of these variables (x, y and z) to get a lower output value.  In our case, x, y, and z are all weights in our weights vector W, and the output is the loss. Let's think about this exact same function in terms of how most backpropogation is implemented algorithmically.  The first thing to note is that here we're using very simple computations - addition and multiplication.  This is because it is very easy for us to solve for the gradients of these simple computations - i.e., we know a one-unit increase in y will always result in a one-unit increase in Q, simply because the computation is addition.  Similarly, you know a one unit increase in z results in an increase of Q in the final output.  Because we keep the equations in these computational nodes very, very simple, it allows us to apply backpropogation techniques (and the chain rule) across very deep nets.
 
-#SLIDE
+#SLIDE 18
 One of the great things about backpropogation is that you can solve for each individual node without knowledge of the broader network.  To illustrate this, consider the same computational graph, but we can only see one of the computational nodes - addition. We have no idea what happens with the data after the output is created and passed on (i.e., we don't know there is a multiplication or 'z' variable). In this graph, we don't need any additional information to calculate a few things.  First, we can calculate the local gradients within the computation - i.e., the change in our output F with respect to x, and the same for y.  We know both of these are 1 in this case - i.e., if this is a computational addition function, the gradients will always be 1.
 
-#SLIDE
+#SLIDE 19
 In backpropogation, we have all of our upstream gradients being passed backwards to this set of local gradients.  So, at any given node, we would also know the gradient of downstream nodes based on a change in the nodes output F.  I.e., some function L (let's assume it's a loss function) changes by some amount when our output F changes.  This is denoted by dL / dF.  
 
-#SLIDE
+#SLIDE 20
 So, given that we will know dL over dF, we now want to compute the next gradient backwards, which would be the change in our loss function L when x changes - i.e., dL / dx.  
 
-#SLIDE
+#SLIDE 21
 You'll remember from the earlier example that we can use the chain rule to solve for this - i.e., dL / dx is equal to dl/dF times dF/dx.  
 
-#SLIDE
+#SLIDE 22
 We can then solve for the gradient for the change in loss function L when y changes in the same way.  One really neat thing about this approach is that when we pass these gradients back across the graph, we could also easily be passing them back to a computational node.  In this example, we would be done - i.e., we have solved for the gradient of x and y.  But, in a more complex example....
 
-#SLIDE
-You could imagine passing these solutions back to additional computational nodes, where you would then repeat the back-propogation process, solving for each of those nodes independently and passing the results backwards yet again.
+#SLIDE 23
+You could imagine passing these solutions back to additional computational nodes, where you would then repeat the back-propogation process, solving for each of those nodes independently and passing the results backwards yet again.  This is the core approach to solving for any arbitrary computational graph, and how we solve for our gradients in nearly every deep learning algorithm today.

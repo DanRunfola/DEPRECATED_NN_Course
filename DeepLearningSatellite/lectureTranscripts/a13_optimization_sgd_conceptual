@@ -1,41 +1,41 @@
-==== SLIDE
-You'll recall this slide from last lecture, which gives an overview of where we are today.  We have covered the process of taking some arbitrary dataset (in this example, with 3 observations), using a function to predict which class each image belongs to in the dataset, and then calculating a loss function, or measure of how bad our model is.  Optimization functions use this information on badness to help us select better weights.  To briefly note, this process is broadly refered to as supervised learning, as the model is taking as inputs information that a human has labeled. 
+==== SLIDE 1
+We've covered the process of taking some arbitrary dataset (in this example, with 3 observations), using a function to predict which class each image belongs to in the dataset, and then calculating a loss function, or measure of how bad our model is.  Optimization functions use this information on badness to help us select better weights.  To briefly note, this process is broadly refered to as supervised learning, as the model is taking as inputs information that a human has labeled. 
 
-==== SLIDE
-Thus, our final goal is more like this - we want to find the "W" that ultimately minimizes our loss function, by taking the value from our total loss to inform our algorithm how good or bad a model is.  This is the core loop of training a machine learning model - when we talk about "training", this is the loop we are generally referring to.
+==== SLIDE 2
+Our final goal is to find the "W" that ultimately minimizes our loss function, by taking the value from our total loss to inform our algorithm how good or bad a model is.  This is the core loop of training a machine learning model - when we talk about "training", this is the loop we are generally referring to.
 
-==== SLIDE
+==== SLIDE 3
 So, how do we take the measure of badness in the loss function and use it to find better weights, W?  This is the process of optimization. The way that optimization is most commonly conceptualized is to use the metaphor of mountains, hills and valleys.  Imagine your walking around in a mountain range and trying to find the bottom.  Each time you take a step, you are generally going to be going up or down in elevation.  It's generally easier to go down hill, so if you were naively trying to find the lowest point in a valley, you would just always takes steps that resulted in you moving down until you can't go down any further.  Our optimization algorithms are - very broadly - trying to do the same thing.  They start at a random place on the landscape, but instead of an elevation, they have a loss function value.  They want to move somewhere in the space that results in a lower loss value - instead of walking downhill, the alogrithm adjusts the "W" parameters.  Ultimately, if a new set of "W" parameters result in a lower loss function, the algorithm now knows it walked 'downhill'.  For those of you taking this course with a deep background in mathematics or physics, you may be wondering why we don't just solve for the analytic solution - why bother with all of this optimization nonsense if you can solve for the minimum of a function directly?  The challenge is in the complexity of most functions we're practically using - a neural network can easily exceed millions of parameters, inhibiting or precluding practical analytic solutions.
 
-==== SLIDE
+==== SLIDE 4
 We're going to go over a wide range of optimization techniques, but let's start with a silly one: random search.  If you were to completely naively build a function that sought to determine the best weights, you could simply test random permutations of weights over and over again, and then select the best one that you find.  Obviously, this is... not a great idea.  Not only is it arbitrarily expensive computationally (you have to choose how many iterations to run), but you're also phenomenally unlikely to identify a set of weights that is anywhere near what you could achieve with a more advanced optimization strategy.  
 
-==== SLIDE
+==== SLIDE 5
 So - again, imagine you're the individual trying to find the bottom of a valley.  You could start randomly anywhere in the valley - and, that might be the bottom, but it probably won't be.  However, from that random location you could figure out pretty quickly which way is downhill and which way is uphill, and begin taking steps in the downhill direction. Every time you take a step, you can look around and establish what the next-best step to take might be, based on which step would take you farther down. 
 
-==== SLIDE
+==== SLIDE 6
 So, how do we implement this type of an approach mathematically?  Let's assume that all of you are going to be drinking a lot of coffee (or, tea) in this course.  One thing you might try to establish is the right temperature for that tea - hot, cold, or just right.  If you get it too cold, you suffer - visualized on our y-axis - as it's, well, gross.  If you get it too hot, you burn your tongue.  But, right in the middle there is going to be that perfect temperature.  We want to find it!
 
-==== SLIDE
+==== SLIDE 7
 We could do it randomly - but, that would probably be pretty uncomfortable.  Alternatively, we could do something called a "Grid search", or exhaustive search.  In this case, we subdivide our space into a finite number of tests that are equally spaced along the X-axis (temperature). We then pour ourselves a cup of coffee at every one of these temperatures, and measure how much suffering we go through.  Then, we pick the best temperature at the end - great, but our tongue is badly burned and we had to drink a LOT of coffee.
 
-==== SLIDE
+==== SLIDE 8
 So, instead we can do what the hiker did - start somewhere random, and then walk downhill.  This process is called gradient descent.  First, we drop *two* random points and pour ourselves coffee twice - once at each temperature.  Once we do that, we can then draw a straight line between those two points, as illustrated on the slide now.  Once we know what that line is, we can calculate the slope - and walk down the slope!
 
-===== SLIDE
+===== SLIDE 9
 We then repeat this process until there is little or no slope - i.e., once the slope is 0, we hypothetically would be at the bottom of the valley, or - in this case - minimized our suffering and found the best temperature. 
 
-====== SLIDE
+====== SLIDE 10
 This is the same goal that we have in the context of loss functions - except instead of suffering, we're trying to minimize our total loss; instead of the right temperature for coffee, we're trying to find the best parameter W.  In practice, we're doing this in multi-dimensional space with lots and lots of Ws!
 
-========= NOTES
-So - let's formalize this a bit.  You'll hopefully remember back to your calculus courses, and how to take derivatives.  In one dimension (i.e. - the coffee example where we just have one value - temperature - we're trying to find), we can try to find the derivative of a function following the equation on the screen.  As a very brief refresher, a derivative can be understoof as - at any point along a function - the slope of the line between that point and another point distance "h" away.  
+==== SLIDE 11
+So - let's formalize this a bit.  You'll hopefully remember back to your calculus courses, and how to take derivatives, but don't worry if not - we'll go through this slowly.  In one dimension (i.e. - the coffee example where we just have one value - temperature - we're trying to find), we can try to find the derivative of a function following the equation on the screen.  As a very brief refresher, a derivative can be understood as - at any point along a function - the slope of the line between that point and another point distance "h" away.  
 
-===== SLIDE
-Going back to our suffering example.  Look at the empty dot - this dot represents when we drank a cup of coffee that was 45 degrees, and in that case we had a suffering of "2" on a 3 point scale.  Let's say we want to calculate a derivative of the function at this point.  Remember, we don't actually know the underlying curve, so in order to estimate the derivative we need at least one other point - we'll define that point as being distance "h" away.  In this case, we'll arbitrarily set h to 5 - i.e., we're going to calculate a derivative based on a second measurement that is 5 degrees away towards 0 (i.e., we'll subtract 5).  So, we wait until the coffee cools to 40 degrees, and then pour ourselves another cup.  We then measure the suffering - turns out it's a "2.5" on a 3 point scale!  We then put the shaded-in green dot.
+===== SLIDE 12
+Going back to our suffering example.  Look at the empty dot - this dot represents when we drank a cup of coffee that was 45 degrees, and in that case we had a suffering of "2" on a 3 point scale.  Let's say we want to calculate a derivative of the function at this point.  Remember, we don't actually know the underlying curve, so in order to estimate the derivative we need at least one other point - we'll define that point as being distance "h" away.  In this case, we'll arbitrarily set h to 5 - i.e., we're going to calculate a derivative based on a second measurement that is 5 degrees away towards 0 (i.e., we'll subtract 5).  So, we wait until the coffee cools to 40 degrees, and then pour ourselves another cup.  We then measure the suffering - turns out it's a "2.5" on a 3 point scale (that is, it was worse)!  We then put the shaded-in green dot to represent this new test.
 
-===== SLIDE
-Thus, for this very simple example, we can estimate the derivative of our function to be equivalent to the result of our function at 45 - 2.0, minus the result of our function at 40 - 2.5; i.e., f(40+5) - f(40) in the equation at the upper-right would resolve to -.5.  Our slope would then be -.5 / 5 (the distance we moved), or -.1.  Thus, we would want to guess a temperature value that is higher, i.e., the inverse direction of the slope, as higher values of temperature seem to indicate lower values of suffering.
+===== SLIDE 13
+Thus, for this very simple example, we can estimate the derivative of our function to be equivalent to the result of our function at 45 - 2.0, minus the result of our function at 40 - 2.5; i.e., f(40+5) - f(40) in the equation at the upper-right would resolve to -.5, or the difference in our suffering in our two tests.  Our slope would then be -.5 / 5 (the distance we moved), or -.1.  Thus, we would want to guess a temperature value that is higher, i.e., the inverse direction of the slope, as higher values of temperature seem to indicate lower values of suffering.
 
-===== SLIDE
+===== SLIDE 14
 Now - in practice we don't just have one temperature X; instead, we have up to millions of weights parameters W.  While not perfectly accurate, you can imagine calculating a function like we did for temperature for every single one of those weights parameters - so, you would end up with one slope for every single parameter W.  This vector is called the gradient, and the slopes for each W are partial derivatives.  This gradient is absolutely key for most machine learning, as it provides us with information that allows us to update our weights in ways that are likely to result in a better prediction.  In fact, most of the computational costs of deep learning specifically are in calculating hundreds, thousands, or millions of gradients to iteratively identify better and better weights across vast numbers of parameters.
