@@ -1,10 +1,10 @@
-#SLIDE
-That's the fundamentals of a network, but there are a few other important things we need to cover.  You'll recall I've mentioned that activation surface dimensions can be driven be a range of choices you ahve to make regarding the nature of your convolutions.  One of these is stride.  In this example, we'll set stride equal to 1 - i.e., we will always shift one cell during each connvolution.  In this case, the activation surface would be 4x9, as there are 4x9 valid locations for the filter to convolve across.
-#SLIDE
+#SLIDE 1
+Activation surface dimensions can be driven be a range of choices you ahve to make regarding the nature of your convolutions.  One of these is stride.  In this example, we'll set stride equal to 1 - i.e., we will always shift one cell during each connvolution.  In this case, the activation surface would be 4x9, as there are 4x9 valid locations for the filter to convolve across.
+#SLIDE 2
 A stride of 2 is when you shift the filter two units, rather than one - resulting in a much smaller activation surface, as the number of valid locations to convolve are smaller.  
-#SLIDE
+#SLIDE 3
 Here is an example of the second activation value if stride=2. <Toggle back adn forth a bit>.  You'll see that the activation surface I've drawn here is a 3x5, but if you're *really* paying attention you'll probably be wondering how it's possible to have a stride of 2 3 times - i.e.,
-#SLIDE
+#SLIDE 4
 Wouldn't you go off the side of the image if you had stride=2?  This is another choice that must be made regarding how to convolve over your images.  
-#SLIDE
-I.e., you may choose to zero-pad your image.  This can result in odd biases along edges, but as the biases are systematic if all input images are of the same dimensions bias will be somewhat mitigated.  Note that the depth of a network is limited by the pooling, convolution, padding, and input image dimensions; we'll go into much more depth on this as we explore different architectural choices in this course.
+#SLIDE 5
+I.e., you may choose to zero-pad your image.  This can result in odd biases along edges, but as the biases are systematic if all input images are of the same dimensions bias will be somewhat mitigated.  Note that the depth of a network is limited by the pooling, convolution, padding, and input image dimensions; we'll go into more depth on this as we explore different architectural choices in this course.

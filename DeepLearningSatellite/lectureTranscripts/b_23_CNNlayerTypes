@@ -1,11 +1,9 @@
 
-#SLIDE
-In addition, many convolutional architectures intersperse convolutions with other types of computations.  The most common of these is something called reLu - a simple computation in which if a value is greater than a number, it passes on the value; otherwise it passes on a 0.  This is a reLu with a threshold of 75 - i.e., any value greater than 75 is passed on, otherwise it is not.  Very loosely, this is designed to replicate human neurons "activating", and is where the term "activation surface" comes from.
-#SLIDE
-Another important concept is pooling.  Many convolutional neural network architectures have additional computational stages which "pool" data together.  This can be helpful for a number of reasons, but the most practical is that it can dramatically reduce computational complexity.  Take this (made up) activation surface as an example.  
-#SLIDE
-A pooling layer will subset the activation layer into some number of quadrants; there are a variety of pooling strategies that can be followed, and the pooling strategy itself can be defined in different ways - again, these are defined by the network architecture.  In this example, a 4-quadrant max pool is implemented.
-#SLIDE
+#SLIDE 1
+In this video, we'll briefly cover a few very commonly encountered layers in CNNS. Many convolutional architectures intersperse convolutions with other types of computations.  The most common of these is something called reLu - a simple computation in which if a value is greater than a number, it passes on the value; otherwise it passes on a 0.  This is a reLu with a threshold of 75 - i.e., any value greater than 75 is passed on, otherwise it is not.  Very loosely, this is designed to replicate human neurons "activating", and is where the term "activation surface" comes from.
+#SLIDE 2
+Another important concept is pooling.  Many convolutional neural network architectures have additional computational stages which "pool" data together.  This can be helpful for a number of reasons, but the most practical is that it can dramatically reduce computational complexity.  Take this (made up) activation surface as an example.  A pooling layer will subset the activation layer into some number of quadrants; there are a variety of pooling strategies that can be followed, and the pooling strategy itself can be defined in different ways - again, these are defined by the network architecture.  In this example, a 4-quadrant max pool is implemented.
+#SLIDE 3
 In this approach, the input activation layer is subset into four equally-sized quadrants, and the maximum value within each quadrant is taken.
-#SLIDE
+#SLIDE 4
 Most architectures leverage all of these different components iteratively, alternating between convolving, pooling, and computational (i.e., reLu) layers.

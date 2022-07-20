@@ -1,0 +1,36 @@
+#SLIDE 1
+Let's start digging into Convolutional Neural Networks - or CNNs. CNNs are a special type of deep learning model that are tailored, largely, to image recognition problems. We'll take the CIFAR example here - remember, these images are 32x32x3, and so when we stretch the image matrix out into a single array, we end up with a 1 x 3072 array.  In our linear approach, we then multiple this image array by a weigths matrix, which in the case of CIFAR is 3072 by 10, with the 10 beign representative of the 10 CIFAR classes (dog, bird, etc).  
+#SLIDE 2
+This multiplication results in a 10 x 1 output array, which we've referred to as 'scores' - i.e., one score for each class.  Each of these individual scores is the result of the dot product between a row of the weights matrix and the image input array.
+#SLIDE 3
+Let's focus for a moment on the input image array.  One natural question to ask about the input array is how to stretch - for example, do you start at the lower-right?  upper-left?  Do you proceed vertically or horizontally?  Any of these options are reasonable, and will result in the same outcome in a linear model, as every individual pixel has a weight, as - importantly - there is no notion of pixel context.  That is to say, when we tranform an image into an array, we are losing any information about the spatial context of where a pixel is.
+#SLIDE 4
+Following this, one of the big questions facing computer vision researchers in the last few years has been how to process image information while retaining spatial structure - i.e., the relationship of pixels to one another.  This is intuitively a very, very important element of how we understand images - i.e., our mind can't tell that a single brown pixel is a part of a dirt bed without knowing that it is surrounded by other pixels; similarly, a single blue pixel gives us no information on if the image is the sky or the ocean.  Context - is it surrounded by more blue pixels (likely ocean) or are there some interspersed white spots (clouds, thus sky) is critical for us.
+#SLIDE 5
+Thus, instead of translating this image to an array, in a CNN approach we are going to retain it in it's full complexity - that is, three matrices that are each 32x32, with every matrix entry being a pixel value from the red, green, or blue band of the image.
+#SLIDE 6
+This stack of 3 matrices is called a tensor - i.e., the tensor in this case is a 32 x 32 x 3 tensor, or 3 32 x 32 matrices.  If you've ever heard the word tensor, now you know why it's so central to convolutional modeling!
+#SLIDE 7
+We *could* take this tensor and stretch it out into a 1 dimensional array just like before, but that would lose the spatial information about pixel context that we want to preserve.  So, instead, we define something called a filter.  The filter is defined only by dimensions, and represents the shape and size of the context we are most interested in exploring.  
+#SLIDE 8
+This filter is convolved across the entire tensor, which results in an activation layer defined by a matrix.  The dimensions of the activation layer are variable depending on exactly how you decide to convolve your filter; we'll walk through a simple example of this in just a minute, but the key thing here is that the activation layer is a matrix in which each entry contains some information about the spatial context of a pixel at a given location.  Thus, 
+#SLIDE 9
+You can imagine simply introducing a convolution into the linear approach we illustrated a moment ago - here, instead of stretching the entire image into one 3,072 pixel long array, we instead convolve over the image first, resulting in a 28x28x1 activation layer.  This layer is then stretched and weighted as we did before.  Again - the benefit, which hopefully will become clear in a minute - is that the 784 values represented here are based on the spatial relationships between pixels in the image - i.e., pixel context.  Let's dig into why with an "elementary" example.
+#SLIDE 10
+For an example of convolutions, we're going to look at how an activation surface might be constructed using an image of the letter A.
+#SLIDE 11
+Ok - let's start with our three matrices; i.e., the tensor - representing the letter A.  Each matrix is 5x10, so the tensor this case would be a 5x10x3 tensor representing all three color bands.
+#SLIDE 12
+We'll define a simple filter here - remember, filters are arbitrarily defined, and represent the context you're trying to capture.  Here, we'll use the example of a 2x2x3 filter.
+#SLIDE 13
+When we talk about "convoling" a filter, we mean sliding the filter we define over each matrix (or, across the tensor).  The term convolution is drawn directly from signal processing - i.e., the convolution of two signals.
+#SLIDE 14
+The filter itself is based on weights - i.e., the simplest filter would have a weight of "1" in each of the 2x2x3 tensor cells.  In the case where all of your filter weights was 1, any given convolution would result in the sum of all input pixel values.  Behind the scenes, we're taking the dot product of the weights and the input values.  So, take a moment to look at this example.  Here, the blue band of the letter A has four pixel values that fall within the 2x2 filter - 1, 2, 3 and 1.  Red is 1, 3, 4 and 2; green is 1, 3, 5 and 2.  Because all of those pixels fall within this filter - remember, it's 2x2x3 - and we're assuming the weights for the filter are all equal to 1, the calculated value for this first convolution of this filter would be 28.
+#SLIDE 15
+This value - 28 - becomes the first cell in the activation layer.  Note the activation layer is a 4x9x1 matrix - this may not always be the case, and is based on some choices you have to make about convolution strategies we'll discuss later.
+#SLIDE 16
+In this case, we are going to convolve by moving our filter one pixel to the right across all three layers.  Because we're assuming our filter weights are all 1, we take the dot product of the filter and the image pixels, which would be equivalent to the sum of all pixels that fall within the filter - i.e., 36.  This would be the computed value for the second convolution, and represents the next value in the activation layer.
+#SLIDE 17
+And so on - we keep moving the filter, computing the dot product, and saving the resultant value to our activation layer.
+#SLIDE 18
+This process is repeated until all convolutions are complete, and the full activation layer has been constructed. 

@@ -1,0 +1,16 @@
+#SLIDE 1
+Based on our filters, we can sum all values within each area and calculate our activation layer, as previously discussed.
+#SLIDE 2
+Implicit in this is the idea that our filter is made up of all "1s" for the weights.  In practice, we can treat these weights just like any other weight we need to find the parameter for - i.e., we can try to find filter weights that are the most helpful in improving our loss function.  This is where the power of CNNs really starts to come into play, as the algorithm can learn what contextual clues are most important for identifying different classes of images.
+#SLIDE 3
+Imagine for a moment you're trying to distinguish between the letter A and B, and the letter A is always blue, while B is always red or green.  In that case, you could find a hypothetical set of weights that look like this - i.e., all of the blue filter weights are "1", and both red and green are "0".  The filter size is still the same - i.e., this is a 2x2x3 filter - but only the values in the blue layer will be summed, as the weights themselves have changed.  Essentially, this becomes a filter that is only considering the blue band.
+#SLIDE 4
+Just as before, we would convolve this filter - but, this time, the dot product between the filter weights and the three bands is equal to the sum of only blue pixels.  I.e., in the highlighted red example, the four blue pixels are 4, 3, 3 and 2 - for a total of 12.  This computation would ignore the values in the red and green bands if the weights for those filters are set to 0.
+#SLIDE 5
+In practice, convolutional neural networks are made up of large numbers of activation surfaces - i.e., one might define hundreds of filter dimensions, and then seek to solve for the most appropriate weights given the target classification.  Each filter - and associated weights - will result in an activation layer.  So, if we start with 5 filters, we end up with five activation layers, as illustrated here.
+#SLIDE 6
+To take a step back for a moment, we could hypothetically use these five activation layers to calculate a final classificaiton of the letter A.  Our activation layers are 4x9x1, and we have 5 of them (i.e., five filters), for a total of 180 values.  We would take the dot product of this 1x180 array, multiply it by a matrix of weights that is 26 x 180 (as there are 26 letters in the alphabet - so we would need 26 sets of weights), and then we would get an output scores array that is 26x1 - hopefully, the letter A would have the highest score in that final array.
+#SLIDE 7
+Most convolutional neural networks take this a step farther, and actually have multiple rounds of convolution.  In this approach, the activation layers themselves become the inputs - 
+#SLIDE 8
+And we define a new filter.  For example, here you see a 2x2x5 filter, with a hypothetical where all weights are equal to 1.  Just like before, we would sum all of the values in each activation (where there is one activation per filter).  So - in the upper left is the activation surface for all colors; i.e., when all weights are equal to 1.  The upper-right represents a hypothetical where the filter weights for green and blue are all 1, but the filter weights for red are all 0.  The number of convolutions and filter dimensions for each convolution are all defined by a given network architecture.

@@ -1,15 +1,16 @@
-what makes neural networks so powerful is the addition of non-linear layers.  Take this function as an example - here, we're still multiplying a set of weights (now called beta) by our pixel values - but now, instead of the output being that raw value, we're now taking the maximum of either 0 or that output.  Additionally, we have introduced a new parameter - being represented by W alpha - and a hidden layer of intermediary nodes called h.  Let's walk through what's going on here.
-#######SLIDE
+#####SLIDE 1
+What makes neural networks so powerful is the addition of non-linear layers.  Take this function as an example - here, we're still multiplying a set of weights (now called beta) by our pixel values - but now, instead of the output being that raw value, we're now taking the maximum of either 0 or that output.  Additionally, we have introduced a new parameter - being represented by W alpha - and a hidden layer of intermediary nodes called h.  Let's walk through what's going on here, and why it can be so effective in capturing complexity across imagery datasets.
+#######SLIDE 2
 First, we're taking in our 3,072 pixels, and passing them to a new type of layer - a hidden layer.  Hidden layers are poorly named, but represent intermediary layers of neural networks.  In this example, I have chosen 50 for the number of hidden layers.  That means that weights vector W beta would contain 50 * 3072 weights, or just about 154,000 weights. 
-#######SLIDE
-In the second part of this network, we will reduce h (which is 50 outputs) down to the final 10 scores - one for each of our 10 CIFAR classes.  Here, we're going to multiply the 50 h outputs by 10 sets of weights W alpha.  The means weights vector W alpha would contain 500 total weights.  
-#######SLIDE
+#######SLIDE 3
+In the second part of this network, we will reduce h (which is 50 outputs) down to the final 10 scores - one for each of 10 classes (i.e., if we were classifying into the 10 CIFAR classes).  Here, we're going to multiply the 50 h outputs by 10 sets of weights W alpha.  The means weights vector W alpha would contain 500 total weights.  
+#######SLIDE 4
 Just like in our smaller examples, the 10 scores for a given image would then be passed into a loss function, and we would then back-propogate through the network, calculating the gradient for every W, and updating accordingly.
-#######SLIDE
-So, why is this intermediary of h, and the additional weights, so important?  Let's go back to the CIFAR example of a horse.  You'll remember back a few lectures, if we just have one layer of weights (i.e., a linear model), the weight values for a horse end up looking something like this - i.e., images that look more like this will be classified as a horse.  In the linear case, this one single image is the image that defines a "horse".  Images that look more like this will be classified as a horse - which means that images with green grass are going to get a much higher probability.
-#######SLIDE
+#######SLIDE 5
+So, why is this intermediary of h, and the additional weights, so important?  Let'sconsider a CIFAR example of a horse.  If we just have one layer of weights (i.e., a linear model), the weights values for a horse end up looking something like this picture - i.e., images that look more like this blurry horse will be classified as a horse.  In the linear case, this one single image is the image that defines a "horse".  Images that look more like this will be classified as a horse - which means that images with green grass are going to get a much higher probability.
+#######SLIDE 6
 Thus, linear models - or single layer neural networks - would suffer when trying to classify a horse that looks like this, as there is no green background.  
-#######SLIDE
+#######SLIDE 7
 Further, you can tell that some horses were facing left, and some right.  Thus, a linear model using CIFAR would assign a very, very high probability to a horse that looked something like...
-########SLIDE
-This lovable horse here.  Obviously, that's not desirable!
+########SLIDE 8
+This lovable horse here.  Obviously, that's not desirable!  Using hidden layers, and defining multiple layers of networks, is what helps us overcome this challenge.

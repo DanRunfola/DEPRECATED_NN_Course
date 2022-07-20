@@ -1,24 +1,33 @@
-######SLIDE
-Functionally, when we go to implement a neural network, we are reliant on two different bodies of code: an implementation of a forward and backward pass.  The forward pass is the code that takes in the input X (image) and W (weights for the image).  It then provides a set of scores - no optimization of any kind is done, and forward passes are lightning fast in most cases.  After the forward pass is completed, the backward pass can then be done to solve for the gradients of each input (i.e., weights W) with respect to the loss function you select; these gradients can then be used to update your weights.  Once you weights are updated, you repeat the process - doing a forward pass and then another backward pass - until some threshold is reached (i.e., a maximum number of iterations).
-######SLIDE
-In code, you can imagine a neural network being split into the same two steps - forward and backward passes.  In the forward pass, we take our input data (say, image pixels X and weights for each pixel W).  We would then start at the beginning of the graph and solve for each node - X1 * W1, X2 * W2, and the addition computation (i.e., in our forwardPass for loop, we would conduct a computation for every blue circle in this picture).
-######SLIDE
+######SLIDE 1
+In code, you can imagine a neural network being split into two steps - forward and backward passes.  In the forward pass, we take our input data (say, image pixels X and weights for each pixel W).  We would then start at the beginning of the graph and solve for each node - X1 * W1, X2 * W2, and the addition computation (i.e., in our forwardPass for loop, we would conduct a computation for every blue circle in this picture).
+######SLIDE 2
 In the back propogation, we flip the computational graph so that we're running the nodes in reverse order, and we're passing the loss function backwards through the function.  Again, we go node-by-node, solving the gradients for each node in a for loop.
-######SLIDE
-A pragmatic approach to implementing forward and backpropogation is to create independent functions (or a class, as we will do here) for each one of the blue circles - i.e., every type of computation gets a function we can pass data through in a forward or backward direction.  
-######SLIDE
-In this case, we have two different types of computation - multiplication and addition - so would need two different classes to handle the different types of passes.
-######SLIDE
+######SLIDE 3
+A pragmatic approach to implementing forward and backpropogation is to create independent functions (or a class, as we will do here) for each one of the blue circles - i.e., every type of computation gets a function we can pass data through in a forward or backward direction.  In this case, we have two different types of computation - multiplication and addition - so would need two different classes to handle the different types of passes.
+######SLIDE 4
 Let's consider multiplication first.  For our forward pass, the implementation of the calculation that happens in a multiplication node is trivial - we multiply the two incoming inputs together.  Remember, because this is a function, we can replace the variables "W" and "X" to be more generic, as we'll simply be passing data into this function, so we'll call these...
-######SLIDE
+######SLIDE 5
 input1 and input2.
-######SLIDE
+######SLIDE 6
 Now we need to consider the backwards function.  In this case, we have the input of the upstream gradient - i.e., the change in the loss function when the node output changes.  We expect our backward function to have two outputs - d_input1 and d_input2 - i.e., the expected change in the loss function when input1 and input2 change, respectively.  We'll get to how to solve for those in a minute.
-######SLIDE
+######SLIDE 7
 First, remember back to what we discussed about multiplication nodes in the last lecture.  In this example, we have node F, which is the final computational node in our graph.  We know that F is equal to the two inputs multiplied together - i.e., Q * z in this example.  Thus, it is very easy to intuit that a one unit increase in Q would result in a change in function F of z - because, it's Q * z!  Thus, the gradient of F with respect to Q is z.  This is what we want to implement in code.
-######SLIDE
+######SLIDE 8
 So, let's crosswalk that to our current example, just focusing on this one multiplication node for now.  In the forward pass, following our code, we are taking in X1 and W1, multiplying them, and returning the output.  Because we're multiplying we know that a change of 1 in X1 would result in a change of W1 in this output - because all we're doing is multiplying.
-######SLIDE
+######SLIDE 9
 This can be represented in our code like this in the backward pass for dInput1 - i.e., the expected change if you change dInput1 by 1 is equal to the value of input2 * the upstream gradient (represented by dOutput here).  If you have a keen programming eye, you'll see a big problem with this code as written right now - pause if you want to sleuth.
-######SLIDE
+######SLIDE 10
 For a given multiplication node, in the forward pass we need to save the two inputs - because we're going to need those inputs to solve for the gradient on the backward pass.  As a class in python, we need to save the variables in a way all functions can access; we do so by editing the forwardPass to include a temporary cache of both input1 and input2.  This allows us to reference those values in the backward pass. These types of node definitions are what make up the backbone of neural network implementations - essentially, different architectures are stringing classes that look like this together in different ways. 
+######SLIDE 11
+Ok, let's take a moment to bring all of this back to the topic in this course, neural networks, and exactly how this is represented and implemented in that context.
+######SLIDE 12
+First, let's bring things back to a real example - remember CIFAR-10.  Here, every image has 3,072 pixels - that is, they are 32x32 size images, with 3 color bands.  In a simple linear model like this, we would multiply each of those pixels by some value W - and, remember, there are 10 of those, 3,072 for each W. Thus, for our computational graph, we have 30,720 multiplication functions that we have to include, and 10 "score" nodes which took the additive total of each set of 3,072.
+######SLIDE 13
+We could write all of that out - i.e., like this, but in practice that's infeasible, because you end up with a beautiful diagram that looks osmething like...
+######SLIDE 14
+Whatever this mess is.  So, instead, we are going to represent our neural networks using layers.  Layers are the shorthand way to refer to all of these calculations - so, one multiplicative layer in a neural network would refer to the 30,720 weights multiplied by the 3,072 pixel values, and that layer as an output would have the 10 scores - one for each class - which is the sum of the inputs.
+######SLIDE 15
+That would look something more like this - and, this probably looks familiar to any of you that have dabbled in neural nets before! Much cleaner.  This represents our X - which has 3,072 pixels of input - our S, which has 10 class outputs.  We can infer from this that W is an array of 30,720 free parameters.  
+
+#####SLIDE 16
+In practice, most networks are far more complex than a single linear layer - there are multiple linear layers that output interim scores (generally referred to as hidden layers), that are then passed forward into additional layers of the network.  This is where deep learning gets so much of it's power - it's able to establish very complex relationships between pixel values and outcomes by enabling very large differences to be captured.
